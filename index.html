@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.1/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.1/addons/p5.sound.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <meta charset="UTF-8" />
+    <meta id="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>まおりゅう ダメージ計算機</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="Rimuru" rel="stylesheet" />
+  </head>
+  <body>
+    <h1>まおりゅう ダメージ計算機</h1>
+    <p>β版 var 1.12 最終更新3/11 15:51</p>
+    <details>
+      <summary>過去の更新記録</summary>
+      <li>24/03/11 β版 var 1.12...クレジット追加 ←今ここ</li>
+      <li>24/02/7 β版 var 1.11...数式表示機能実装,バフ追加</li>
+      <li>24/02/6 β版 var 1.01...一部不具合などの修正</li>
+      <li>24/02/5 β版 var 1.0 公開</li>
+    </details>
+    <p>超反撃・超ガードの計算方法知ってる人いたら教えてください(´;ω;｀)</p>
+    <details>
+      <summary>クレジット</summary>
+      <details>
+        <summary>るおうさん</summary>
+        <li>
+          <a
+            href="https://www.youtube.com/@ru6309"
+            target="_blank"
+            >るおうさんのYouTubeチャンネル</a
+          >
+        </li>
+        <li>
+          <a href="https://x.com/poke_tribe" target="_blank">るおうさんのX</a>
+        </li>
+        <li>
+          <a
+            href="https://youtu.be/fdHHfKgkf_s?si=_Eye8G9cn6o22uRH"
+            target="_blank"
+            >【まおりゅう】ダメージ計算シリーズ
+            Vol.1「攻撃力の計算方法」〜基礎攻撃力/表示攻撃力/実攻撃力の求め方〜</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://youtu.be/ShvcahbLKtE?si=0oMnTCMWbqHwK_0b"
+            target="_blank"
+            >【まおりゅう】ダメージ計算シリーズ Vol.2
+            「防御力の計算方法」〜基礎防御力/表示防御力/実防御力の求め方〜</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://youtu.be/nubO4N4CUhQ?si=2qfSiZL2rkZ3J7QU"
+            target="_blank"
+            >【まおりゅう】ダメージ計算シリーズVol.3
+            「ベースダメージの計算方法」</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://youtu.be/-EttD-jRbtM?si=UqcoBVkZYYwvs9V0"
+            target="_blank"
+            >【まおりゅう】ダメージ計算シリーズ番外編「協心の計算方法」</a
+          >
+        </li>
+      </details>
+    </details>
+    <h2>お知らせ・バグ報告</h2>
+    <p>加護の導き・反撃力バフ・反撃耐性・超ガードが未完成です</p>
+    <p>実際に計算に数式を表示させる機能を製作中</p>
+    <h2>注意点</h2>
+    <p>※製作中※</p>
+    <p>
+      完成版ではないので計算方法が間違っていたり機能しない場合やバフがない場合などがあります
+    </p>
+    <p>倍率は単位を除く半角数字の自然数を記入してください</p>
+    <p></p>
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="1">バフ名</th>
+          <th rowspan="1">効果</th>
+          <th rowspan="1">バフ倍率</th>
+          <th rowspan="1">デバフ倍率</th>
+        </tr>
+      </thead>
+      <tr>
+        <td>会心力</td>
+        <td>
+          <select class="effect" onchange="toggleInput(0)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="kaisinbuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="kaisindebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>貫通力</td>
+        <td>
+          <select class="effect" onchange="toggleInput(1)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="kantubuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="kantudebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>協心力</td>
+        <td>
+          <select class="effect" onchange="toggleInput(2)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="kyousinbuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="kyousindebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>攻撃力</td>
+        <td>
+          <select class="effect" onchange="toggleInput(3)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="attackbuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="attackdebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>魔法/物理</td>
+        <td>
+          <select class="effect" onchange="toggleInput(4)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="mahoubuturibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="mahoubuturidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>属性攻撃力</td>
+        <td>
+          <select class="effect" onchange="toggleInput(5)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="zokuseibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="zokuseidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>全属性攻撃力</td>
+        <td>
+          <select class="effect" onchange="toggleInput(6)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="zenzokuseibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="zenzokuseidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>弱点特攻</td>
+        <td>
+          <select class="effect" onchange="toggleInput(7)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="jyakutenbuff"
+            disabled
+          />%
+        </td>
+        <td><input type="number" class="debuff" value="0" disabled />%</td>
+      </tr>
+      <tr>
+        <td>反撃力</td>
+        <td>
+          <select class="effect" onchange="toggleInput(8)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="hangekibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="hangekidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>ガード貫通力</td>
+        <td>
+          <select class="effect" onchange="toggleInput(9)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="guardkantubuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="guardkantudebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>気絶特攻</td>
+        <td>
+          <select class="effect" onchange="toggleInput(10)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="kizetubuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="kizetudebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>奥義</td>
+        <td>
+          <select class="effect" onchange="toggleInput(11)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input type="number" class="buff" value="0" id="ougibuff" disabled />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="ougidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>単体攻撃</td>
+        <td>
+          <select class="effect" onchange="toggleInput(12)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="tantaibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="tantaidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr></tr>
+      <tr>
+        <td>全体攻撃</td>
+        <td>
+          <select class="effect" onchange="toggleInput(13)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="zentaibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="zentaidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>防御力</td>
+        <td>
+          <select class="effect" onchange="toggleInput(14)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="bougyobuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="bougyodebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>魔法/物理耐性</td>
+        <td>
+          <select class="effect" onchange="toggleInput(15)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="mahoubuturitaiseibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="mahoubuturitaiseidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>属性耐性</td>
+        <td>
+          <select class="effect" onchange="toggleInput(16)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="zokuseitaiseibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="zokuseitaiseidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>全属性耐性</td>
+        <td>
+          <select class="effect" onchange="toggleInput(17)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="zenzokuseitaiseibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="zenzokuseitaiseidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>会心耐性</td>
+        <td>
+          <select class="effect" onchange="toggleInput(18)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="kaisintaiseibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="kaisintaiseidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>貫通耐性</td>
+        <td>
+          <select class="effect" onchange="toggleInput(19)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="kantutaiseibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="kantutaiseidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>協心耐性</td>
+        <td>
+          <select class="effect" onchange="toggleInput(20)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="kyousintaiseibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="kyousintaiseidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>反撃耐性</td>
+        <td>
+          <select class="effect" onchange="toggleInput(21)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="hangekitaiseibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="hangekitaiseidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>ガード力</td>
+        <td>
+          <select class="effect" onchange="toggleInput(22)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="guardryokubuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="guardryokudebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>奥義耐性</td>
+        <td>
+          <select class="effect" onchange="toggleInput(23)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="ougitaiseibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="ougitaiseidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>単体攻撃耐性</td>
+        <td>
+          <select class="effect" onchange="toggleInput(24)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="tantaitaiseibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="tantaitaiseidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>全体攻撃耐性</td>
+        <td>
+          <select class="effect" onchange="toggleInput(25)">
+            <option value="none">無し</option>
+            <option value="buff">バフ</option>
+            <option value="debuff">デバフ</option>
+            <option value="both">両方</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="zentaitaiseibuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="zentaitaiseidebuff"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>奥義倍率</td>
+        <td>
+          <select class="effect" onchange="toggleInput(26)">
+            <option value="none">無し</option>
+            <option value="buff">奥義</option>
+            <option value="buff">極奥義(フルゲージ)</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="ougibairitu"
+            disabled
+          />%
+        </td>
+        <td><input type="number" class="debuff" value="0" disabled />%</td>
+      </tr>
+      <tr>
+        <td>加護の導き</td>
+        <td>
+          <select class="effect" onchange="toggleInput(27)">
+            <option value="none">無し</option>
+            <option value="both">攻撃力UP</option>
+            <option value="both">物理/魔法攻撃力UP</option>
+            <option value="both">属性攻撃力UP</option>
+          </select>
+        </td>
+        <td>
+          <input type="number" class="buff" value="0" id="kagobuff" disabled />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="kagobuff2"
+            disabled
+          />%
+        </td>
+      </tr>
+      <tr>
+        <td>支援の導き</td>
+        <td>
+          <select class="effect" onchange="toggleInput(28)">
+            <option value="none">無し</option>
+            <option value="both">攻撃力UP</option>
+            <option value="both">物理/魔法攻撃力UP</option>
+            <option value="both">属性攻撃力UP</option>
+          </select>
+        </td>
+        <td>
+          <input
+            type="number"
+            class="buff"
+            value="0"
+            id="shienbuff"
+            disabled
+          />%
+        </td>
+        <td>
+          <input
+            type="number"
+            class="debuff"
+            value="0"
+            id="shienbuff2"
+            disabled
+          />%
+        </td>
+      </tr>
+    </table>
+    <form class="status_form">
+      <dt>
+        弱点・抵抗発生の有無
+        <br />
+        <label
+          ><input type="radio" name="radio1" id="jyakuten" value="jyakuten" />
+          弱点</label
+        >
+        <label
+          ><input type="radio" name="radio1" id="teikou" value="teikou" />
+          抵抗</label
+        >
+        <label
+          ><input type="radio" name="radio1" id="nasi" value="nasi" checked />
+          無し</label
+        >
+        <br />
+        奥義発動魂の有無
+        <br />
+        <label
+          ><input
+            type="radio"
+            name="radio2"
+            id="ougiari"
+            value="ougiari"
+            onclick="combochange0(this.checked);"
+          />
+          有り</label
+        >
+        <label
+          ><input
+            type="radio"
+            name="radio2"
+            id="ouginasi"
+            value="ouginasi"
+            onclick="combochange1(this.checked);"
+            checked
+          />
+          無し</label
+        >
+        <br />
+        コンボ数
+        <br />
+        <label
+          ><input
+            type="radio"
+            name="radio3"
+            id="combonasi"
+            value="combonasi"
+            checked
+          />
+          なし</label
+        >
+        <label
+          ><input type="radio" name="radio3" id="4combo" value="4combo" />
+          4コンボ</label
+        >
+        <label
+          ><input type="radio" name="radio3" id="5combo" value="5combo" />
+          5コンボ</label
+        >
+        <label
+          ><input type="radio" name="radio3" id="6combo" value="6combo" />
+          6コンボ</label
+        >
+        <br />
+        ガード発生の有無
+        <br />
+        <label
+          ><input type="radio" name="radio4" id="guardari" value="guardari" />
+          有り</label
+        >
+        <label
+          ><input
+            type="radio"
+            name="radio4"
+            id="guardnasi"
+            value="guardnasi"
+            checked
+          />
+          無し</label
+        >
+        <br />
+        会心の有無
+        <br />
+        <label
+          ><input type="radio" name="radio5" id="kaisinari" value="kaisinari" />
+          有り</label
+        >
+        <label
+          ><input
+            type="radio"
+            name="radio5"
+            id="kaisinnasi"
+            value="kaisinnasi"
+            checked
+          />
+          無し</label
+        >
+        <br />
+        貫通の有無
+        <br />
+        <label
+          ><input type="radio" name="radio6" id="kantuari" value="kantuari" />
+          有り</label
+        >
+        <label
+          ><input
+            type="radio"
+            name="radio6"
+            id="kantunasi"
+            value="kantunasi"
+            checked
+          />
+          無し</label
+        >
+        <br />
+        超反撃の有無
+        <br />
+        <label
+          ><input
+            type="radio"
+            name="radio7"
+            id="hangekiari"
+            value="hangekiari"
+          />
+          有り</label
+        >
+        <label
+          ><input
+            type="radio"
+            name="radio7"
+            id="hangekinasi"
+            value="hangekinasi"
+            checked
+          />
+          無し</label
+        >
+      </dt>
+      <dt>攻撃キャラの基礎攻撃力:</dt>
+      <dd><input type="number" class="box" value="0" id="attack" /></dd>
+      <dt>攻撃対象キャラの基礎防御力:</dt>
+      <dd><input type="number" class="box" value="0" id="defense" /></dd>
+      <dt>支援枠キャラの基礎攻撃力(協心発生時のみ入力):</dt>
+      <dd><input type="number" class="box" value="0" id="subattack" /></dd>
+      <p>
+        <input
+          type="button"
+          class="calc-btn"
+          onclick="keisan(attack.value, defense.value, subattack.value, kaisinbuff.value, kaisindebuff.value, kantubuff.value, kantudebuff.value, kyousinbuff.value, kyousindebuff.value, attackbuff.value,attackdebuff.value, mahoubuturibuff.value, mahoubuturidebuff.value, zokuseibuff.value, zokuseidebuff.value, zenzokuseibuff.value, zenzokuseidebuff.value, jyakutenbuff.value, hangekibuff, hangekidebuff, guardkantubuff.value, guardkantudebuff.value, kizetubuff.value, kizetudebuff.value, ougibuff.value, ougidebuff.value, bougyobuff.value, bougyodebuff.value, mahoubuturitaiseibuff.value, mahoubuturitaiseidebuff.value,zokuseitaiseibuff.value, zokuseitaiseidebuff.value, zenzokuseitaiseibuff.value, zenzokuseitaiseidebuff.value, kaisintaiseibuff.value, kaisintaiseidebuff.value, kantutaiseibuff.value, kantutaiseidebuff.value, kyousintaiseibuff.value, kyousintaiseidebuff.value, hangekitaiseibuff.value, hangekitaiseidebuff.value, guardryokubuff.value, guardryokudebuff.value, ougitaiseibuff.value, ougitaiseidebuff.value, ougibairitu.value, kagobuff.value, shienbuff.value);"
+          value="計算"
+        />
+      </p>
+      <dt>数式:</dt>
+      <dd>
+        <textarea
+          id="susiki"
+          class="siki"
+          cols="60"
+          rows="5"
+          readonly=""
+        ></textarea>
+      </dd>
+      <dt>火力:</dt>
+      <dd><input id="basedamage" class="box" type="text" readonly="" /></dd>
+      <dt>乱数(±2%):</dt>
+      <dd><input id="ransu" class="box" type="text" readonly="" /></dd>
+      <dt>文字式:</dt>
+      <dd>
+        <textarea
+          id="mojisiki"
+          class="siki"
+          cols="60"
+          rows="5"
+          readonly=""
+        ></textarea>
+      </dd>
+    </form>
+    <table>
+      <thead>
+        <tr>
+          <td rowspan="1">【基礎攻撃力 / 防御力】</td>
+          <td rowspan="1">キャラクターのステータスに表示されている数値</td>
+        </tr>
+        <tr>
+          <td rowspan="1">【攻撃力 / 防御力】</td>
+          <td rowspan="1">戦闘開始後に確認できるステータス画面の数値</td>
+        </tr>
+        <tr>
+          <td rowspan="1">【実攻撃力 / 実防御力】</td>
+          <td rowspan="1">ステータスでは可視化されない数値</td>
+        </tr>
+        <tr>
+          <td rowspan="1">【火力】</td>
+          <td rowspan="1">最終的に敵に与えるダメージ</td>
+        </tr>
+        <tr>
+          <td rowspan="1">【支援火力】</td>
+          <td rowspan="1">支援枠の攻撃力</td>
+        </tr>
+      </thead>
+    </table>
+    <script src="sketch.js"></script>
+  </body>
+</html>
