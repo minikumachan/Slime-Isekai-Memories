@@ -3,75 +3,75 @@ body {
   background-color: #eaf4ff;
 }
 
-ハイ {
-  テキスト整列: センター;
+h1 {
+  text-align: center;
 }
 
-テーブル {
-  幅: 100%;
-  マージン: 20割合 オート;
-  国境崩壊: 崩壊;
+table {
+  width: 100%;
+  margin: 20px auto;
+  border-collapse: collapse;
 }
 
-目,
-シーディー {
-  パディング: 13割合;
-  境界: 1割合 堅実 #000000;
-  テキスト整列: センター;
+th,
+td {
+  padding: 13px;
+  border: 1px solid #000000;
+  text-align: center;
 }
 
-目 {
-  背景色: #f2f2f2;
+th {
+  background-color: #f2f2f2;
 }
 
-. 。効果 {
-  幅: 80%;
-  パディング: 5割合;
+.effect {
+  width: 80%;
+  padding: 5px;
 }
 
-. 。マルチプライヤー {
-  幅: 80%;
-  パディング: 5割合;
+.multiplier {
+  width: 80%;
+  padding: 5px;
 }
-. 。ステータス フォーム {
-  背景: #eaf4ff;
-  パディング: 10割合 30割合;
-  フォントサイズ: 20割合;
+.status_form {
+  background: #eaf4ff;
+  padding: 10px 30px;
+  font-size: 20px;
 }
-フォーム dl dt {
-  幅: 200割合;
-  高さ: 40割合;
-  パディング: 10割合 0;
-  ラインハイト: 40割合;
-  浮ぶ: 左;
+form dl dt {
+  width: 200px;
+  height: 40px;
+  padding: 10px 0;
+  line-height: 40px;
+  float: left;
 }
-フォーム dl dd {
-  パディング: 10割合 0;
-  マージン: 0;
+form dl dd {
+  padding: 10px 0;
+  margin: 0;
 }
-. 。box {
-  ボックスサイジング: ボーダー ボックス;
-  幅: 100% !重要;
-  高さ: 40割合 !重要;
-  マージン: 0 !重要;
-  パディング: 0 10割合 !重要;
+.box {
+  box-sizing: border-box;
+  width: 100% !important;
+  height: 40px !important;
+  margin: 0 !important;
+  padding: 0 10px !important;
 }
-. 。カルク-btn {
-  幅: 10%;
-  高さ: 35割合;
-  境界: 1割合 堅実 #333;
+.calc-btn {
+  width: 10%;
+  height: 35px;
+  border: 1px solid #333;
 }
-. 。カルク-btn:ホバー {
-  カーソル: ポイント;
+.calc-btn:hover {
+  cursor: point;
 }
-. 。チェック {
-  幅: 3% !重要;
-  高さ: 15割合 !重要;
+.check {
+  width: 3% !important;
+  height: 15px !important;
 }
-. 。siki {
-  ボックスサイジング: ボーダー ボックス;
-  幅: 100% !重要;
-  高さ: 100割合 !重要;
-  マージン: 0 !重要;
-  パディング: 0 10割合 !重要;
+.siki {
+  box-sizing: border-box;
+  width: 100% !important;
+  height: 100px !important;
+  margin: 0 !important;
+  padding: 0 10px !important;
 }
