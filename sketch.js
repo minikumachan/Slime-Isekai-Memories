@@ -60,16 +60,16 @@ function combochange1(ischecked) {
 }
 
 //超反撃発生時は反撃発生の有無を無効可する
-function tyouhangekichange0(ischecked) {
+function tyouguardchange0(ischecked) {
   if (ischecked == true) {
-    document.getElementById("hangekiari").disabled = true;
-    document.getElementById("hangekinasi").checked = true;
+    document.getElementById("guardari").disabled = true;
+    document.getElementById("guardnasi").checked = true;
   }
 }
 
-function tyouhangekichange1(ischecked) {
+function tyouguardchange1(ischecked) {
   if (ischecked == true) {
-    document.getElementById("hangekiari").disabled = false;
+    document.getElementById("guardari").disabled = false;
   }
 }
 
