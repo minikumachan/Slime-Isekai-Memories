@@ -126,6 +126,7 @@ function keisan(
   var teikouChecked = document.getElementById("teikou").checked;
   var kaisinChecked = document.getElementById("kaisinari").checked;
   var guardChecked = document.getElementById("guardari").checked;
+  var tyouguardChecked = document.getElementById("tyouguardari").checked;
   var ougiChecked = document.getElementById("ougiari").checked;
   var comboChecked = document.getElementById("combonasi").checked;
   var comboChecked4 = document.getElementById("4combo").checked;
