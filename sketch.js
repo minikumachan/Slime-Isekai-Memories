@@ -41,15 +41,13 @@ function toggleInput(row) {
     debuffInput.placeholder = "0";
   }
 }
-//奥義発動時はコンボ・超反撃を無効にする
+//奥義発動時はコンボ発生の有無を無効可する
 function combochange0(ischecked) {
   if (ischecked == true) {
     document.getElementById("4combo").disabled = true;
     document.getElementById("5combo").disabled = true;
     document.getElementById("6combo").disabled = true;
     document.getElementById("combonasi").checked = true;
-    document.getElementById("hangekiari").disabled = true;
-    document.getElementById("hangekinasi").checked = true;
   }
 }
 
@@ -58,9 +56,23 @@ function combochange1(ischecked) {
     document.getElementById("4combo").disabled = false;
     document.getElementById("5combo").disabled = false;
     document.getElementById("6combo").disabled = false;
+  }
+}
+
+//超反撃発生時は反撃発生の有無を無効可する
+function tyouhangekichange0(ischecked) {
+  if (ischecked == true) {
+    document.getElementById("hangekiari").disabled = true;
+    document.getElementById("hangekinasi").checked = true;
+  }
+}
+
+function tyouhangekichange1(ischecked) {
+  if (ischecked == true) {
     document.getElementById("hangekiari").disabled = false;
   }
 }
+
 function keisan(
   attack,
   defense,
