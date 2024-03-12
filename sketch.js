@@ -118,6 +118,7 @@ function keisan(
   var teikouValue = -30;
   var kaisin = 30;
   var guard = 50;
+  var tyouguard = 25;
   var basedamage = 0;
   var kougekiryoku = 0;
   var ransu2 = 0;
@@ -285,6 +286,33 @@ function keisan(
       susiki2 +
       " × ((" +
       guard +
+      " - (" +
+      guardryokubuff +
+      " - " +
+      guardryokudebuff +
+      " + (" +
+      guardkantubuff +
+      " - " +
+      guardkantudebuff +
+      "))) ÷ 100)";
+  }
+  //超ガード発生時
+  if (tyouguardChecked) {
+    basedamage = Math.round(
+      basedamage *
+        ((tyouguard -
+          (guardryokubuff -
+            guardryokudebuff +
+            (guardkantubuff - guardkantudebuff))) /
+          100)
+    );
+    mojisiki2 =
+      mojisiki2 +
+      " × (超ガード - (ガード力バフ - ガード力デバフ + (ガード貫通バフ - ガード貫通デバフ)))";
+    susiki2 =
+      susiki2 +
+      " × ((" +
+      tyouguard +
       " - (" +
       guardryokubuff +
       " - " +
