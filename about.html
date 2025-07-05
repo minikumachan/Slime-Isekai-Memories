@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>使い方ガイド - まおりゅうダメージ計算機</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body class="about-page">
+
+  <header>
+    <h1 id="logo"><a href="index.html"><img src="images/tensura_WEB_City.png" alt="まおりゅう_WEB_City"></a></h1>
+    <div id="menubar">
+      <nav>
+        <ul>
+          <li><a href="index.html#section1">ホーム</a></li>
+          <li><a href="index.html#section2">プロフィール</a></li>
+          <li><a href="index.html#section3">ダメージ計算機</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="about-main" class="section">
+      <h2>使い方ガイド</h2>
+      <p>「まおりゅうダメージ計算機」の各機能の使い方を解説します。</p>
+
+      <div class="info-box">
+        <h3><i class="fas fa-calculator"></i> 1. 基本的なダメージ計算</h3>
+        <p>サイト左側の入力パネルに、キャラクターのステータスや使用するバフ・デバフの数値を入力します。数値はパーセンテージ（%）で入力してください（例: 30%バフなら「30」と入力）。</p>
+        <p>入力するたびに、右側の結果表示パネルのダメージが**リアルタイムで自動更新**されます。</p>
+      </div>
+
+      <div class="info-box">
+        <h3><i class="fas fa-star"></i> 2. スキルプリセット機能</h3>
+        <p>よく使うスキルの組み合わせを「スキルプリセット」として保存し、ワンタッチで計算に反映させることができます。</p>
+        <ol>
+          <li>計算機ページ上部の「スキルプリセット設定」を開きます。</li>
+          <li>「<i class="fas fa-plus"></i>」カードをクリックして、新しいプリセットの入力欄を作成します。</li>
+          <li>プリセット名と、含めたいバフ・デバフ、状態異常を設定し、「<i class="fas fa-save"></i>」ボタンで保存します。</li>
+          <li>不要になったプリセットは「<i class="fas fa-trash-alt"></i>」ボタンでいつでも削除できます。</li>
+          <li>作成したプリセットは、入力パネルの「使用するスキルプリセット」セクションに表示されます。チェックを入れると、そのプリセットの効果が計算の基礎値として適用されます。複数選択も可能です。</li>
+        </ol>
+      </div>
+
+      <div class="info-box">
+        <h3><i class="fas fa-save"></i> 3. データプリセット機能</h3>
+        <p>スキルプリセットの選択状態を含む、**全ての入力内容**を丸ごと保存・読込できる機能です。特定のキャラクターや編成の状況を保存するのに便利です。</p>
+        <ol>
+          <li>結果表示パネル上部の「<i class="fas fa-plus"></i>」カードをクリックし、名前を入力して保存します。最大10個まで保存可能です。</li>
+          <li>保存したカードの「<i class="fas fa-download"></i>」ボタンでいつでも入力内容を復元できます。</li>
+          <li>「<i class="fas fa-save"></i>」で上書き保存、「<i class="fas fa-trash-alt"></i>」で削除ができます。</li>
+        </ol>
+      </div>
+
+      <div class="info-box">
+        <h3><i class="fas fa-cogs"></i> 4. 便利なツールバー機能</h3>
+        <p>結果表示パネルの上部にあるツールバーで、様々な操作が可能です。</p>
+        <ul>
+          <li><strong><i class="fas fa-file-export"></i> エクスポート:</strong>
+            全てのプリセット（スキル・データ）を一つのファイルとして端末にダウンロードします。データのバックアップに最適です。</li>
+          <li><strong><i class="fas fa-file-import"></i> インポート:</strong> エクスポートしたファイルを読み込み、全てのプリセットを復元します。</li>
+          <li><strong><i class="fas fa-share-alt"></i> 共有URL:</strong> 現在の入力状況を反映したURLをコピーします。SNSなどで簡単に構成を共有できます。</li>
+          <li><strong><i class="fas fa-trash-alt"></i> クリア:</strong> 全ての入力項目を初期化します。</li>
+          <li><strong><i class="fas fa-search-plus"></i><i class="fas fa-search-minus"></i> ズーム:</strong>
+            結果表示の文字サイズを調整できます。</li>
+          <li><strong><i class="fas fa-chart-bar"></i> グラフ表示:</strong> 計算結果を棒グラフで視覚的に確認できます。もう一度押すと閉じます。</li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3><i class="fas fa-palette"></i> 5. その他の機能</h3>
+        <ul>
+          <li><strong>テーマ切り替え:</strong> ヘッダーの<i class="fas fa-palette"></i>アイコンで、サイトの見た目をダークテーマとライトテーマで切り替えられます。</li>
+          <li><strong>ツールチップ:</strong> 各入力セクションの<i class="fas fa-question-circle"></i>アイコンにマウスを乗せると、簡単な説明が表示されます。</li>
+        </ul>
+      </div>
+
+      <p style="text-align: center; margin-top: 2rem;"><a href="index.html#section3" class="link-button">計算機に戻る</a></p>
+
+    </section>
+  </main>
+
+  <footer>
+    <small>Copyright&copy; <a href="index.html">Maoryu Calculator</a> All Rights Reserved.</small>
+  </footer>
+
+  <div class="pagetop"><a href="#"><i class="fas fa-angle-double-up"></i></a></div>
+
+</body>
+
+</html>
