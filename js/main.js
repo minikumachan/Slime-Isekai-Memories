@@ -578,11 +578,49 @@ $(function () {
   $('#zoom-in').on('click', () => { if (currentZoomLevel < 5) { currentZoomLevel++; updateZoom(); } });
   $('#zoom-out').on('click', () => { if (currentZoomLevel > -3) { currentZoomLevel--; updateZoom(); } });
 
+  // --- Theme Switcher Logic ---
+  const themes = ['dark', 'blue-theme'];
+
+  function applyTheme(themeName) {
+    // Remove all possible theme classes from the body
+    themes.forEach(t => {
+      if (t !== 'dark') document.body.classList.remove(t);
+    });
+    document.body.classList.remove('light-theme'); // Also remove old theme class just in case
+
+    // Add the new theme class if it's not the default dark theme
+    if (themeName && themeName !== 'dark') {
+      document.body.classList.add(themeName);
+    }
+    // Save the selected theme to local storage
+    localStorage.setItem(THEME_KEY, themeName);
+  }
+
+  // On page load, apply the saved theme or the default
   const savedTheme = localStorage.getItem(THEME_KEY);
-  if (savedTheme) document.body.classList.add(savedTheme);
+  const currentTheme = themes.includes(savedTheme) ? savedTheme : 'dark';
+  applyTheme(currentTheme);
+
+  // Add click event to the theme switcher button
   $('.theme-switcher').on('click', function () {
-    document.body.classList.toggle('light-theme');
-    localStorage.setItem(THEME_KEY, document.body.classList.contains('light-theme') ? 'light-theme' : '');
+    const bodyClassList = document.body.classList;
+    let currentThemeName = 'dark'; // Assume default
+
+    // Find which theme class is currently applied
+    for (const theme of themes) {
+      if (theme !== 'dark' && bodyClassList.contains(theme)) {
+        currentThemeName = theme;
+        break;
+      }
+    }
+
+    // Determine the next theme in the cycle
+    const currentIndex = themes.indexOf(currentThemeName);
+    const nextIndex = (currentIndex + 1) % themes.length;
+    const nextTheme = themes[nextIndex];
+
+    // Apply the next theme
+    applyTheme(nextTheme);
   });
 
   loadFromUrl();
