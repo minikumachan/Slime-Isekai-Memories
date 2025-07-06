@@ -415,16 +415,15 @@ ul.icons i {
 	align-items: center;
 }
 
-.select-group label,
-.checkbox-group label {
-	cursor: pointer;
-	margin-left: 4px;
-}
-
 .select-group {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
+}
+
+.select-group label {
+	cursor: pointer;
+	margin-left: 4px;
 }
 
 .select-group select {
@@ -440,10 +439,100 @@ ul.icons i {
 	background-color: #3d3663;
 }
 
+/* --- Custom Toggle Switch --- */
 .checkbox-group {
 	display: flex;
 	align-items: center;
+	gap: 10px;
+	min-height: 26px;
 }
+
+.checkbox-group input[type="checkbox"] {
+	/* Hide the original checkbox */
+	opacity: 0;
+	width: 0;
+	height: 0;
+	position: absolute;
+}
+
+.checkbox-group label {
+	position: relative;
+	cursor: pointer;
+	user-select: none;
+	/* Make space for the switch */
+	padding-left: 52px;
+	line-height: 22px;
+	/* Vertically align text with the switch */
+}
+
+/* The switch track */
+.checkbox-group label::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 42px;
+	height: 22px;
+	background-color: rgba(255, 255, 255, 0.15);
+	border-radius: 11px;
+	transition: background-color 0.3s ease;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* The switch thumb */
+.checkbox-group label::after {
+	content: '';
+	position: absolute;
+	left: 3px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 16px;
+	height: 16px;
+	background-color: #ccc;
+	border-radius: 50%;
+	transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* Checked State */
+.checkbox-group input[type="checkbox"]:checked+label::before {
+	background-color: #9efaad;
+	/* Active color */
+	border-color: transparent;
+}
+
+.checkbox-group input[type="checkbox"]:checked+label::after {
+	transform: translate(20px, -50%);
+	/* Move the thumb */
+	background-color: #fff;
+	/* Thumb color when active */
+}
+
+/* Disabled state (used in skill presets) */
+.checkbox-group input[type="checkbox"]:disabled+label {
+	cursor: not-allowed;
+	opacity: 0.6;
+}
+
+/* Light Theme Adjustments */
+.light-theme .checkbox-group label::before {
+	background-color: #ccc;
+	border-color: #bbb;
+}
+
+.light-theme .checkbox-group label::after {
+	background-color: #f8f9fa;
+}
+
+.light-theme .checkbox-group input[type="checkbox"]:checked+label::before {
+	background-color: #28a745;
+	border-color: #28a745;
+}
+
+.light-theme .checkbox-group input[type="checkbox"]:checked+label::after {
+	background-color: #fff;
+}
+
 
 /* --- Result Panel Styles --- */
 .result-panel {
@@ -1099,7 +1188,7 @@ ul.icons i {
 }
 
 .update-list {
-	list-style-type: '✓  ';
+	list-style-type: '✓  ';
 	padding-left: 1.2rem;
 }
 
@@ -1205,122 +1294,6 @@ ul.icons i {
 	}
 }
 
-.light-theme {
-	background: #f0f2f5;
-	color: #333;
-}
-
-.light-theme a {
-	color: #007bff;
-}
-
-.light-theme header #logo,
-.light-theme #menubar nav a {
-	background: #fff;
-	color: #333;
-	border-color: #ddd;
-}
-
-.light-theme #menubar nav a:hover {
-	background: #e9ecef;
-}
-
-.light-theme #menubar_hdr {
-	background: #fff;
-}
-
-.light-theme #menubar_hdr span {
-	border-top-color: #333;
-}
-
-.light-theme section {
-	color: #333;
-}
-
-.light-theme #section2,
-.light-theme #section3,
-.light-theme #section4,
-.light-theme #section5,
-.light-theme #section6 {
-	background-color: rgba(255, 255, 255, 0.9);
-}
-
-.light-theme .form-section,
-.light-theme .skill-preset-wrapper,
-.light-theme .skill-preset-card {
-	background: #fff;
-	border-color: #e0e0e0;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.light-theme .input-group .ef {
-	color: #333;
-	border-bottom-color: #ccc;
-}
-
-.light-theme .input-group label {
-	color: #666;
-}
-
-.light-theme .select-group select {
-	background: #f8f9fa;
-	color: #333;
-	border-color: #ccc;
-}
-
-.light-theme .select-group select option {
-	background: #fff;
-	color: #333;
-}
-
-.light-theme .result-panel {
-	background: #fff;
-}
-
-.light-theme .result-content .result-type-header {
-	background: #e9ecef;
-}
-
-.light-theme .result-content td {
-	border-bottom-color: #eee;
-}
-
-.light-theme .preset-controls-container::-webkit-scrollbar-thumb {
-	background: #007bff;
-}
-
-.light-theme .preset-card {
-	background: #f8f9fa;
-	border-color: #ddd;
-}
-
-.light-theme .preset-name {
-	border-bottom-color: #eee;
-}
-
-.light-theme .preset-btn {
-	background: #e9ecef;
-	border-color: #ddd;
-	color: #333;
-}
-
-.light-theme .new-preset-card {
-	background: transparent;
-	border-color: #ccc;
-	color: #888;
-}
-
-.light-theme .util-controls button,
-.light-theme #clear-inputs {
-	background: #e9ecef;
-	border-color: #ddd;
-	color: #333;
-}
-
-.light-theme .tooltip-icon {
-	color: rgba(0, 0, 0, 0.4);
-}
-
 /* ★★★ about.html 専用スタイルを追加 ★★★ */
 .about-page header {
 	position: static;
@@ -1345,7 +1318,168 @@ ul.icons i {
 	margin: 0.25rem;
 }
 
-.light-theme.about-page header {
-	background: #fff;
-	border-bottom: 1px solid #ddd;
+/* --- Theme: Blue (Cool) --- */
+.blue-theme {
+	background: #1a233b;
+	color: #c0d0f0;
+}
+
+.blue-theme a {
+	color: #3d8bff;
+}
+
+.blue-theme header #logo,
+.blue-theme #menubar nav a {
+	background: #202d4b;
+	color: #c0d0f0;
+	border-color: #30456f;
+}
+
+.blue-theme #menubar nav a:hover {
+	background: #2a62c8;
+}
+
+.blue-theme #menubar_hdr {
+	background: #202d4b;
+}
+
+.blue-theme #menubar_hdr span {
+	border-top-color: #c0d0f0;
+}
+
+.blue-theme section {
+	color: #c0d0f0;
+}
+
+.blue-theme #section2,
+.blue-theme #section3,
+.blue-theme #section4,
+.blue-theme #section5,
+.blue-theme #section6 {
+	background-color: rgba(32, 45, 75, 0.9);
+	/* #202d4b */
+}
+
+.blue-theme .form-section,
+.blue-theme .skill-preset-wrapper,
+.blue-theme .skill-preset-card {
+	background: #202d4b;
+	border-color: #30456f;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.blue-theme .input-group .ef {
+	color: #c0d0f0;
+	border-bottom-color: #4a6b9c;
+}
+
+.blue-theme .input-group label {
+	color: #88a2d0;
+}
+
+.blue-theme .input-group .ef:focus+label,
+.blue-theme .input-group .ef.has-value+label {
+	color: #8cb8ff;
+}
+
+.blue-theme .input-group .focus_line::before,
+.blue-theme .input-group .focus_line::after {
+	background-color: #8cb8ff;
+}
+
+.blue-theme .select-group select {
+	background: #1a233b;
+	color: #c0d0f0;
+	border-color: #4a6b9c;
+}
+
+.blue-theme .select-group select option {
+	background: #1a233b;
+	color: #c0d0f0;
+}
+
+/* Custom Toggle Switch */
+.blue-theme .checkbox-group label::before {
+	background-color: rgba(0, 0, 0, 0.2);
+	border-color: #4a6b9c;
+}
+
+.blue-theme .checkbox-group label::after {
+	background-color: #88a2d0;
+}
+
+.blue-theme .checkbox-group input[type="checkbox"]:checked+label::before {
+	background-color: #3d8bff;
+	border-color: #3d8bff;
+}
+
+.blue-theme .checkbox-group input[type="checkbox"]:checked+label::after {
+	background-color: #fff;
+}
+
+.blue-theme .result-panel {
+	background: #202d4b;
+}
+
+.blue-theme .result-content .result-type-header {
+	background: rgba(42, 98, 200, 0.2);
+}
+
+.blue-theme .result-content td {
+	border-bottom-color: #30456f;
+}
+
+.blue-theme .result-header,
+.blue-theme .form-section h3,
+.blue-theme .info-box h3 {
+	color: #8cb8ff;
+}
+
+.blue-theme .result-header {
+	border-bottom-color: #8cb8ff;
+}
+
+.blue-theme .result-content td:first-child {
+	color: #8cb8ff;
+}
+
+.blue-theme .preset-controls-container::-webkit-scrollbar-thumb {
+	background: #3d8bff;
+}
+
+.blue-theme .preset-card {
+	background: #202d4b;
+	border-color: #30456f;
+}
+
+.blue-theme .preset-name {
+	border-bottom-color: #30456f;
+}
+
+.blue-theme .new-preset-card {
+	background: transparent;
+	border-color: #4a6b9c;
+	color: #88a2d0;
+}
+
+.blue-theme .tooltip-icon {
+	color: rgba(192, 208, 240, 0.5);
+}
+
+.blue-theme .graph-bar {
+	background: linear-gradient(90deg, #3d8bff, #8cb8ff);
+	color: #fff;
+}
+
+.blue-theme .graph-bar-container {
+	background: rgba(0, 0, 0, 0.2);
+}
+
+.blue-theme .new dd {
+	border-left-color: #3d8bff;
+}
+
+.blue-theme.about-page header {
+	background: #202d4b;
+	border-bottom: 1px solid #30456f;
 }
