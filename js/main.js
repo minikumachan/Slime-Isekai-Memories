@@ -23,6 +23,13 @@ function v(id) {
   const userValue = parseFloat(el?.value) || 0;
   return baseValue + userValue;
 }
+// ★★★ 新しい補助関数を追加 ★★★
+// 倍率（1.3など）を直接読み取る。空欄や無効な値の場合は1を返す
+function m(id) {
+  const el = document.getElementById(id);
+  const val = parseFloat(el?.value);
+  return isNaN(val) || val <= 0 ? 1.0 : val;
+}
 function c(id) { return document.getElementById(id)?.checked; }
 function s(id) { return document.getElementById(id)?.value; }
 function getStoredJSON(key, defaultValue = []) {
@@ -291,7 +298,6 @@ function calculateDamage() {
     const mainActualAttack = isAoe ? aoeActualAttack : baseActualAttack;
     const supportActualAttack = isAoe ? supportActualAttackAoe : supportActualAttackSingle;
 
-    // ★★★ [ステップ3] ベースダメージ ★★★
     const normalBaseDmg = (mainActualAttack * 2 - enemyActualDefense) * 0.2;
     const synergyBaseDmg = ((mainActualAttack + supportActualAttack) * 2 - enemyActualDefense) * 0.2;
     const kensanBaseDmg = ((mainActualAttack + kensanAddedAttack) * 2 - enemyActualDefense) * 0.2;
@@ -309,16 +315,15 @@ function calculateDamage() {
     const damagePowerCoeff = (1 + pmDamageUpTotal * dragonAuraCorrect) * (1 + pmResistDownTotal * debuffAmpCorrect) * (1 + attrDamageUpTotal * dragonAuraCorrect) * (1 + attrResistDownTotal * debuffAmpCorrect);
     const ultimateCoeff = ultimateMagnification * (1 + ultimateBuffTotal + extremeUltimateBuffTotal) * (1 + ((ultimateResistDebuffTotal * debuffAmpCorrect) - ultimateResistBuffTotal));
 
-    // ★★★ [新規] 真・属性解放の倍率を計算 ★★★
+    // ★★★ [新規] 真・属性解放の倍率を計算 (修正) ★★★
     let trueReleaseMultiplier = 1.0;
     const targetWeakness = s('target-weakness-type');
     if (targetWeakness === 'weak') {
-      trueReleaseMultiplier = 1 + p('true-release-weak-mult');
+      trueReleaseMultiplier = m('true-release-weak-mult');
     } else if (targetWeakness === 'super-weak') {
-      trueReleaseMultiplier = 1 + p('true-release-super-weak-mult');
+      trueReleaseMultiplier = m('true-release-super-weak-mult');
     }
 
-    // ★★★ 共通係数と基本ダメージの計算 (修正) ★★★
     const commonCoeff = affinityWeaknessCoeff * specialResistCoeff * damagePowerCoeff;
 
     function calculateFinalDamage(baseDmg) {
