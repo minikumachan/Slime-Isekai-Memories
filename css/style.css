@@ -415,7 +415,10 @@ ul.icons i {
 	align-items: center;
 }
 
+/* --- Select (Dropdown) Group --- */
 .select-group {
+	position: relative;
+	/* 子要素の矢印を配置するための基準点 */
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
@@ -427,16 +430,59 @@ ul.icons i {
 }
 
 .select-group select {
+	/* 標準の矢印を非表示にする */
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+
+	/* デザイン調整 */
 	width: 100%;
-	padding: 8px;
+	padding: 10px 40px 10px 12px;
+	/* 右側に矢印用のスペースを確保 */
 	background-color: rgba(0, 0, 0, 0.3);
 	color: #fff;
 	border: 1px solid #aaa;
-	border-radius: 4px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 1rem;
+	transition: border-color 0.3s, background-color 0.3s;
+}
+
+.select-group select:hover {
+	border-color: #9efaad;
+	background-color: rgba(0, 0, 0, 0.4);
+}
+
+.select-group select:focus {
+	outline: none;
+	border-color: #54ebf9;
+	box-shadow: 0 0 5px rgba(84, 235, 249, 0.5);
 }
 
 .select-group select option {
 	background-color: #3d3663;
+}
+
+/* カスタム矢印の追加 */
+.select-group::after {
+	content: '\f078';
+	/* Font Awesomeのシェブロン下向きアイコン */
+	font-family: "Font Awesome 6 Free";
+	font-weight: 900;
+	position: absolute;
+	right: 15px;
+	top: calc(50% + 10px);
+	/* ラベルの高さを考慮して調整 */
+	transform: translateY(-50%);
+	color: #fff;
+	pointer-events: none;
+	/* 矢印部分がクリックイベントを妨げないようにする */
+	transition: color 0.3s;
+}
+
+.select-group select:hover+ ::after,
+.select-group select:focus+ ::after {
+	color: #9efaad;
 }
 
 /* --- Custom Toggle Switch --- */
@@ -1387,10 +1433,20 @@ ul.icons i {
 	background-color: #8cb8ff;
 }
 
+/* Blue Themeの調整 */
 .blue-theme .select-group select {
 	background: #1a233b;
 	color: #c0d0f0;
 	border-color: #4a6b9c;
+}
+
+.blue-theme .select-group select:hover {
+	border-color: #3d8bff;
+}
+
+.blue-theme .select-group select:focus {
+	border-color: #8cb8ff;
+	box-shadow: 0 0 5px rgba(140, 184, 255, 0.5);
 }
 
 .blue-theme .select-group select option {
@@ -1398,14 +1454,8 @@ ul.icons i {
 	color: #c0d0f0;
 }
 
-/* Custom Toggle Switch */
-.blue-theme .checkbox-group label::before {
-	background-color: rgba(0, 0, 0, 0.2);
-	border-color: #4a6b9c;
-}
-
-.blue-theme .checkbox-group label::after {
-	background-color: #88a2d0;
+.blue-theme .select-group::after {
+	color: #c0d0f0;
 }
 
 .blue-theme .checkbox-group input[type="checkbox"]:checked+label::before {
