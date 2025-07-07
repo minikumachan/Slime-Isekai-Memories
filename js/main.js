@@ -23,7 +23,6 @@ function v(id) {
   const userValue = parseFloat(el?.value) || 0;
   return baseValue + userValue;
 }
-// ★★★ 新しい補助関数を追加 ★★★
 // 倍率（1.3など）を直接読み取る。空欄や無効な値の場合は1を返す
 function m(id) {
   const el = document.getElementById(id);
@@ -46,27 +45,60 @@ function getStoredJSON(key, defaultValue = []) {
 // ===============================================================
 // ** スキルプリセット機能 **
 // ===============================================================
+// ★★★ スキルプリセットの定義を修正 ★★★
 const skillPresetStructure = [
-  { category: '状態異常', type: 'state', id: 'is-charmed', label: '魅了/束縛' }, { category: '状態異常', type: 'state', id: 'is-frostbite', label: '凍傷' },
-  { category: '状態異常', type: 'state', id: 'is-dominated', label: '支配' }, { category: '状態異常', type: 'state', id: 'is-tremor', label: '戦慄' },
+  // 状態異常
+  { category: '状態異常', type: 'state', id: 'is-charmed', label: '魅了/束縛' },
+  { category: '状態異常', type: 'state', id: 'is-frostbite', label: '凍傷' },
+  { category: '状態異常', type: 'state', id: 'is-dominated', label: '支配' },
+  { category: '状態異常', type: 'state', id: 'is-tremor', label: '戦慄' },
   { category: '状態異常', type: 'state', id: 'is-dragon-aura', label: '竜気状態' },
-  { category: 'バフ', type: 'text', id: 'attack-buff', label: '攻撃バフ' }, { category: 'バフ', type: 'text', id: 'attr-buff', label: '属性バフ' },
-  { category: 'バフ', type: 'text', id: 'pm-buff', label: '物魔バフ' }, { category: 'バフ', type: 'text', id: 'aoe-attack-buff', label: '全体攻撃バフ' },
-  { category: 'バフ', type: 'text', id: 'ultimate-buff', label: '奥義バフ' }, { category: 'バフ', type: 'text', id: 'extreme-ultimate-buff', label: '極奥義バフ' },
-  { category: 'バフ', type: 'text', id: 'pm-damage-up', label: '物魔ダメージ威力バフ' }, { category: 'バフ', type: 'text', id: 'attr-damage-up', label: '属性ダメージ威力バフ' },
-  { category: 'バフ', type: 'text', id: 'soul-buff', label: '魔創魂バフ' }, { category: 'バフ', type: 'text', id: 'charm-special-buff', label: '魅了特攻' },
-  { category: 'バフ', type: 'text', id: 'stun-special-buff', label: '気絶特攻' }, { category: 'バフ', type: 'text', id: 'weak-point-buff', label: '弱点特攻' },
-  { category: 'バフ', type: 'text', id: 'defense-buff', label: '防御力バフ' }, { category: 'バフ', type: 'text', id: 'crit-buff', label: '会心力バフ' },
-  { category: 'バフ', type: 'text', id: 'pierce-buff', label: '貫通力バフ' }, { category: 'バフ', type: 'text', id: 'synergy-buff', label: '協心力バフ' },
+  // バフ
+  { category: 'バフ', type: 'text', id: 'attack-buff', label: '攻撃バフ' },
+  { category: 'バフ', type: 'text', id: 'all-attr-buff', label: '全属性バフ' },
+  { category: 'バフ', type: 'text', id: 'attr-buff', label: '属性バフ' },
+  { category: 'バフ', type: 'text', id: 'pm-buff', label: '物魔バフ' },
+  { category: 'バフ', type: 'text', id: 'aoe-attack-buff', label: '全体攻撃バフ' },
+  { category: 'バフ', type: 'text', id: 'ultimate-buff', label: '奥義バフ' },
+  { category: 'バフ', type: 'text', id: 'extreme-ultimate-buff', label: '極奥義バフ' },
+  { category: 'バフ', type: 'text', id: 'pm-damage-up', label: '物魔ダメージ威力UP' },
+  { category: 'バフ', type: 'text', id: 'attr-damage-up', label: '属性ダメージ威力UP' },
+  { category: 'バフ', type: 'text', id: 'soul-buff', label: '魔創魂バフ' },
+  { category: 'バフ', type: 'text', id: 'charm-special-buff', label: '魅了特攻' },
+  { category: 'バフ', type: 'text', id: 'stun-special-buff', label: '気絶特攻' },
+  { category: 'バフ', type: 'text', id: 'weak-point-buff', label: '弱点特攻' },
+  { category: 'バフ', type: 'text', id: 'defense-buff', label: '防御力バフ' },
+  { category: 'バフ', type: 'text', id: 'crit-buff', label: '会心力バフ' },
+  { category: 'バフ', type: 'text', id: 'pierce-buff', label: '貫通力バフ' },
+  { category: 'バフ', type: 'text', id: 'synergy-buff', label: '協心力バフ' },
   { category: 'バフ', type: 'text', id: 'kensan-buff', label: '堅閃力バフ' },
-  { category: 'デバフ', type: 'text', id: 'single-target-resist-debuff', label: '単体攻撃耐性デバフ' }, { category: 'デバフ', type: 'text', id: 'aoe-resist-debuff', label: '全体攻撃耐性デバフ' },
-  { category: 'デバフ', type: 'text', id: 'attr-resist-debuff', label: '属性耐性デバフ' }, { category: 'デバフ', type: 'text', id: 'pm-resist-debuff', label: '物魔耐性デバフ' },
-  { category: 'デバフ', type: 'text', id: 'ultimate-resist-debuff', label: '奥義耐性デバフ' }, { category: 'デバフ', type: 'text', id: 'pm-resist-down', label: '物魔ダメージ威力デバフ' },
-  { category: 'デバフ', type: 'text', id: 'attr-resist-down', label: '属性ダメージ威力デバフ' }, { category: 'デバフ', type: 'text', id: 'weak-point-resist-debuff', label: '弱点耐性デバフ' },
-  { category: 'デバフ', type: 'text', id: 'defense-debuff', label: '防御力デバフ' }, { category: 'デバフ', type: 'text', id: 'crit-resist-debuff', label: '会心耐性デバフ' },
-  { category: 'デバフ', type: 'text', id: 'pierce-resist-debuff', label: '貫通耐性デバフ' }, { category: 'デバフ', type: 'text', id: 'synergy-resist-debuff', label: '協心耐性デバフ' },
-  { category: 'デバフ', type: 'text', id: 'kensan-resist-debuff', label: '堅閃耐性デバフ' }
+  // デバフ (敵への効果)
+  { category: 'デバフ', type: 'text', id: 'defense-debuff', label: '[敵]防御力デバフ' },
+  { category: 'デバフ', type: 'text', id: 'enemy-all-attr-resist-buff', label: '[敵]全属性耐性バフ' },
+  { category: 'デバフ', type: 'text', id: 'enemy-all-attr-resist-debuff', label: '[敵]全属性耐性デバフ' },
+  { category: 'デバフ', type: 'text', id: 'enemy-attr-resist-buff', label: '[敵]属性耐性バフ' },
+  { category: 'デバフ', type: 'text', id: 'attr-resist-debuff', label: '[敵]属性耐性デバフ' },
+  { category: 'デバフ', type: 'text', id: 'enemy-pm-resist-buff', label: '[敵]物/魔耐性バフ' },
+  { category: 'デバフ', type: 'text', id: 'pm-resist-debuff', label: '[敵]物/魔耐性デバフ' },
+  { category: 'デバフ', type: 'text', id: 'enemy-weak-point-resist-buff', label: '[敵]弱点耐性バフ' },
+  { category: 'デバフ', type: 'text', id: 'weak-point-resist-debuff', label: '[敵]弱点耐性デバフ' },
+  { category: 'デバフ', type: 'text', id: 'enemy-ultimate-resist-buff', label: '[敵]奥義耐性バフ' },
+  { category: 'デバフ', type: 'text', id: 'ultimate-resist-debuff', label: '[敵]奥義耐性デバフ' },
+  { category: 'デバフ', type: 'text', id: 'single-target-resist-debuff', label: '[敵]単体攻撃耐性デバフ' },
+  { category: 'デバフ', type: 'text', id: 'aoe-resist-debuff', label: '[敵]全体攻撃耐性デバフ' },
+  { category: 'デバフ', type: 'text', id: 'enemy-crit-resist-buff', label: '[敵]会心耐性バフ' },
+  { category: 'デバフ', type: 'text', id: 'crit-resist-debuff', label: '[敵]会心耐性デバフ' },
+  { category: 'デバフ', type: 'text', id: 'enemy-pierce-resist-buff', label: '[敵]貫通耐性バフ' },
+  { category: 'デバフ', type: 'text', id: 'pierce-resist-debuff', label: '[敵]貫通耐性デバフ' },
+  { category: 'デバフ', type: 'text', id: 'enemy-synergy-resist-buff', label: '[敵]協心耐性バフ' },
+  { category: 'デバフ', type: 'text', id: 'synergy-resist-debuff', label: '[敵]協心耐性デバフ' },
+  { category: 'デバフ', type: 'text', id: 'enemy-kensan-resist-buff', label: '[敵]堅閃耐性バフ' },
+  { category: 'デバフ', type: 'text', id: 'kensan-resist-debuff', label: '[敵]堅閃耐性デバフ' },
+  // 真・属性解放
+  { category: '真・属性解放', type: 'text', id: 'true-release-weak-mult', label: '弱点時の倍率(例:1.3)' },
+  { category: '真・属性解放', type: 'text', id: 'true-release-super-weak-mult', label: '超弱点時の倍率(例:1.5)' }
 ];
+
 
 function renderSkillPresetEditor() {
   const editor = document.getElementById('skill-preset-editor');
@@ -78,13 +110,14 @@ function renderSkillPresetEditor() {
     card.className = 'skill-preset-card';
     card.draggable = true;
     card.dataset.index = i;
-    const categories = { '状態異常': '', 'バフ': '', 'デバフ': '' };
+    const categories = { '状態異常': '', 'バフ': '', 'デバフ': '', '真・属性解放': '' };
     skillPresetStructure.forEach(skill => {
       let inputHTML = '';
-      const value = preset.buffs?.[skill.id] || '';
+      const value = skill.id.includes('true-release') ? (preset.multipliers?.[skill.id] || '') : (preset.buffs?.[skill.id] || '');
       const hasValueClass = value ? ' has-value' : '';
       if (skill.type === 'text') {
-        inputHTML = `<div class="input-group"><input class="ef${hasValueClass}" type="number" id="skill-preset-${i}-${skill.id}" value="${value}"><label>${skill.label}</label><span class="focus_line"></span></div>`;
+        const step = skill.id.includes('true-release') ? 'step="0.01"' : '';
+        inputHTML = `<div class="input-group"><input class="ef${hasValueClass}" type="number" ${step} id="skill-preset-${i}-${skill.id}" value="${value}"><label>${skill.label}</label><span class="focus_line"></span></div>`;
       } else if (skill.type === 'state') {
         inputHTML = `<div class="checkbox-group"><input type="checkbox" id="skill-preset-${i}-${skill.id}" ${preset.states?.[skill.id] ? 'checked' : ''}><label for="skill-preset-${i}-${skill.id}">${skill.label}</label></div>`;
       }
@@ -114,11 +147,22 @@ function saveSkillPreset(slot, isNew = false) {
   if (isNew) {
     if (!name) { alert('新しいプリセットの名前を入力してください。'); nameInput.focus(); return; }
   }
-  const preset = { name: name || `スキルセット ${slot + 1}`, buffs: {}, states: {} };
+  const preset = { name: name || `スキルセット ${slot + 1}`, buffs: {}, states: {}, multipliers: {} };
   skillPresetStructure.forEach(skill => {
     const inputId = `skill-preset-${sourceIndex}-${skill.id}`;
-    if (skill.type === 'text') { const value = v(inputId); if (value) preset.buffs[skill.id] = value; }
-    else if (skill.type === 'state') { const checked = c(inputId); if (checked) preset.states[skill.id] = true; }
+    if (skill.type === 'text') {
+      const value = v(inputId);
+      if (value) {
+        if (skill.id.includes('true-release')) {
+          preset.multipliers[skill.id] = value;
+        } else {
+          preset.buffs[skill.id] = value;
+        }
+      }
+    } else if (skill.type === 'state') {
+      const checked = c(inputId);
+      if (checked) preset.states[skill.id] = true;
+    }
   });
   if (isNew) savedSkillPresets.push(preset);
   else savedSkillPresets[slot] = preset;
@@ -148,11 +192,15 @@ function addNewSkillPresetCard() {
   const card = document.createElement('div');
   card.className = 'skill-preset-card';
   let contentHTML = '<div class="skill-preset-content">';
-  const categories = { '状態異常': '', 'バフ': '', 'デバフ': '' };
+  const categories = { '状態異常': '', 'バフ': '', 'デバフ': '', '真・属性解放': '' };
   skillPresetStructure.forEach(skill => {
     let inputHTML = '';
-    if (skill.type === 'text') { inputHTML = `<div class="input-group"><input class="ef" type="number" id="skill-preset-new-${skill.id}"><label>${skill.label}</label><span class="focus_line"></span></div>`; }
-    else if (skill.type === 'state') { inputHTML = `<div class="checkbox-group"><input type="checkbox" id="skill-preset-new-${skill.id}"><label for="skill-preset-new-${skill.id}">${skill.label}</label></div>`; }
+    if (skill.type === 'text') {
+      const step = skill.id.includes('true-release') ? 'step="0.01"' : '';
+      inputHTML = `<div class="input-group"><input class="ef" type="number" ${step} id="skill-preset-new-${skill.id}"><label>${skill.label}</label><span class="focus_line"></span></div>`;
+    } else if (skill.type === 'state') {
+      inputHTML = `<div class="checkbox-group"><input type="checkbox" id="skill-preset-new-${skill.id}"><label for="skill-preset-new-${skill.id}">${skill.label}</label></div>`;
+    }
     if (categories[skill.category] !== undefined) categories[skill.category] += inputHTML;
   });
   for (const [categoryName, categoryHTML] of Object.entries(categories)) {
@@ -188,15 +236,23 @@ function applySkillPresets() {
     $(input).toggleClass('has-value', input.value.trim() !== '');
   });
   document.querySelectorAll('.calc-input[type="checkbox"]:disabled').forEach(cb => { cb.checked = false; cb.disabled = false; });
-  const baseBuffs = {}, baseStates = {};
+  const baseBuffs = {}, baseStates = {}, baseMultipliers = {};
   const savedSkillPresets = getStoredJSON(SKILL_PRESET_KEY);
   savedSkillPresets.forEach((preset, i) => {
     if (c(`activate-skill-preset-${i}`)) {
       Object.entries(preset.buffs || {}).forEach(([id, value]) => { baseBuffs[id] = (baseBuffs[id] || 0) + value; });
+      Object.entries(preset.multipliers || {}).forEach(([id, value]) => { baseMultipliers[id] = (baseMultipliers[id] || 0) + value; });
       Object.keys(preset.states || {}).forEach(id => { baseStates[id] = true; });
     }
   });
   Object.entries(baseBuffs).forEach(([id, value]) => {
+    const input = document.getElementById(id);
+    if (input) {
+      input.placeholder = value;
+      $(input).toggleClass('has-value', input.value.trim() !== '' || input.placeholder.trim() !== '');
+    }
+  });
+  Object.entries(baseMultipliers).forEach(([id, value]) => {
     const input = document.getElementById(id);
     if (input) {
       input.placeholder = value;
@@ -251,8 +307,6 @@ function calculateDamage() {
     const weakPointBuffTotal = p('weak-point-buff') + p('weak-point-infinite-buff');
     const pmDamageUpTotal = p('pm-damage-up');
     const attrDamageUpTotal = p('attr-damage-up');
-    const pmResistDownTotal = p('pm-resist-down');
-    const attrResistDownTotal = p('attr-resist-down');
     const critPowerTotal = p('crit-buff') + p('crit-ex-talent') + p('crit-special-stat') + p('crit-trait') + p('crit-divine-trait') + p('crit-divine-trait-support') + p('crit-engraved-seal');
     const piercePowerTotal = p('pierce-buff') + p('pierce-ex-talent') + p('pierce-special-stat') + p('pierce-trait') + p('pierce-divine-trait') + p('pierce-divine-trait-support') + p('pierce-engraved-seal');
     const synergyPowerTotal = p('synergy-buff') + p('synergy-ex-talent') + p('synergy-special-stat') + p('synergy-trait');
@@ -312,10 +366,10 @@ function calculateDamage() {
     const affinityWeaknessCoeff = (finalAffinityCorrect * (1 + affinityUpTotal * dragonAuraCorrect)) + (weakPointBuffTotal * dragonAuraCorrect) + ((weakPointResistDebuffTotal * debuffAmpCorrect) - weakPointResistBuffTotal);
     const targetResistDebuffTotal = isAoe ? aoeResistDebuffTotal : singleTargetResistDebuffTotal;
     const specialResistCoeff = (1 + (stunSpecialTotal + charmSpecialTotal) * dragonAuraCorrect) * (1 + targetResistDebuffTotal * debuffAmpCorrect);
-    const damagePowerCoeff = (1 + pmDamageUpTotal * dragonAuraCorrect) * (1 + pmResistDownTotal * debuffAmpCorrect) * (1 + attrDamageUpTotal * dragonAuraCorrect) * (1 + attrResistDownTotal * debuffAmpCorrect);
+    // ★★★ damagePowerCoeff の計算式を修正 ★★★
+    const damagePowerCoeff = (1 + pmDamageUpTotal * dragonAuraCorrect) * (1 + attrDamageUpTotal * dragonAuraCorrect);
     const ultimateCoeff = ultimateMagnification * (1 + ultimateBuffTotal + extremeUltimateBuffTotal) * (1 + ((ultimateResistDebuffTotal * debuffAmpCorrect) - ultimateResistBuffTotal));
 
-    // ★★★ [新規] 真・属性解放の倍率を計算 (修正) ★★★
     let trueReleaseMultiplier = 1.0;
     const targetWeakness = s('target-weakness-type');
     if (targetWeakness === 'weak') {
@@ -324,10 +378,11 @@ function calculateDamage() {
       trueReleaseMultiplier = m('true-release-super-weak-mult');
     }
 
-    const commonCoeff = affinityWeaknessCoeff * specialResistCoeff * damagePowerCoeff;
+    const commonCoeff = affinityWeaknessCoeff * specialResistCoeff;
 
     function calculateFinalDamage(baseDmg) {
-      return baseDmg * commonCoeff * trueReleaseMultiplier;
+      const newBaseDamage = baseDmg * damagePowerCoeff;
+      return newBaseDamage * commonCoeff * trueReleaseMultiplier;
     }
 
     const skillBase = {
