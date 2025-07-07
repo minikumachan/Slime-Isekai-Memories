@@ -228,10 +228,12 @@ function calculateDamage() {
     if (c('is-frostbite')) debuffAmpCorrect += 0.3;
     if (c('is-dominated')) debuffAmpCorrect += 0.3;
     if (c('is-tremor')) debuffAmpCorrect += 0.4;
+
+    // --- 攻撃者バフ ---
     const attackBuffTotal = p('attack-buff') + p('attack-buff-trait') + p('attack-buff-cumulative') + p('attack-buff-faction') + p('attack-buff-faction-support') + p('attack-buff-divine-lead') + p('attack-buff-divine-lead-support') + p('attack-buff-divine-trait') + p('attack-buff-divine-trait-support');
     const defenseBuffTotal = p('defense-buff') + p('defense-trait') + p('defense-special-stat') + p('defense-ex-talent') + p('defense-engraved-seal') + p('defense-divine-lead') + p('defense-divine-lead-support') + p('defense-divine-trait') + p('defense-divine-trait-support');
-    const attrBuffTotal = p('attr-buff') + p('attr-buff-cumulative') + p('attr-buff-divine-lead') + p('attr-buff-divine-lead-support');
-    const pmBuffTotal = p('pm-buff') + p('pm-buff-cumulative') + p('pm-buff-divine-lead') + p('pm-buff-divine-lead-support') + p('pm-buff-divine-trait') + p('pm-buff-divine-trait-support');
+    const selfAttrBuffTotal = p('all-attr-buff') + p('attr-buff') + p('attr-buff-cumulative') + p('attr-buff-divine-lead') + p('attr-buff-divine-lead-support');
+    const selfPmBuffTotal = p('pm-buff') + p('pm-buff-cumulative') + p('pm-buff-divine-lead') + p('pm-buff-divine-lead-support') + p('pm-buff-divine-trait') + p('pm-buff-divine-trait-support');
     const aoeAttackBuffTotal = p('aoe-attack-buff') + p('aoe-attack-buff-cumulative');
     const ultimateBuffTotal = p('ultimate-buff') + p('ultimate-buff-cumulative');
     const extremeUltimateBuffTotal = p('extreme-ultimate-buff');
@@ -240,65 +242,123 @@ function calculateDamage() {
     const stunSpecialTotal = p('stun-special-buff');
     const affinityUpTotal = p('affinity-up-buff');
     const weakPointBuffTotal = p('weak-point-buff') + p('weak-point-infinite-buff');
-    const weakPointResistDebuffTotal = p('weak-point-resist-debuff');
     const pmDamageUpTotal = p('pm-damage-up');
     const attrDamageUpTotal = p('attr-damage-up');
     const pmResistDownTotal = p('pm-resist-down');
     const attrResistDownTotal = p('attr-resist-down');
+    const critPowerTotal = p('crit-buff') + p('crit-ex-talent') + p('crit-special-stat') + p('crit-trait') + p('crit-divine-trait') + p('crit-divine-trait-support') + p('crit-engraved-seal');
+    const piercePowerTotal = p('pierce-buff') + p('pierce-ex-talent') + p('pierce-special-stat') + p('pierce-trait') + p('pierce-divine-trait') + p('pierce-divine-trait-support') + p('pierce-engraved-seal');
+    const synergyPowerTotal = p('synergy-buff') + p('synergy-ex-talent') + p('synergy-special-stat') + p('synergy-trait');
+    const kensanPowerTotal = p('kensan-buff') + p('kensan-ex-talent') + p('kensan-special-stat') + p('kensan-trait');
+
+    // --- 敵の耐性バフ ---
+    const enemyAttrResistBuffTotal = p('enemy-all-attr-resist-buff') + p('enemy-attr-resist-buff');
+    const enemyPmResistBuffTotal = p('enemy-pm-resist-buff');
+    const critResistBuffTotal = p('enemy-crit-resist-buff');
+    const pierceResistBuffTotal = p('enemy-pierce-resist-buff');
+    const synergyResistBuffTotal = p('enemy-synergy-resist-buff');
+    const kensanResistBuffTotal = p('enemy-kensan-resist-buff');
+    const ultimateResistBuffTotal = p('enemy-ultimate-resist-buff');
+    const weakPointResistBuffTotal = p('enemy-weak-point-resist-buff');
+
+    // --- 敵へのデバフ ---
     const defenseDebuffTotal = p('defense-debuff') + p('defense-debuff-divine-trait');
-    const pmResistDebuffTotal = p('pm-resist-debuff');
-    const attrResistDebuffTotal = p('attr-resist-debuff');
-    const ultimateResistDebuffTotal = p('ultimate-resist-debuff');
+    const enemyAttrResistDebuffTotal = p('enemy-all-attr-resist-debuff') + p('attr-resist-debuff');
+    const enemyPmResistDebuffTotal = p('pm-resist-debuff');
     const singleTargetResistDebuffTotal = p('single-target-resist-debuff');
     const aoeResistDebuffTotal = p('aoe-resist-debuff');
-    const critPowerTotal = p('crit-buff') + p('crit-ex-talent') + p('crit-special-stat') + p('crit-trait') + p('crit-divine-trait') + p('crit-divine-trait-support') + p('crit-engraved-seal');
-    const critResistDebuffTotal = p('crit-resist-debuff') + p('crit-resist-debuff-trait') + p('crit-resist-debuff-divine-trait') + p('crit-resist-debuff-divine-trait-support');
-    const piercePowerTotal = p('pierce-buff') + p('pierce-ex-talent') + p('pierce-special-stat') + p('pierce-trait') + p('pierce-divine-trait') + p('pierce-divine-trait-support') + p('pierce-engraved-seal');
-    const pierceResistDebuffTotal = p('pierce-resist-debuff') + p('pierce-resist-debuff-trait') + p('pierce-resist-debuff-divine-trait') + p('pierce-resist-debuff-divine-trait-support');
-    const synergyPowerTotal = p('synergy-buff') + p('synergy-ex-talent') + p('synergy-special-stat') + p('synergy-trait');
+    const ultimateResistDebuffTotal = p('ultimate-resist-debuff');
+    const weakPointResistDebuffTotal = p('weak-point-resist-debuff');
+    const critResistDebuffTotal = p('crit-resist-debuff') + p('crit-resist-debuff-trait') + p('crit-resist-debuff-divine-trait');
+    const pierceResistDebuffTotal = p('pierce-resist-debuff') + p('pierce-resist-debuff-trait') + p('pierce-resist-debuff-divine-trait');
     const synergyResistDebuffTotal = p('synergy-resist-debuff') + p('synergy-resist-debuff-trait');
-    const kensanPowerTotal = p('kensan-buff') + p('kensan-ex-talent') + p('kensan-special-stat') + p('kensan-trait');
     const kensanResistDebuffTotal = p('kensan-resist-debuff') + p('kensan-resist-debuff-trait');
+
+    // --- 計算開始 ---
     const displayAttack = baseAttack * (1 + attackBuffTotal * dragonAuraCorrect) * charmCorrect;
     const displayDefense = baseDefense * (1 + defenseBuffTotal);
-    const enemyActualDefense = enemyBaseDefense * (1 - defenseDebuffTotal * debuffAmpCorrect) * (1 - pmResistDebuffTotal * debuffAmpCorrect) * (1 - attrResistDebuffTotal * debuffAmpCorrect);
-    const baseActualAttack = displayAttack * (1 + attrBuffTotal * dragonAuraCorrect) * (1 + pmBuffTotal * dragonAuraCorrect);
+
+    const enemyPmResistCoeff = 1 + (enemyPmResistDebuffTotal * debuffAmpCorrect - enemyPmResistBuffTotal);
+    const enemyAttrResistCoeff = 1 + (enemyAttrResistDebuffTotal * debuffAmpCorrect - enemyAttrResistBuffTotal);
+    const enemyActualDefense = enemyBaseDefense * (1 - defenseDebuffTotal * debuffAmpCorrect) * enemyPmResistCoeff * enemyAttrResistCoeff;
+
+    const baseActualAttack = displayAttack * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect);
     const aoeActualAttack = baseActualAttack * (1 + aoeAttackBuffTotal * dragonAuraCorrect);
-    const kensanAddedAttack = (displayDefense * 0.4) * (1 + attrBuffTotal * dragonAuraCorrect) * (1 + pmBuffTotal * dragonAuraCorrect);
-    const supportActualAttackSingle = baseSupportAttack * (1 + attrBuffTotal * dragonAuraCorrect) * (1 + pmBuffTotal * dragonAuraCorrect) * 0.4;
-    const supportActualAttackAoe = baseSupportAttack * (1 + attrBuffTotal * dragonAuraCorrect) * (1 + pmBuffTotal * dragonAuraCorrect) * (1 + aoeAttackBuffTotal * dragonAuraCorrect) * 0.4;
+    const kensanAddedAttack = (displayDefense * 0.4) * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect);
+    const supportActualAttackSingle = baseSupportAttack * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect) * 0.4;
+    const supportActualAttackAoe = baseSupportAttack * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect) * (1 + aoeAttackBuffTotal * dragonAuraCorrect) * 0.4;
     const isAoe = (attackType === 'aoe');
     const mainActualAttack = isAoe ? aoeActualAttack : baseActualAttack;
     const supportActualAttack = isAoe ? supportActualAttackAoe : supportActualAttackSingle;
+
+    // ★★★ [ステップ3] ベースダメージ ★★★
     const normalBaseDmg = (mainActualAttack * 2 - enemyActualDefense) * 0.2;
     const synergyBaseDmg = ((mainActualAttack + supportActualAttack) * 2 - enemyActualDefense) * 0.2;
     const kensanBaseDmg = ((mainActualAttack + kensanAddedAttack) * 2 - enemyActualDefense) * 0.2;
     const synergyKensanBaseDmg = ((mainActualAttack + supportActualAttack + kensanAddedAttack) * 2 - enemyActualDefense) * 0.2;
-    const critTTL = 1.3 + (critPowerTotal * dragonAuraCorrect) + (critResistDebuffTotal * debuffAmpCorrect);
-    const pierceTTL = 1 + (piercePowerTotal * dragonAuraCorrect) + (pierceResistDebuffTotal * debuffAmpCorrect);
-    const synergyTTL = 1 + (synergyPowerTotal * dragonAuraCorrect) + (synergyResistDebuffTotal * debuffAmpCorrect);
-    const kensanTTL = 1 + (kensanPowerTotal * dragonAuraCorrect) + (kensanResistDebuffTotal * debuffAmpCorrect);
+
+    const critTTL = 1.3 + (critPowerTotal * dragonAuraCorrect) + ((critResistDebuffTotal * debuffAmpCorrect) - critResistBuffTotal);
+    const pierceTTL = 1 + (piercePowerTotal * dragonAuraCorrect) + ((pierceResistDebuffTotal * debuffAmpCorrect) - pierceResistBuffTotal);
+    const synergyTTL = 1 + (synergyPowerTotal * dragonAuraCorrect) + ((synergyResistDebuffTotal * debuffAmpCorrect) - synergyResistBuffTotal);
+    const kensanTTL = 1 + (kensanPowerTotal * dragonAuraCorrect) + ((kensanResistDebuffTotal * debuffAmpCorrect) - kensanResistBuffTotal);
+
     let finalAffinityCorrect = (s('affinity') === 'eiketsu') ? 1.6 : affinityCorrect;
-    const affinityWeaknessCoeff = (finalAffinityCorrect * (1 + affinityUpTotal * dragonAuraCorrect)) + (weakPointBuffTotal * dragonAuraCorrect) + (weakPointResistDebuffTotal * debuffAmpCorrect);
+    const affinityWeaknessCoeff = (finalAffinityCorrect * (1 + affinityUpTotal * dragonAuraCorrect)) + (weakPointBuffTotal * dragonAuraCorrect) + ((weakPointResistDebuffTotal * debuffAmpCorrect) - weakPointResistBuffTotal);
     const targetResistDebuffTotal = isAoe ? aoeResistDebuffTotal : singleTargetResistDebuffTotal;
     const specialResistCoeff = (1 + (stunSpecialTotal + charmSpecialTotal) * dragonAuraCorrect) * (1 + targetResistDebuffTotal * debuffAmpCorrect);
     const damagePowerCoeff = (1 + pmDamageUpTotal * dragonAuraCorrect) * (1 + pmResistDownTotal * debuffAmpCorrect) * (1 + attrDamageUpTotal * dragonAuraCorrect) * (1 + attrResistDownTotal * debuffAmpCorrect);
-    const ultimateCoeff = ultimateMagnification * (1 + ultimateBuffTotal + extremeUltimateBuffTotal) * (1 + ultimateResistDebuffTotal * debuffAmpCorrect);
+    const ultimateCoeff = ultimateMagnification * (1 + ultimateBuffTotal + extremeUltimateBuffTotal) * (1 + ((ultimateResistDebuffTotal * debuffAmpCorrect) - ultimateResistBuffTotal));
+
+    // ★★★ [新規] 真・属性解放の倍率を計算 ★★★
+    let trueReleaseMultiplier = 1.0;
+    const targetWeakness = s('target-weakness-type');
+    if (targetWeakness === 'weak') {
+      trueReleaseMultiplier = 1 + p('true-release-weak-mult');
+    } else if (targetWeakness === 'super-weak') {
+      trueReleaseMultiplier = 1 + p('true-release-super-weak-mult');
+    }
+
+    // ★★★ 共通係数と基本ダメージの計算 (修正) ★★★
     const commonCoeff = affinityWeaknessCoeff * specialResistCoeff * damagePowerCoeff;
-    const skillBase = { normal: normalBaseDmg * commonCoeff, synergy: synergyBaseDmg * commonCoeff, kensan: kensanBaseDmg * commonCoeff, synergyKensan: synergyKensanBaseDmg * commonCoeff };
-    const ultimateBase = { normal: skillBase.normal * ultimateCoeff, synergy: skillBase.synergy * ultimateCoeff, kensan: skillBase.kensan * ultimateCoeff, synergyKensan: skillBase.synergyKensan * ultimateCoeff };
-    function applyEffects(damage, hasSynergy, hasKensan) { let finalDmg = damage; if (hasSynergy) finalDmg *= synergyTTL; if (hasKensan) finalDmg *= kensanTTL; finalDmg *= (1 + soulBuffTotal); return finalDmg > 0 ? finalDmg : 0; }
+
+    function calculateFinalDamage(baseDmg) {
+      return baseDmg * commonCoeff * trueReleaseMultiplier;
+    }
+
+    const skillBase = {
+      normal: calculateFinalDamage(normalBaseDmg),
+      synergy: calculateFinalDamage(synergyBaseDmg),
+      kensan: calculateFinalDamage(kensanBaseDmg),
+      synergyKensan: calculateFinalDamage(synergyKensanBaseDmg)
+    };
+
+    const ultimateBase = {
+      normal: skillBase.normal * ultimateCoeff,
+      synergy: skillBase.synergy * ultimateCoeff,
+      kensan: skillBase.kensan * ultimateCoeff,
+      synergyKensan: skillBase.synergyKensan * ultimateCoeff
+    };
+
+    function applyEffects(damage, hasSynergy, hasKensan) {
+      let finalDmg = damage;
+      if (hasSynergy) finalDmg *= synergyTTL;
+      if (hasKensan) finalDmg *= kensanTTL;
+      finalDmg *= (1 + soulBuffTotal);
+      return finalDmg > 0 ? finalDmg : 0;
+    }
+
     const skillFinal = { normal: applyEffects(skillBase.normal, false, false), synergy: applyEffects(skillBase.synergy, true, false), kensan: applyEffects(skillBase.kensan, false, true), synergyKensan: applyEffects(skillBase.synergyKensan, true, true) };
     const ultimateFinal = { normal: applyEffects(ultimateBase.normal, false, false), synergy: applyEffects(ultimateBase.synergy, true, false), kensan: applyEffects(ultimateBase.kensan, false, true), synergyKensan: applyEffects(ultimateBase.synergyKensan, true, true) };
+
     const critRate = p('crit-rate');
     const pierceRate = p('pierce-rate');
-
     function calculateExpectedDamage(normal, crit, pierce, critPierce) {
       if (critRate === 0 && pierceRate === 0) return normal;
       const c = critRate; const p = pierceRate;
       return (normal * (1 - c) * (1 - p)) + (crit * c * (1 - p)) + (pierce * (1 - c) * p) + (critPierce * c * p);
     }
 
+    // --- 結果表示 ---
     function generateResultHtml(title, baseResults) {
       let html = `<h3 class="result-header is-open">${title}<i class="fas fa-chevron-down"></i></h3><div class="result-content-collapsible is-open"><table>`;
       const types = [{ key: 'normal', name: '通常' }, { key: 'synergy', name: '協心' }, { key: 'kensan', name: '堅閃' }, { key: 'synergyKensan', name: '協心+堅閃' }];
