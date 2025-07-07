@@ -407,7 +407,19 @@ function loadFromUrl() {
         if (data[input.id] !== undefined) {
           if (input.type === 'checkbox') input.checked = data[input.id];
           else input.value = data[input.id];
-          input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      });
+      // カスタムドロップダウンの表示も更新
+      document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
+        const select = wrapper.querySelector('select');
+        if (select && data[select.id] !== undefined) {
+          const triggerSpan = wrapper.querySelector('.custom-select-trigger span');
+          const selectedOption = wrapper.querySelector(`.custom-option[data-value="${data[select.id]}"]`);
+          if (triggerSpan && selectedOption) {
+            triggerSpan.textContent = selectedOption.textContent;
+            wrapper.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
+            selectedOption.classList.add('selected');
+          }
         }
       });
       window.history.pushState("", document.title, window.location.pathname + window.location.search);
@@ -464,13 +476,39 @@ function loadDataPreset(slot) {
   const savedData = getStoredJSON(`${DATA_PRESET_KEY_PREFIX}${slot}`, null);
   if (savedData) {
     if (!savedData.data) { alert(`スロット${slot}のデータが破損しています。`); return; }
-    document.querySelectorAll('.calc-input').forEach(input => {
-      if (savedData.data[input.id] !== undefined) {
-        if (input.type === 'checkbox') input.checked = savedData.data[input.id];
-        else input.value = savedData.data[input.id];
-        input.dispatchEvent(new Event('input', { bubbles: true }));
+    // 全入力値をクリア
+    clearAllInputs(false);
+
+    // データを適用
+    Object.keys(savedData.data).forEach(id => {
+      const input = document.getElementById(id);
+      if (input) {
+        if (input.type === 'checkbox') {
+          input.checked = savedData.data[id];
+        } else {
+          input.value = savedData.data[id];
+        }
       }
     });
+
+    // カスタムドロップダウンの表示を更新
+    document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
+      const select = wrapper.querySelector('select');
+      const value = savedData.data[select.id];
+      if (select && value !== undefined) {
+        select.value = value;
+        const triggerSpan = wrapper.querySelector('.custom-select-trigger span');
+        const selectedOption = wrapper.querySelector(`.custom-option[data-value="${value}"]`);
+        if (triggerSpan && selectedOption) {
+          triggerSpan.textContent = selectedOption.textContent;
+          wrapper.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
+          selectedOption.classList.add('selected');
+        }
+      }
+    });
+
+    // has-valueクラスの更新と計算実行
+    document.querySelectorAll('.ef').forEach(input => $(input).toggleClass('has-value', input.value.trim() !== '' || input.placeholder.trim() !== ''));
     calculateDamage();
     alert(`「${savedData.name}」を読み込みました。`);
   } else { alert(`スロット${slot}に保存されたデータがありません。`); }
@@ -484,14 +522,37 @@ function deleteDataPreset(slot) {
     renderDataPresetButtons();
   }
 }
+
+// 確認ダイアログなしで全入力値をクリアする内部関数
+function clearAllInputs(showConfirm) {
+  document.querySelectorAll('.calc-input').forEach(input => {
+    if (input.type === 'checkbox') {
+      input.checked = false;
+    } else if (input.tagName.toLowerCase() === 'select') {
+      input.selectedIndex = 0;
+      // カスタムドロップダウンの表示もリセット
+      const wrapper = input.closest('.custom-select-wrapper');
+      if (wrapper) {
+        const triggerSpan = wrapper.querySelector('.custom-select-trigger span');
+        const firstOption = wrapper.querySelector('.custom-option');
+        if (triggerSpan && firstOption) {
+          triggerSpan.textContent = firstOption.textContent;
+          wrapper.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
+          firstOption.classList.add('selected');
+        }
+      }
+    } else {
+      input.value = '';
+    }
+  });
+  // has-valueクラスの更新
+  document.querySelectorAll('.ef').forEach(input => $(input).toggleClass('has-value', false));
+}
+
+// ユーザーがクリックするためのクリアボタン関数
 function clearInputs() {
   if (confirm('すべての入力値をクリアしますか？')) {
-    document.querySelectorAll('.calc-input').forEach(input => {
-      if (input.type === 'checkbox') input.checked = false;
-      else if (input.tagName.toLowerCase() === 'select') input.selectedIndex = 0;
-      else input.value = '';
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-    });
+    clearAllInputs(false);
     calculateDamage();
   }
 }
@@ -541,6 +602,66 @@ function importPresets(event) {
 // ===============================================================
 // ** サイト全体のUI機能 **
 // ===============================================================
+
+// ★★★ カスタムドロップダウンのロジック ★★★
+function setupCustomSelects() {
+  // 全てのカスタムドロップダウンのラッパー要素を取得
+  document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
+    const customSelect = wrapper.querySelector('.custom-select');
+    const trigger = wrapper.querySelector('.custom-select-trigger');
+    const options = wrapper.querySelectorAll('.custom-option');
+    const originalSelect = wrapper.querySelector('select'); // 元のselect要素
+    const triggerSpan = trigger.querySelector('span');
+
+    // トリガーをクリックしたらドロップダウンを開閉
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // 他のドロップダウンが開いていたら閉じる
+      closeAllSelects(customSelect);
+      customSelect.classList.toggle('open');
+    });
+
+    // 各選択肢をクリックした時の処理
+    options.forEach(option => {
+      option.addEventListener('click', function () {
+        // 'selected'クラスをリセットし、クリックされたものに付与
+        options.forEach(opt => opt.classList.remove('selected'));
+        this.classList.add('selected');
+
+        // 表示テキストと元のselectの値を更新
+        triggerSpan.textContent = this.textContent;
+        originalSelect.value = this.dataset.value;
+
+        // 計算を発火させるために 'change' イベントを発生させる
+        originalSelect.dispatchEvent(new Event('change', { bubbles: true }));
+
+        // ドロップダウンを閉じる
+        customSelect.classList.remove('open');
+      });
+    });
+
+    // 初期状態で元のselectの値を選択済みにする
+    const initialValue = originalSelect.value;
+    const initialOption = wrapper.querySelector(`.custom-option[data-value="${initialValue}"]`);
+    if (initialOption) {
+      initialOption.classList.add('selected');
+      triggerSpan.textContent = initialOption.textContent;
+    }
+  });
+
+  // ドロップダウン以外の場所をクリックしたら閉じるイベント
+  document.addEventListener('click', () => closeAllSelects());
+
+  // 全てのカスタムドロップダウンを閉じる関数
+  function closeAllSelects(exceptThisOne = null) {
+    document.querySelectorAll('.custom-select').forEach(select => {
+      if (select !== exceptThisOne) {
+        select.classList.remove('open');
+      }
+    });
+  }
+}
+
 $(function () {
   function debounce(func, wait) { let timeout; return (...args) => { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), wait); }; }
 
@@ -570,7 +691,7 @@ $(function () {
   $('#show-graph-btn').on('click', () => $('#graph-container').slideToggle());
 
   const debouncedCalculate = debounce(calculateDamage, 400);
-  $('body').on('input', '.calc-input', debouncedCalculate);
+  $('body').on('input change', '.calc-input', debouncedCalculate); // 'change'もトリガーに
 
   let currentZoomLevel = 0;
   const result_content = document.getElementById('damage-result');
@@ -582,47 +703,37 @@ $(function () {
   const themes = ['dark', 'blue-theme'];
 
   function applyTheme(themeName) {
-    // Remove all possible theme classes from the body
     themes.forEach(t => {
       if (t !== 'dark') document.body.classList.remove(t);
     });
-    document.body.classList.remove('light-theme'); // Also remove old theme class just in case
-
-    // Add the new theme class if it's not the default dark theme
+    document.body.classList.remove('light-theme');
     if (themeName && themeName !== 'dark') {
       document.body.classList.add(themeName);
     }
-    // Save the selected theme to local storage
     localStorage.setItem(THEME_KEY, themeName);
   }
 
-  // On page load, apply the saved theme or the default
   const savedTheme = localStorage.getItem(THEME_KEY);
   const currentTheme = themes.includes(savedTheme) ? savedTheme : 'dark';
   applyTheme(currentTheme);
 
-  // Add click event to the theme switcher button
   $('.theme-switcher').on('click', function () {
     const bodyClassList = document.body.classList;
-    let currentThemeName = 'dark'; // Assume default
-
-    // Find which theme class is currently applied
+    let currentThemeName = 'dark';
     for (const theme of themes) {
       if (theme !== 'dark' && bodyClassList.contains(theme)) {
         currentThemeName = theme;
         break;
       }
     }
-
-    // Determine the next theme in the cycle
     const currentIndex = themes.indexOf(currentThemeName);
     const nextIndex = (currentIndex + 1) % themes.length;
     const nextTheme = themes[nextIndex];
-
-    // Apply the next theme
     applyTheme(nextTheme);
   });
 
+  // ★★★ 初期化処理の呼び出し ★★★
+  setupCustomSelects(); // カスタムドロップダウンを初期化
   loadFromUrl();
   renderSkillPresetEditor();
   renderSkillPresetActivator();
