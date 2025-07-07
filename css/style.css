@@ -320,10 +320,6 @@ ul.icons i {
 	}
 }
 
-.input-panel {
-	overflow-y: auto;
-}
-
 .form-section {
 	border: 1px solid rgba(255, 255, 255, 0.2);
 	padding: 1rem 1.5rem;
