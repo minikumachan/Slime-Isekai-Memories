@@ -122,21 +122,44 @@
             <h3>戦闘条件 <i class="fas fa-question-circle tooltip-icon"
                 data-tooltip="戦闘時の状況を選択します。期待値計算を行う場合は会心率と貫通率も入力してください。"></i></h3>
             <div class="input-grid-4 conditions-grid">
-              <div class="select-group">
+
+              <div class="select-group custom-select-wrapper">
                 <label for="ultimate-type">攻撃の種類</label>
-                <select id="ultimate-type" class="calc-input">
+                <select id="ultimate-type" name="ultimate-type" class="calc-input" style="display: none;">
                   <option value="single" selected>単体攻撃/奥義</option>
                   <option value="aoe">全体攻撃/奥義</option>
                 </select>
+                <div class="custom-select">
+                  <div class="custom-select-trigger">
+                    <span>単体攻撃/奥義</span>
+                    <i class="fas fa-chevron-down"></i>
+                  </div>
+                  <div class="custom-options">
+                    <div class="custom-option" data-value="single">単体攻撃/奥義</div>
+                    <div class="custom-option" data-value="aoe">全体攻撃/奥義</div>
+                  </div>
+                </div>
               </div>
-              <div class="select-group">
+              <div class="select-group custom-select-wrapper">
                 <label for="affinity">属性相性</label>
-                <select id="affinity" class="calc-input">
+                <select id="affinity" name="affinity" class="calc-input" style="display: none;">
                   <option value="equal" selected>等倍</option>
                   <option value="favorable">有利(1.5)</option>
                   <option value="unfavorable">不利(0.7)</option>
                   <option value="eiketsu">英傑杯有利(1.6)</option>
                 </select>
+                <div class="custom-select">
+                  <div class="custom-select-trigger">
+                    <span>等倍</span>
+                    <i class="fas fa-chevron-down"></i>
+                  </div>
+                  <div class="custom-options">
+                    <div class="custom-option" data-value="equal">等倍</div>
+                    <div class="custom-option" data-value="favorable">有利(1.5)</div>
+                    <div class="custom-option" data-value="unfavorable">不利(0.7)</div>
+                    <div class="custom-option" data-value="eiketsu">英傑杯有利(1.6)</div>
+                  </div>
+                </div>
               </div>
               <div class="input-group"><input class="ef calc-input" type="number"
                   id="crit-rate"><label>会心率(%)</label><span class="focus_line"></span></div>
