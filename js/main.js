@@ -1,5 +1,5 @@
 // ===============================================================
-// ** まおりゅうダメージ計算機 (自動保存機能搭載版) **
+// ** まおりゅうダメージ計算機 (v1.2.2相当 最終版) **
 // ===============================================================
 
 // --- グローバル変数 ---
@@ -12,7 +12,7 @@ const DATA_PRESET_KEY_PREFIX = "maoryuDataPreset_v2";
 const SKILL_PRESET_KEY = "maoryuSkillPresets_v2";
 const MAX_DATA_SLOTS = 10;
 const THEME_KEY = "maoryuTheme";
-const AUTOSAVE_KEY = "maoryuAutoSave"; // ★★ 自動保存用のキーを追加 ★★
+const AUTOSAVE_KEY = "maoryuAutoSave";
 let draggedItem = null;
 
 // --- 補助関数 ---
@@ -49,14 +49,11 @@ function getStoredJSON(key, defaultValue = []) {
 // ===============================================================
 // ** 自動保存機能 **
 // ===============================================================
-
-// ★★【新機能】現在の入力内容をlocalStorageに保存する関数 ★★
 function saveInputsToStorage() {
   const dataToSave = {};
   document.querySelectorAll(".calc-input").forEach((input) => {
     const id = input.id;
-    if (!id) return; // IDのない入力は無視
-
+    if (!id) return;
     if (input.type === "checkbox" || input.type === "radio") {
       dataToSave[id] = input.checked;
     } else {
@@ -66,11 +63,9 @@ function saveInputsToStorage() {
   localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(dataToSave));
 }
 
-// ★★【新機能】localStorageから入力内容を復元する関数 ★★
 function loadInputsFromStorage() {
   const savedData = localStorage.getItem(AUTOSAVE_KEY);
   if (!savedData) return;
-
   try {
     const data = JSON.parse(savedData);
     Object.entries(data).forEach(([id, value]) => {
@@ -81,8 +76,6 @@ function loadInputsFromStorage() {
         } else {
           input.value = value;
         }
-
-        // カスタムセレクトボックスの表示も更新
         if (input.tagName.toLowerCase() === "select") {
           const wrapper = input.closest(".custom-select-wrapper");
           if (wrapper) {
@@ -105,7 +98,7 @@ function loadInputsFromStorage() {
     });
   } catch (e) {
     console.error("自動保存データの読み込みに失敗しました:", e);
-    localStorage.removeItem(AUTOSAVE_KEY); // 破損したデータを削除
+    localStorage.removeItem(AUTOSAVE_KEY);
   }
 }
 
@@ -235,6 +228,16 @@ const buffMasterList = [
   },
   { category: "ダメージ威力系", id: "pm-damage-up", label: "物魔ダメージ威力UP" },
   { category: "ダメージ威力系", id: "attr-damage-up", label: "属性ダメージ威力UP" },
+  {
+    category: "ダメージ威力系",
+    id: "pm-damage-resist-debuff",
+    label: "物/魔ダメージ耐性ダウン",
+  },
+  {
+    category: "ダメージ威力系",
+    id: "attr-damage-resist-debuff",
+    label: "属性ダメージ耐性ダウン",
+  },
   { category: "敵へのデバフ", id: "defense-debuff", label: "防御力デバフ" },
   {
     category: "敵へのデバフ",
@@ -365,6 +368,18 @@ const skillPresetStructure = [
     type: "text",
     id: "attr-damage-up",
     label: "属性ダメージ威力UP",
+  },
+  {
+    category: "バフ",
+    type: "text",
+    id: "pm-damage-resist-debuff",
+    label: "物/魔ダメージ耐性ダウン",
+  },
+  {
+    category: "バフ",
+    type: "text",
+    id: "attr-damage-resist-debuff",
+    label: "属性ダメージ耐性ダウン",
   },
   { category: "バフ", type: "text", id: "soul-buff", label: "魔創魂バフ" },
   { category: "バフ", type: "text", id: "charm-special-buff", label: "魅了特攻" },
@@ -502,78 +517,116 @@ const skillPresetStructure = [
 // ** スキルプリセット機能 **
 // ===============================================================
 function applySkillPresets() {
-  const activePresetBuffs = {}; const activePresetStates = {};
+  const activePresetBuffs = {};
+  const activePresetStates = {};
   const savedSkillPresets = getStoredJSON(SKILL_PRESET_KEY);
   savedSkillPresets.forEach((preset, i) => {
     if (c(`activate-skill-preset-${i}`)) {
-      Object.entries(preset.buffs || {}).forEach(([id, value]) => { activePresetBuffs[id] = (activePresetBuffs[id] || 0) + value; });
-      Object.keys(preset.states || {}).forEach(id => { activePresetStates[id] = true; });
+      Object.entries(preset.buffs || {}).forEach(([id, value]) => {
+        activePresetBuffs[id] = (activePresetBuffs[id] || 0) + value;
+      });
+      Object.keys(preset.states || {}).forEach((id) => {
+        activePresetStates[id] = true;
+      });
     }
   });
-  skillPresetStructure.forEach(skill => {
+  skillPresetStructure.forEach((skill) => {
     const input = document.getElementById(skill.id);
     if (!input) return;
-    if (skill.type === 'state') {
-      if (activePresetStates[skill.id]) { input.checked = true; input.disabled = true; }
-      else if (input.disabled) { input.checked = false; input.disabled = false; }
-    } else if (skill.type === 'text') {
+    if (skill.type === "state") {
+      if (activePresetStates[skill.id]) {
+        input.checked = true;
+        input.disabled = true;
+      } else if (input.disabled) {
+        input.checked = false;
+        input.disabled = false;
+      }
+    } else if (skill.type === "text") {
       const presetValue = activePresetBuffs[skill.id];
       if (presetValue !== undefined) {
         const userValue = parseFloat(input.value) || 0;
-        if (userValue < presetValue) { input.value = presetValue; }
-        input.classList.add('preset-active');
+        if (userValue < presetValue) {
+          input.value = presetValue;
+        }
+        input.classList.add("preset-active");
       } else {
-        input.classList.remove('preset-active');
+        input.classList.remove("preset-active");
       }
     }
   });
-  document.querySelectorAll('.ef').forEach(input => { $(input).toggleClass('has-value', input.value.trim() !== ''); });
+  document
+    .querySelectorAll(".ef")
+    .forEach((input) => {
+      $(input).toggleClass("has-value", input.value.trim() !== "");
+    });
 }
 
 function renderSkillPresetEditor() {
-  const editor = document.getElementById('skill-preset-editor');
+  const editor = document.getElementById("skill-preset-editor");
   if (!editor) return;
-  editor.innerHTML = '';
+  editor.innerHTML = "";
   const savedSkillPresets = getStoredJSON(SKILL_PRESET_KEY);
   savedSkillPresets.forEach((preset, i) => {
-    const card = document.createElement('div');
-    card.className = 'skill-preset-card'; card.draggable = true; card.dataset.index = i;
-    const categories = { '状態異常': '', 'バフ': '', 'デバフ': '' };
-    skillPresetStructure.forEach(skill => {
-      let inputHTML = '';
-      const value = preset.buffs?.[skill.id] || '';
-      const hasValueClass = value ? ' has-value' : '';
-      if (skill.type === 'text') {
-        inputHTML = `<div class="input-group"><input class="ef${hasValueClass}" type="number" id="skill-preset-${i}-${skill.id}" value="${value}"><label>${skill.label}</label><span class="focus_line"></span></div>`;
-      } else if (skill.type === 'state') {
-        inputHTML = `<div class="checkbox-group"><input type="checkbox" id="skill-preset-${i}-${skill.id}" ${preset.states?.[skill.id] ? 'checked' : ''}><label for="skill-preset-${i}-${skill.id}">${skill.label}</label></div>`;
+    const card = document.createElement("div");
+    card.className = "skill-preset-card";
+    card.draggable = true;
+    card.dataset.index = i;
+    const categories = { 状態異常: "", バフ: "", デバフ: "" };
+    skillPresetStructure.forEach((skill) => {
+      let inputHTML = "";
+      const value = preset.buffs?.[skill.id] || "";
+      const hasValueClass = value ? " has-value" : "";
+      if (skill.type === "text") {
+        inputHTML = `<div class="input-group"><input class="ef${hasValueClass}" type="number" id="skill-preset-${i}-${skill.id
+          }" value="${value}"><label>${skill.label}</label><span class="focus_line"></span></div>`;
+      } else if (skill.type === "state") {
+        inputHTML = `<div class="checkbox-group"><input type="checkbox" id="skill-preset-${i}-${skill.id
+          }" ${preset.states?.[skill.id] ? "checked" : ""
+          }><label for="skill-preset-${i}-${skill.id}">${skill.label
+          }</label></div>`;
       }
-      if (categories[skill.category] !== undefined) categories[skill.category] += inputHTML;
+      if (categories[skill.category] !== undefined)
+        categories[skill.category] += inputHTML;
     });
     let contentHTML = '<div class="skill-preset-content">';
     for (const [categoryName, categoryHTML] of Object.entries(categories)) {
-      if (categoryHTML) contentHTML += `<div class="skill-preset-category"><h5>${categoryName}</h5><div class="skill-preset-grid">${categoryHTML}</div></div>`;
+      if (categoryHTML)
+        contentHTML += `<div class="skill-preset-category"><h5>${categoryName}</h5><div class="skill-preset-grid">${categoryHTML}</div></div>`;
     }
-    contentHTML += '</div>';
-    card.innerHTML = `<h4><input type="text" class="preset-name-input" id="skill-preset-${i}-name" value="${preset.name || ''}" placeholder="スキルセット ${i + 1}"><button class="save-skill-preset-btn" data-action="save-skill" data-slot="${i}" title="上書き保存"><i class="fas fa-save"></i></button><button class="delete-skill-preset-btn" data-action="delete-skill" data-slot="${i}" title="削除"><i class="fas fa-trash-alt"></i></button></h4>${contentHTML}`;
+    contentHTML += "</div>";
+    card.innerHTML = `<h4><input type="text" class="preset-name-input" id="skill-preset-${i}-name" value="${preset.name || ""
+      }" placeholder="スキルセット ${i + 1
+      }"><button class="save-skill-preset-btn" data-action="save-skill" data-slot="${i}" title="上書き保存"><i class="fas fa-save"></i></button><button class="delete-skill-preset-btn" data-action="delete-skill" data-slot="${i}" title="削除"><i class="fas fa-trash-alt"></i></button></h4>${contentHTML}`;
     editor.appendChild(card);
   });
-  const newCardEl = document.createElement('div');
-  newCardEl.className = 'skill-preset-card new-skill-preset-card'; newCardEl.id = 'new-skill-preset-creator'; newCardEl.title = `新規スキルプリセットを作成`; newCardEl.innerHTML = `<i class="fas fa-plus"></i>`;
+  const newCardEl = document.createElement("div");
+  newCardEl.className = "skill-preset-card new-skill-preset-card";
+  newCardEl.id = "new-skill-preset-creator";
+  newCardEl.title = `新規スキルプリセットを作成`;
+  newCardEl.innerHTML = `<i class="fas fa-plus"></i>`;
   editor.appendChild(newCardEl);
 }
 
 function saveSkillPreset(slot, isNew = false) {
   let savedSkillPresets = getStoredJSON(SKILL_PRESET_KEY);
-  const sourceIndex = isNew ? 'new' : slot;
+  const sourceIndex = isNew ? "new" : slot;
   const nameInput = document.getElementById(`skill-preset-${sourceIndex}-name`);
-  let name = nameInput ? nameInput.value.trim() : '';
-  if (isNew && !name) { alert('新しいプリセットの名前を入力してください。'); nameInput.focus(); return; }
+  let name = nameInput ? nameInput.value.trim() : "";
+  if (isNew && !name) {
+    alert("新しいプリセットの名前を入力してください。");
+    nameInput.focus();
+    return;
+  }
   const preset = { name: name || `スキルセット ${slot + 1}`, buffs: {}, states: {} };
-  skillPresetStructure.forEach(skill => {
+  skillPresetStructure.forEach((skill) => {
     const inputId = `skill-preset-${sourceIndex}-${skill.id}`;
-    if (skill.type === 'text') { const value = v(inputId); if (value) preset.buffs[skill.id] = value; }
-    else if (skill.type === 'state') { const checked = c(inputId); if (checked) preset.states[skill.id] = true; }
+    if (skill.type === "text") {
+      const value = v(inputId);
+      if (value) preset.buffs[skill.id] = value;
+    } else if (skill.type === "state") {
+      const checked = c(inputId);
+      if (checked) preset.states[skill.id] = true;
+    }
   });
   if (isNew) savedSkillPresets.push(preset);
   else savedSkillPresets[slot] = preset;
@@ -589,46 +642,58 @@ function deleteSkillPreset(slot) {
   if (confirm(`スキルプリセット「${presetName}」を本当に削除しますか？`)) {
     savedSkillPresets.splice(slot, 1);
     localStorage.setItem(SKILL_PRESET_KEY, JSON.stringify(savedSkillPresets));
-    alert('プリセットを削除しました。');
-    renderSkillPresetEditor(); renderSkillPresetActivator(); calculateDamage();
+    alert("プリセットを削除しました。");
+    renderSkillPresetEditor();
+    renderSkillPresetActivator();
+    calculateDamage();
   }
 }
 
 function addNewSkillPresetCard() {
-  const editor = document.getElementById('skill-preset-editor');
-  const newCardCreator = document.getElementById('new-skill-preset-creator');
-  if (!editor || !newCardCreator || document.getElementById('skill-preset-new-name')) return;
-  const card = document.createElement('div');
-  card.className = 'skill-preset-card';
+  const editor = document.getElementById("skill-preset-editor");
+  const newCardCreator = document.getElementById("new-skill-preset-creator");
+  if (!editor || !newCardCreator || document.getElementById("skill-preset-new-name"))
+    return;
+  const card = document.createElement("div");
+  card.className = "skill-preset-card";
   let contentHTML = '<div class="skill-preset-content">';
-  const categories = { '状態異常': '', 'バフ': '', 'デバフ': '' };
-  skillPresetStructure.forEach(skill => {
-    let inputHTML = '';
-    if (skill.type === 'text') { inputHTML = `<div class="input-group"><input class="ef" type="number" id="skill-preset-new-${skill.id}"><label>${skill.label}</label><span class="focus_line"></span></div>`; }
-    else if (skill.type === 'state') { inputHTML = `<div class="checkbox-group"><input type="checkbox" id="skill-preset-new-${skill.id}"><label for="skill-preset-new-${skill.id}">${skill.label}</label></div>`; }
-    if (categories[skill.category] !== undefined) categories[skill.category] += inputHTML;
+  const categories = { 状態異常: "", バフ: "", デバフ: "" };
+  skillPresetStructure.forEach((skill) => {
+    let inputHTML = "";
+    if (skill.type === "text") {
+      inputHTML = `<div class="input-group"><input class="ef" type="number" id="skill-preset-new-${skill.id}"><label>${skill.label}</label><span class="focus_line"></span></div>`;
+    } else if (skill.type === "state") {
+      inputHTML = `<div class="checkbox-group"><input type="checkbox" id="skill-preset-new-${skill.id}"><label for="skill-preset-new-${skill.id}">${skill.label}</label></div>`;
+    }
+    if (categories[skill.category] !== undefined)
+      categories[skill.category] += inputHTML;
   });
   for (const [categoryName, categoryHTML] of Object.entries(categories)) {
-    if (categoryHTML) contentHTML += `<div class="skill-preset-category"><h5>${categoryName}</h5><div class="skill-preset-grid">${categoryHTML}</div></div>`;
+    if (categoryHTML)
+      contentHTML += `<div class="skill-preset-category"><h5>${categoryName}</h5><div class="skill-preset-grid">${categoryHTML}</div></div>`;
   }
-  contentHTML += '</div>';
+  contentHTML += "</div>";
   card.innerHTML = `<h4><input type="text" class="preset-name-input" id="skill-preset-new-name" placeholder="新しいプリセット名"><button class="save-skill-preset-btn" data-action="save-new" title="新規保存"><i class="fas fa-save"></i></button></h4>${contentHTML}`;
   editor.insertBefore(card, newCardCreator);
-  newCardCreator.style.display = 'none';
+  newCardCreator.style.display = "none";
 }
 
 function renderSkillPresetActivator() {
-  const activator = document.getElementById('skill-preset-activator');
+  const activator = document.getElementById("skill-preset-activator");
   if (!activator) return;
   const savedStates = {};
-  activator.querySelectorAll('.skill-preset-activator-cb:checked').forEach(cb => savedStates[cb.id] = true);
-  activator.innerHTML = '';
+  activator
+    .querySelectorAll(".skill-preset-activator-cb:checked")
+    .forEach((cb) => (savedStates[cb.id] = true));
+  activator.innerHTML = "";
   const savedSkillPresets = getStoredJSON(SKILL_PRESET_KEY);
   savedSkillPresets.forEach((preset, i) => {
     if (preset && preset.name) {
-      const div = document.createElement('div'); div.className = 'checkbox-group';
+      const div = document.createElement("div");
+      div.className = "checkbox-group";
       const id = `activate-skill-preset-${i}`;
-      div.innerHTML = `<input type="checkbox" class="calc-input skill-preset-activator-cb" id="${id}" ${savedStates[id] ? 'checked' : ''}><label for="${id}">${preset.name}</label>`;
+      div.innerHTML = `<input type="checkbox" class="calc-input skill-preset-activator-cb" id="${id}" ${savedStates[id] ? "checked" : ""
+        }><label for="${id}">${preset.name}</label>`;
       activator.appendChild(div);
     }
   });
@@ -638,74 +703,211 @@ function renderSkillPresetActivator() {
 // ** 新計算エンジン **
 // ===============================================================
 function runCalculationEngine(inputData) {
-  const p = id => (inputData[id] || 0) / 100;
-  const v = id => inputData[id] || 0;
-  const m = id => { const val = inputData[id]; return isNaN(val) || val <= 0 ? 1.0 : val; };
-  const c = id => inputData[id] || false;
-  const s = id => inputData[id] || '';
-  const baseAttack = v('base-attack-power'); const baseDefense = v('base-defense-power'); const enemyBaseDefense = v('enemy-defense-power'); const baseSupportAttack = v('support-attack-power');
-  const ultimateMagnification = p('ultimate-magnification'); const dragonAuraCorrect = c('is-dragon-aura') ? 1.2 : 1; const charmCorrect = c('is-charmed') ? 0.95 : 1;
-  const attackType = s('ultimate-type'); let affinityCorrect = 1.0;
-  if (s('affinity') === 'favorable' || s('affinity') === 'eiketsu') affinityCorrect = 1.5;
-  if (s('affinity') === 'unfavorable') affinityCorrect = 0.7;
+  const p = (id) => (inputData[id] || 0) / 100;
+  const v = (id) => inputData[id] || 0;
+  const m = (id) => {
+    const val = inputData[id];
+    return isNaN(val) || val <= 0 ? 1.0 : val;
+  };
+  const c = (id) => inputData[id] || false;
+  const s = (id) => inputData[id] || "";
+  const baseAttack = v("base-attack-power");
+  const baseDefense = v("base-defense-power");
+  const enemyBaseDefense = v("enemy-defense-power");
+  const baseSupportAttack = v("support-attack-power");
+  const ultimateMagnification = p("ultimate-magnification");
+  const dragonAuraCorrect = c("is-dragon-aura") ? 1.2 : 1;
+  const charmCorrect = c("is-charmed") ? 0.95 : 1;
+  const attackType = s("ultimate-type");
+  let affinityCorrect = 1.0;
+  if (s("affinity") === "favorable" || s("affinity") === "eiketsu")
+    affinityCorrect = 1.5;
+  if (s("affinity") === "unfavorable") affinityCorrect = 0.7;
   let debuffAmpCorrect = 1.0;
-  if (c('is-frostbite')) debuffAmpCorrect += 0.3; if (c('is-dominated')) debuffAmpCorrect += 0.3; if (c('is-tremor')) debuffAmpCorrect += 0.4;
-  const attackBuffTotal = p('attack-buff') + p('attack-buff-trait') + p('attack-buff-cumulative') + p('attack-buff-faction') + p('attack-buff-faction-support') + p('attack-buff-divine-lead') + p('attack-buff-divine-lead-support') + p('attack-buff-divine-trait') + p('attack-buff-divine-trait-support');
-  const defenseBuffTotal = p('defense-buff') + p('defense-trait') + p('defense-special-stat') + p('defense-ex-talent') + p('defense-engraved-seal') + p('defense-divine-lead') + p('defense-divine-lead-support') + p('defense-divine-trait') + p('defense-divine-trait-support');
-  const selfAttrBuffTotal = p('all-attr-buff') + p('attr-buff') + p('attr-buff-cumulative') + p('attr-buff-divine-lead') + p('attr-buff-divine-lead-support');
-  const selfPmBuffTotal = p('pm-buff') + p('pm-buff-cumulative') + p('pm-buff-divine-lead') + p('pm-buff-divine-lead-support') + p('pm-buff-divine-trait') + p('pm-buff-divine-trait-support');
-  const aoeAttackBuffTotal = p('aoe-attack-buff') + p('aoe-attack-buff-cumulative'); const ultimateBuffTotal = p('ultimate-buff') + p('ultimate-buff-cumulative'); const extremeUltimateBuffTotal = p('extreme-ultimate-buff');
-  const soulBuffTotal = p('soul-buff'); const charmSpecialTotal = p('charm-special-buff'); const stunSpecialTotal = p('stun-special-buff'); const affinityUpTotal = p('affinity-up-buff');
-  const weakPointBuffTotal = p('weak-point-buff') + p('weak-point-infinite-buff'); const pmDamageUpTotal = p('pm-damage-up'); const attrDamageUpTotal = p('attr-damage-up');
-  const critPowerTotal = p('crit-buff') + p('crit-ex-talent') + p('crit-special-stat') + p('crit-trait') + p('crit-divine-trait') + p('crit-divine-trait-support') + p('crit-engraved-seal');
-  const piercePowerTotal = p('pierce-buff') + p('pierce-ex-talent') + p('pierce-special-stat') + p('pierce-trait') + p('pierce-divine-trait') + p('pierce-divine-trait-support') + p('pierce-engraved-seal');
-  const synergyPowerTotal = p('synergy-buff') + p('synergy-ex-talent') + p('synergy-special-stat') + p('synergy-trait');
-  const kensanPowerTotal = p('kensan-buff') + p('kensan-ex-talent') + p('kensan-special-stat') + p('kensan-trait');
-  const enemyAttrResistBuffTotal = p('enemy-all-attr-resist-buff') + p('enemy-attr-resist-buff'); const enemyPmResistBuffTotal = p('enemy-pm-resist-buff');
-  const critResistBuffTotal = p('enemy-crit-resist-buff'); const pierceResistBuffTotal = p('enemy-pierce-resist-buff'); const synergyResistBuffTotal = p('enemy-synergy-resist-buff'); const kensanResistBuffTotal = p('enemy-kensan-resist-buff');
-  const ultimateResistBuffTotal = p('enemy-ultimate-resist-buff'); const weakPointResistBuffTotal = p('enemy-weak-point-resist-buff');
-  const defenseDebuffTotal = p('defense-debuff') + p('defense-debuff-divine-trait'); const enemyAttrResistDebuffTotal = p('enemy-all-attr-resist-debuff') + p('attr-resist-debuff');
-  const enemyPmResistDebuffTotal = p('pm-resist-debuff'); const singleTargetResistDebuffTotal = p('single-target-resist-debuff'); const aoeResistDebuffTotal = p('aoe-resist-debuff');
-  const ultimateResistDebuffTotal = p('ultimate-resist-debuff'); const weakPointResistDebuffTotal = p('weak-point-resist-debuff');
-  const critResistDebuffTotal = p('crit-resist-debuff') + p('crit-resist-debuff-trait') + p('crit-resist-debuff-divine-trait');
-  const pierceResistDebuffTotal = p('pierce-resist-debuff') + p('pierce-resist-debuff-trait') + p('pierce-resist-debuff-divine-trait');
-  const synergyResistDebuffTotal = p('synergy-resist-debuff') + p('synergy-resist-debuff-trait'); const kensanResistDebuffTotal = p('kensan-resist-debuff') + p('kensan-resist-debuff-trait');
-  const displayAttack = baseAttack * (1 + attackBuffTotal * dragonAuraCorrect) * charmCorrect;
+  if (c("is-frostbite")) debuffAmpCorrect += 0.3;
+  if (c("is-dominated")) debuffAmpCorrect += 0.3;
+  if (c("is-tremor")) debuffAmpCorrect += 0.4;
+  const attackBuffTotal = p("attack-buff") + p("attack-buff-trait") + p("attack-buff-cumulative") + p("attack-buff-faction") + p("attack-buff-faction-support") + p("attack-buff-divine-lead") + p("attack-buff-divine-lead-support") + p("attack-buff-divine-trait") + p("attack-buff-divine-trait-support");
+  const defenseBuffTotal = p("defense-buff") + p("defense-trait") + p("defense-special-stat") + p("defense-ex-talent") + p("defense-engraved-seal") + p("defense-divine-lead") + p("defense-divine-lead-support") + p("defense-divine-trait") + p("defense-divine-trait-support");
+  const selfAttrBuffTotal = p("all-attr-buff") + p("attr-buff") + p("attr-buff-cumulative") + p("attr-buff-divine-lead") + p("attr-buff-divine-lead-support");
+  const selfPmBuffTotal = p("pm-buff") + p("pm-buff-cumulative") + p("pm-buff-divine-lead") + p("pm-buff-divine-lead-support") + p("pm-buff-divine-trait") + p("pm-buff-divine-trait-support");
+  const aoeAttackBuffTotal = p("aoe-attack-buff") + p("aoe-attack-buff-cumulative");
+  const ultimateBuffTotal = p("ultimate-buff") + p("ultimate-buff-cumulative");
+  const extremeUltimateBuffTotal = p("extreme-ultimate-buff");
+  const soulBuffTotal = p("soul-buff");
+  const charmSpecialTotal = p("charm-special-buff");
+  const stunSpecialTotal = p("stun-special-buff");
+  const affinityUpTotal = p("affinity-up-buff");
+  const weakPointBuffTotal = p("weak-point-buff") + p("weak-point-infinite-buff");
+
+  const pmDamageUpTotal = p("pm-damage-up");
+  const attrDamageUpTotal = p("attr-damage-up");
+  const pmDamageResistDebuffTotal = p("pm-damage-resist-debuff");
+  const attrDamageResistDebuffTotal = p("attr-damage-resist-debuff");
+  const totalPmDamageCoeff =
+    pmDamageUpTotal * dragonAuraCorrect +
+    pmDamageResistDebuffTotal * debuffAmpCorrect;
+  const totalAttrDamageCoeff =
+    attrDamageUpTotal * dragonAuraCorrect +
+    attrDamageResistDebuffTotal * debuffAmpCorrect;
+  const damagePowerCoeff = (1 + totalPmDamageCoeff) * (1 + totalAttrDamageCoeff);
+
+  const critPowerTotal = p("crit-buff") + p("crit-ex-talent") + p("crit-special-stat") + p("crit-trait") + p("crit-divine-trait") + p("crit-divine-trait-support") + p("crit-engraved-seal");
+  const piercePowerTotal = p("pierce-buff") + p("pierce-ex-talent") + p("pierce-special-stat") + p("pierce-trait") + p("pierce-divine-trait") + p("pierce-divine-trait-support") + p("pierce-engraved-seal");
+  const synergyPowerTotal = p("synergy-buff") + p("synergy-ex-talent") + p("synergy-special-stat") + p("synergy-trait");
+  const kensanPowerTotal = p("kensan-buff") + p("kensan-ex-talent") + p("kensan-special-stat") + p("kensan-trait");
+  const enemyAttrResistBuffTotal = p("enemy-all-attr-resist-buff") + p("enemy-attr-resist-buff");
+  const enemyPmResistBuffTotal = p("enemy-pm-resist-buff");
+  const critResistBuffTotal = p("enemy-crit-resist-buff");
+  const pierceResistBuffTotal = p("enemy-pierce-resist-buff");
+  const synergyResistBuffTotal = p("enemy-synergy-resist-buff");
+  const kensanResistBuffTotal = p("enemy-kensan-resist-buff");
+  const ultimateResistBuffTotal = p("enemy-ultimate-resist-buff");
+  const weakPointResistBuffTotal = p("enemy-weak-point-resist-buff");
+  const defenseDebuffTotal = p("defense-debuff") + p("defense-debuff-divine-trait");
+  const enemyAttrResistDebuffTotal = p("enemy-all-attr-resist-debuff") + p("attr-resist-debuff");
+  const enemyPmResistDebuffTotal = p("pm-resist-debuff");
+  const singleTargetResistDebuffTotal = p("single-target-resist-debuff");
+  const aoeResistDebuffTotal = p("aoe-resist-debuff");
+  const ultimateResistDebuffTotal = p("ultimate-resist-debuff");
+  const weakPointResistDebuffTotal = p("weak-point-resist-debuff");
+  const critResistDebuffTotal = p("crit-resist-debuff") + p("crit-resist-debuff-trait") + p("crit-resist-debuff-divine-trait");
+  const pierceResistDebuffTotal = p("pierce-resist-debuff") + p("pierce-resist-debuff-trait") + p("pierce-resist-debuff-divine-trait");
+  const synergyResistDebuffTotal = p("synergy-resist-debuff") + p("synergy-resist-debuff-trait");
+  const kensanResistDebuffTotal = p("kensan-resist-debuff") + p("kensan-resist-debuff-trait");
+  const displayAttack =
+    baseAttack * (1 + attackBuffTotal * dragonAuraCorrect) * charmCorrect;
   const displayDefense = baseDefense * (1 + defenseBuffTotal);
-  const enemyPmResistCoeff = 1 + (enemyPmResistDebuffTotal * debuffAmpCorrect - enemyPmResistBuffTotal);
-  const enemyAttrResistCoeff = 1 + (enemyAttrResistDebuffTotal * debuffAmpCorrect - enemyAttrResistBuffTotal);
-  const enemyActualDefense = enemyBaseDefense * (1 - defenseDebuffTotal * debuffAmpCorrect) * enemyPmResistCoeff * enemyAttrResistCoeff;
-  const baseActualAttack = displayAttack * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect);
-  const aoeActualAttack = baseActualAttack * (1 + aoeAttackBuffTotal * dragonAuraCorrect);
-  const kensanAddedAttack = (displayDefense * 0.4) * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect);
-  const supportActualAttackSingle = baseSupportAttack * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect) * 0.4;
-  const supportActualAttackAoe = baseSupportAttack * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect) * (1 + aoeAttackBuffTotal * dragonAuraCorrect) * 0.4;
-  const isAoe = (attackType === 'aoe'); const mainActualAttack = isAoe ? aoeActualAttack : baseActualAttack; const supportActualAttack = isAoe ? supportActualAttackAoe : supportActualAttackSingle;
+  const enemyPmResistCoeff =
+    1 + (enemyPmResistDebuffTotal * debuffAmpCorrect - enemyPmResistBuffTotal);
+  const enemyAttrResistCoeff =
+    1 + (enemyAttrResistDebuffTotal * debuffAmpCorrect - enemyAttrResistBuffTotal);
+  const enemyActualDefense =
+    enemyBaseDefense *
+    (1 - defenseDebuffTotal * debuffAmpCorrect) *
+    enemyPmResistCoeff *
+    enemyAttrResistCoeff;
+  const baseActualAttack =
+    displayAttack *
+    (1 + selfAttrBuffTotal * dragonAuraCorrect) *
+    (1 + selfPmBuffTotal * dragonAuraCorrect);
+  const aoeActualAttack =
+    baseActualAttack * (1 + aoeAttackBuffTotal * dragonAuraCorrect);
+  const kensanAddedAttack =
+    displayDefense *
+    0.4 *
+    (1 + selfAttrBuffTotal * dragonAuraCorrect) *
+    (1 + selfPmBuffTotal * dragonAuraCorrect);
+  const supportActualAttackSingle =
+    baseSupportAttack *
+    (1 + selfAttrBuffTotal * dragonAuraCorrect) *
+    (1 + selfPmBuffTotal * dragonAuraCorrect) *
+    0.4;
+  const supportActualAttackAoe =
+    baseSupportAttack *
+    (1 + selfAttrBuffTotal * dragonAuraCorrect) *
+    (1 + selfPmBuffTotal * dragonAuraCorrect) *
+    (1 + aoeAttackBuffTotal * dragonAuraCorrect) *
+    0.4;
+  const isAoe = attackType === "aoe";
+  const mainActualAttack = isAoe ? aoeActualAttack : baseActualAttack;
+  const supportActualAttack = isAoe
+    ? supportActualAttackAoe
+    : supportActualAttackSingle;
   const normalBaseDmg = (mainActualAttack * 2 - enemyActualDefense) * 0.2;
-  const synergyBaseDmg = ((mainActualAttack + supportActualAttack) * 2 - enemyActualDefense) * 0.2;
-  const kensanBaseDmg = ((mainActualAttack + kensanAddedAttack) * 2 - enemyActualDefense) * 0.2;
-  const synergyKensanBaseDmg = ((mainActualAttack + supportActualAttack + kensanAddedAttack) * 2 - enemyActualDefense) * 0.2;
-  const critTTL = 1.3 + (critPowerTotal * dragonAuraCorrect) + ((critResistDebuffTotal * debuffAmpCorrect) - critResistBuffTotal);
-  const pierceTTL = 1 + (piercePowerTotal * dragonAuraCorrect) + ((pierceResistDebuffTotal * debuffAmpCorrect) - pierceResistBuffTotal);
-  const synergyTTL = 1 + (synergyPowerTotal * dragonAuraCorrect) + ((synergyResistDebuffTotal * debuffAmpCorrect) - synergyResistBuffTotal);
-  const kensanTTL = 1 + (kensanPowerTotal * dragonAuraCorrect) + ((kensanResistDebuffTotal * debuffAmpCorrect) - kensanResistBuffTotal);
-  let finalAffinityCorrect = (s('affinity') === 'eiketsu') ? 1.6 : affinityCorrect;
-  const affinityWeaknessCoeff = (finalAffinityCorrect * (1 + affinityUpTotal * dragonAuraCorrect)) + (weakPointBuffTotal * dragonAuraCorrect) + ((weakPointResistDebuffTotal * debuffAmpCorrect) - weakPointResistBuffTotal);
-  const targetResistDebuffTotal = isAoe ? aoeResistDebuffTotal : singleTargetResistDebuffTotal;
-  const specialResistCoeff = (1 + (stunSpecialTotal + charmSpecialTotal) * dragonAuraCorrect) * (1 + targetResistDebuffTotal * debuffAmpCorrect);
-  const damagePowerCoeff = (1 + pmDamageUpTotal * dragonAuraCorrect) * (1 + attrDamageUpTotal * dragonAuraCorrect);
-  const ultimateCoeff = ultimateMagnification * (1 + ultimateBuffTotal + extremeUltimateBuffTotal) * (1 + ((ultimateResistDebuffTotal * debuffAmpCorrect) - ultimateResistBuffTotal));
+  const synergyBaseDmg =
+    ((mainActualAttack + supportActualAttack) * 2 - enemyActualDefense) * 0.2;
+  const kensanBaseDmg =
+    ((mainActualAttack + kensanAddedAttack) * 2 - enemyActualDefense) * 0.2;
+  const synergyKensanBaseDmg =
+    ((mainActualAttack + supportActualAttack + kensanAddedAttack) * 2 -
+      enemyActualDefense) *
+    0.2;
+  const critTTL =
+    1.3 +
+    critPowerTotal * dragonAuraCorrect +
+    (critResistDebuffTotal * debuffAmpCorrect - critResistBuffTotal);
+  const pierceTTL =
+    1 +
+    piercePowerTotal * dragonAuraCorrect +
+    (pierceResistDebuffTotal * debuffAmpCorrect - pierceResistBuffTotal);
+  const synergyTTL =
+    1 +
+    synergyPowerTotal * dragonAuraCorrect +
+    (synergyResistDebuffTotal * debuffAmpCorrect - synergyResistBuffTotal);
+  const kensanTTL =
+    1 +
+    kensanPowerTotal * dragonAuraCorrect +
+    (kensanResistDebuffTotal * debuffAmpCorrect - kensanResistBuffTotal);
+  let finalAffinityCorrect = s("affinity") === "eiketsu" ? 1.6 : affinityCorrect;
+  const affinityWeaknessCoeff =
+    finalAffinityCorrect * (1 + affinityUpTotal * dragonAuraCorrect) +
+    weakPointBuffTotal * dragonAuraCorrect +
+    (weakPointResistDebuffTotal * debuffAmpCorrect - weakPointResistBuffTotal);
+  const targetResistDebuffTotal = isAoe
+    ? aoeResistDebuffTotal
+    : singleTargetResistDebuffTotal;
+  const specialResistCoeff =
+    (1 + (stunSpecialTotal + charmSpecialTotal) * dragonAuraCorrect) *
+    (1 + targetResistDebuffTotal * debuffAmpCorrect);
+  const ultimateCoeff =
+    ultimateMagnification *
+    (1 + ultimateBuffTotal + extremeUltimateBuffTotal) *
+    (1 + (ultimateResistDebuffTotal * debuffAmpCorrect - ultimateResistBuffTotal));
   let trueReleaseMultiplier = 1.0;
-  const targetWeakness = s('target-weakness-type');
-  if (targetWeakness === 'weak') { trueReleaseMultiplier = m('true-release-weak-mult'); } else if (targetWeakness === 'super-weak') { trueReleaseMultiplier = m('true-release-super-weak-mult'); }
+  const targetWeakness = s("target-weakness-type");
+  if (targetWeakness === "weak") {
+    trueReleaseMultiplier = m("true-release-weak-mult");
+  } else if (targetWeakness === "super-weak") {
+    trueReleaseMultiplier = m("true-release-super-weak-mult");
+  }
   const commonCoeff = affinityWeaknessCoeff * specialResistCoeff;
-  function calculateFinalDamage(baseDmg) { return (baseDmg * damagePowerCoeff) * commonCoeff * trueReleaseMultiplier; }
-  const skillBase = { normal: calculateFinalDamage(normalBaseDmg), synergy: calculateFinalDamage(synergyBaseDmg), kensan: calculateFinalDamage(kensanBaseDmg), synergyKensan: calculateFinalDamage(synergyKensanBaseDmg) };
-  const ultimateBase = { normal: skillBase.normal * ultimateCoeff, synergy: skillBase.synergy * ultimateCoeff, kensan: skillBase.kensan * ultimateCoeff, synergyKensan: skillBase.synergyKensan * ultimateCoeff };
-  function applyEffects(damage, hasSynergy, hasKensan) { let finalDmg = damage; if (hasSynergy) finalDmg *= synergyTTL; if (hasKensan) finalDmg *= kensanTTL; finalDmg *= (1 + soulBuffTotal); return finalDmg > 0 ? finalDmg : 0; }
-  const skillFinal = { normal: applyEffects(skillBase.normal, false, false), synergy: applyEffects(skillBase.synergy, true, false), kensan: applyEffects(skillBase.kensan, false, true), synergyKensan: applyEffects(skillBase.synergyKensan, true, true) };
-  const ultimateFinal = { normal: applyEffects(ultimateBase.normal, false, false), synergy: applyEffects(ultimateBase.synergy, true, false), kensan: applyEffects(ultimateBase.kensan, false, true), synergyKensan: applyEffects(ultimateBase.synergyKensan, true, true) };
-  return { displayAttack, mainActualAttack, enemyActualDefense, isAoe, skillFinal, ultimateFinal, critTTL, pierceTTL, critRate: p('crit-rate'), pierceRate: p('pierce-rate') };
+  function calculateFinalDamage(baseDmg) {
+    return baseDmg * damagePowerCoeff * commonCoeff * trueReleaseMultiplier;
+  }
+  const skillBase = {
+    normal: calculateFinalDamage(normalBaseDmg),
+    synergy: calculateFinalDamage(synergyBaseDmg),
+    kensan: calculateFinalDamage(kensanBaseDmg),
+    synergyKensan: calculateFinalDamage(synergyKensanBaseDmg),
+  };
+  const ultimateBase = {
+    normal: skillBase.normal * ultimateCoeff,
+    synergy: skillBase.synergy * ultimateCoeff,
+    kensan: skillBase.kensan * ultimateCoeff,
+    synergyKensan: skillBase.synergyKensan * ultimateCoeff,
+  };
+  function applyEffects(damage, hasSynergy, hasKensan) {
+    let finalDmg = damage;
+    if (hasSynergy) finalDmg *= synergyTTL;
+    if (hasKensan) finalDmg *= kensanTTL;
+    finalDmg *= 1 + soulBuffTotal;
+    return finalDmg > 0 ? finalDmg : 0;
+  }
+  const skillFinal = {
+    normal: applyEffects(skillBase.normal, false, false),
+    synergy: applyEffects(skillBase.synergy, true, false),
+    kensan: applyEffects(skillBase.kensan, false, true),
+    synergyKensan: applyEffects(skillBase.synergyKensan, true, true),
+  };
+  const ultimateFinal = {
+    normal: applyEffects(ultimateBase.normal, false, false),
+    synergy: applyEffects(ultimateBase.synergy, true, false),
+    kensan: applyEffects(ultimateBase.kensan, false, true),
+    synergyKensan: applyEffects(ultimateBase.synergyKensan, true, true),
+  };
+  return {
+    displayAttack,
+    mainActualAttack,
+    enemyActualDefense,
+    isAoe,
+    skillFinal,
+    ultimateFinal,
+    critTTL,
+    pierceTTL,
+    critRate: p("crit-rate"),
+    pierceRate: p("pierce-rate"),
+  };
 }
 
 // ===============================================================
@@ -952,9 +1154,6 @@ function openComparisonGraphModal() {
   document.body.appendChild(modal);
 }
 
-// ===============================================================
-// ** 初期化&イベントリスナー **
-// ===============================================================
 // ===============================================================
 // ** 初期化&イベントリスナー **
 // ===============================================================
