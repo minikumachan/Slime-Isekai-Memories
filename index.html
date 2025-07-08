@@ -489,6 +489,10 @@
               <div id="preset-buttons" class="preset-buttons"></div>
             </div>
             <div class="util-controls">
+              <button id="open-compare-modal-btn" title="ダメージ比較設定"><i class="fas fa-balance-scale"></i></button>
+
+              <button id="show-comparison-graph-btn" title="比較グラフ表示" style="display: none; background: #ff9800;"><i
+                  class="fas fa-chart-pie"></i></button>
               <button id="show-graph-btn" title="グラフ表示"><i class="fas fa-chart-bar"></i></button>
               <button id="share-url-btn" title="共有URLをコピー"><i class="fas fa-share-alt"></i></button>
               <button id="export-presets" title="プリセットをファイルに書き出す"><i class="fas fa-file-export"></i></button>
@@ -496,6 +500,24 @@
               <button id="clear-inputs" title="入力クリア"><i class="fas fa-trash-alt"></i></button>
               <button id="zoom-out" title="縮小"><i class="fas fa-search-minus"></i></button>
               <button id="zoom-in" title="拡大"><i class="fas fa-search-plus"></i></button>
+            </div>
+          </div>
+          <div class="result-toggles">
+            <div class="checkbox-group">
+              <input type="checkbox" id="toggle-crit" class="calc-input" checked>
+              <label for="toggle-crit">会心</label>
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" id="toggle-pierce" class="calc-input" checked>
+              <label for="toggle-pierce">貫通</label>
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" id="toggle-synergy" class="calc-input" checked>
+              <label for="toggle-synergy">協心</label>
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" id="toggle-kensan" class="calc-input" checked>
+              <label for="toggle-kensan">堅閃</label>
             </div>
           </div>
           <div id="damage-result" class="result-content">
