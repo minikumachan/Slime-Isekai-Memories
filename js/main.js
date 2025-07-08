@@ -93,10 +93,8 @@ const skillPresetStructure = [
   { category: 'デバフ', type: 'text', id: 'enemy-synergy-resist-buff', label: '[敵]協心耐性バフ' },
   { category: 'デバフ', type: 'text', id: 'synergy-resist-debuff', label: '[敵]協心耐性デバフ' },
   { category: 'デバフ', type: 'text', id: 'enemy-kensan-resist-buff', label: '[敵]堅閃耐性バフ' },
-  { category: 'デバフ', type: 'text', id: 'kensan-resist-debuff', label: '[敵]堅閃耐性デバフ' },
-  // 真・属性解放
-  { category: '真・属性解放', type: 'text', id: 'true-release-weak-mult', label: '弱点時の倍率(例:1.3)' },
-  { category: '真・属性解放', type: 'text', id: 'true-release-super-weak-mult', label: '超弱点時の倍率(例:1.5)' }
+  { category: 'デバフ', type: 'text', id: 'kensan-resist-debuff', label: '[敵]堅閃耐性デバフ' }
+  // ★★★ 真・属性解放の項目をここから削除 ★★★
 ];
 
 
@@ -110,14 +108,14 @@ function renderSkillPresetEditor() {
     card.className = 'skill-preset-card';
     card.draggable = true;
     card.dataset.index = i;
-    const categories = { '状態異常': '', 'バフ': '', 'デバフ': '', '真・属性解放': '' };
+    // ★★★ カテゴリの定義を修正 ★★★
+    const categories = { '状態異常': '', 'バフ': '', 'デバフ': '' };
     skillPresetStructure.forEach(skill => {
       let inputHTML = '';
-      const value = skill.id.includes('true-release') ? (preset.multipliers?.[skill.id] || '') : (preset.buffs?.[skill.id] || '');
+      const value = preset.buffs?.[skill.id] || '';
       const hasValueClass = value ? ' has-value' : '';
       if (skill.type === 'text') {
-        const step = skill.id.includes('true-release') ? 'step="0.01"' : '';
-        inputHTML = `<div class="input-group"><input class="ef${hasValueClass}" type="number" ${step} id="skill-preset-${i}-${skill.id}" value="${value}"><label>${skill.label}</label><span class="focus_line"></span></div>`;
+        inputHTML = `<div class="input-group"><input class="ef${hasValueClass}" type="number" id="skill-preset-${i}-${skill.id}" value="${value}"><label>${skill.label}</label><span class="focus_line"></span></div>`;
       } else if (skill.type === 'state') {
         inputHTML = `<div class="checkbox-group"><input type="checkbox" id="skill-preset-${i}-${skill.id}" ${preset.states?.[skill.id] ? 'checked' : ''}><label for="skill-preset-${i}-${skill.id}">${skill.label}</label></div>`;
       }
@@ -147,17 +145,14 @@ function saveSkillPreset(slot, isNew = false) {
   if (isNew) {
     if (!name) { alert('新しいプリセットの名前を入力してください。'); nameInput.focus(); return; }
   }
-  const preset = { name: name || `スキルセット ${slot + 1}`, buffs: {}, states: {}, multipliers: {} };
+  // ★★★ multipliers を削除 ★★★
+  const preset = { name: name || `スキルセット ${slot + 1}`, buffs: {}, states: {} };
   skillPresetStructure.forEach(skill => {
     const inputId = `skill-preset-${sourceIndex}-${skill.id}`;
     if (skill.type === 'text') {
       const value = v(inputId);
       if (value) {
-        if (skill.id.includes('true-release')) {
-          preset.multipliers[skill.id] = value;
-        } else {
-          preset.buffs[skill.id] = value;
-        }
+        preset.buffs[skill.id] = value;
       }
     } else if (skill.type === 'state') {
       const checked = c(inputId);
@@ -192,12 +187,12 @@ function addNewSkillPresetCard() {
   const card = document.createElement('div');
   card.className = 'skill-preset-card';
   let contentHTML = '<div class="skill-preset-content">';
-  const categories = { '状態異常': '', 'バフ': '', 'デバフ': '', '真・属性解放': '' };
+  // ★★★ カテゴリの定義を修正 ★★★
+  const categories = { '状態異常': '', 'バフ': '', 'デバフ': '' };
   skillPresetStructure.forEach(skill => {
     let inputHTML = '';
     if (skill.type === 'text') {
-      const step = skill.id.includes('true-release') ? 'step="0.01"' : '';
-      inputHTML = `<div class="input-group"><input class="ef" type="number" ${step} id="skill-preset-new-${skill.id}"><label>${skill.label}</label><span class="focus_line"></span></div>`;
+      inputHTML = `<div class="input-group"><input class="ef" type="number" id="skill-preset-new-${skill.id}"><label>${skill.label}</label><span class="focus_line"></span></div>`;
     } else if (skill.type === 'state') {
       inputHTML = `<div class="checkbox-group"><input type="checkbox" id="skill-preset-new-${skill.id}"><label for="skill-preset-new-${skill.id}">${skill.label}</label></div>`;
     }
@@ -236,23 +231,16 @@ function applySkillPresets() {
     $(input).toggleClass('has-value', input.value.trim() !== '');
   });
   document.querySelectorAll('.calc-input[type="checkbox"]:disabled').forEach(cb => { cb.checked = false; cb.disabled = false; });
-  const baseBuffs = {}, baseStates = {}, baseMultipliers = {};
+  // ★★★ baseMultipliers を削除 ★★★
+  const baseBuffs = {}, baseStates = {};
   const savedSkillPresets = getStoredJSON(SKILL_PRESET_KEY);
   savedSkillPresets.forEach((preset, i) => {
     if (c(`activate-skill-preset-${i}`)) {
       Object.entries(preset.buffs || {}).forEach(([id, value]) => { baseBuffs[id] = (baseBuffs[id] || 0) + value; });
-      Object.entries(preset.multipliers || {}).forEach(([id, value]) => { baseMultipliers[id] = (baseMultipliers[id] || 0) + value; });
       Object.keys(preset.states || {}).forEach(id => { baseStates[id] = true; });
     }
   });
   Object.entries(baseBuffs).forEach(([id, value]) => {
-    const input = document.getElementById(id);
-    if (input) {
-      input.placeholder = value;
-      $(input).toggleClass('has-value', input.value.trim() !== '' || input.placeholder.trim() !== '');
-    }
-  });
-  Object.entries(baseMultipliers).forEach(([id, value]) => {
     const input = document.getElementById(id);
     if (input) {
       input.placeholder = value;
@@ -366,7 +354,6 @@ function calculateDamage() {
     const affinityWeaknessCoeff = (finalAffinityCorrect * (1 + affinityUpTotal * dragonAuraCorrect)) + (weakPointBuffTotal * dragonAuraCorrect) + ((weakPointResistDebuffTotal * debuffAmpCorrect) - weakPointResistBuffTotal);
     const targetResistDebuffTotal = isAoe ? aoeResistDebuffTotal : singleTargetResistDebuffTotal;
     const specialResistCoeff = (1 + (stunSpecialTotal + charmSpecialTotal) * dragonAuraCorrect) * (1 + targetResistDebuffTotal * debuffAmpCorrect);
-    // ★★★ damagePowerCoeff の計算式を修正 ★★★
     const damagePowerCoeff = (1 + pmDamageUpTotal * dragonAuraCorrect) * (1 + attrDamageUpTotal * dragonAuraCorrect);
     const ultimateCoeff = ultimateMagnification * (1 + ultimateBuffTotal + extremeUltimateBuffTotal) * (1 + ((ultimateResistDebuffTotal * debuffAmpCorrect) - ultimateResistBuffTotal));
 
