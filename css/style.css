@@ -1,5 +1,7 @@
+@charset "utf-8";
+
 /* Google Fonts, Font Awesome, lightbox */
-@import url("https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@300;400;500&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@300;400;500&display=swap');
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css");
 @import url(https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/css/lightbox.css);
 
@@ -38,8 +40,7 @@ body {
 }
 
 body {
-	font-family: "M PLUS 1", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",
-		"メイリオ", Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+	font-family: "M PLUS 1", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
 	font-weight: 300;
 	letter-spacing: 0.1rem;
 	line-height: 1.8;
@@ -137,6 +138,8 @@ footer {
 }
 
 @media screen and (min-width: 900px) {
+
+	/* ★★★ about.html以外のページにのみ適用されるように修正 ★★★ */
 	body:not(.about-page) header {
 		position: fixed;
 		left: 0;
@@ -249,7 +252,7 @@ ul.icons i {
 
 /* --- Section Backgrounds --- */
 .section::before {
-	content: "";
+	content: '';
 	position: fixed;
 	z-index: -1;
 	inset: 0;
@@ -265,7 +268,7 @@ ul.icons i {
 }
 
 #section1::before {
-	background-image: url("../images/section1.jpg");
+	background-image: url('../images/section1.jpg');
 }
 
 #section2 {
@@ -273,7 +276,7 @@ ul.icons i {
 }
 
 #section2::before {
-	background-image: url("../images/section2.jpg");
+	background-image: url('../images/section2.jpg');
 }
 
 #section3 {
@@ -281,7 +284,7 @@ ul.icons i {
 }
 
 #section3::before {
-	background-image: url("../images/section3.jpg");
+	background-image: url('../images/section3.jpg');
 }
 
 #section4 {
@@ -289,7 +292,7 @@ ul.icons i {
 }
 
 #section4::before {
-	background-image: url("../images/section4.jpg");
+	background-image: url('../images/section4.jpg');
 }
 
 #section5 {
@@ -297,7 +300,7 @@ ul.icons i {
 }
 
 #section5::before {
-	background-image: url("../images/section3.jpg");
+	background-image: url('../images/section3.jpg');
 }
 
 #section6 {
@@ -356,7 +359,7 @@ ul.icons i {
 	border: 0;
 	border-bottom: 1px solid #ffffff;
 	background-color: transparent;
-	color: #ffffff;
+	color: #FFFFFF;
 	outline: none;
 }
 
@@ -386,7 +389,7 @@ ul.icons i {
 
 .input-group .focus_line::before,
 .input-group .focus_line::after {
-	content: "";
+	content: '';
 	position: absolute;
 	bottom: 0;
 	width: 0;
@@ -424,11 +427,14 @@ ul.icons i {
 	margin-left: 4px;
 }
 
+/* ラッパー要素の調整 */
 .custom-select-wrapper {
 	position: relative;
 	user-select: none;
+	/* テキスト選択を無効化 */
 }
 
+/* 表示されるトリガー部分のスタイル */
 .custom-select-trigger {
 	position: relative;
 	display: flex;
@@ -464,6 +470,7 @@ ul.icons i {
 	transform: rotate(180deg);
 }
 
+/* 選択肢リストのコンテナ */
 .custom-options {
 	position: absolute;
 	top: 100%;
@@ -489,6 +496,7 @@ ul.icons i {
 	transform: translateY(0);
 }
 
+/* 個々の選択肢 */
 .custom-option {
 	padding: 10px 12px;
 	cursor: pointer;
@@ -505,6 +513,7 @@ ul.icons i {
 	background-color: rgba(84, 235, 249, 0.3);
 	font-weight: 500;
 }
+
 
 /* --- Blue Theme用のスタイル調整 --- */
 .blue-theme .custom-select-trigger {
@@ -549,6 +558,7 @@ ul.icons i {
 }
 
 .checkbox-group input[type="checkbox"] {
+	/* Hide the original checkbox */
 	opacity: 0;
 	width: 0;
 	height: 0;
@@ -559,12 +569,15 @@ ul.icons i {
 	position: relative;
 	cursor: pointer;
 	user-select: none;
+	/* Make space for the switch */
 	padding-left: 52px;
 	line-height: 22px;
+	/* Vertically align text with the switch */
 }
 
+/* The switch track */
 .checkbox-group label::before {
-	content: "";
+	content: '';
 	position: absolute;
 	left: 0;
 	top: 50%;
@@ -577,8 +590,9 @@ ul.icons i {
 	border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* The switch thumb */
 .checkbox-group label::after {
-	content: "";
+	content: '';
 	position: absolute;
 	left: 3px;
 	top: 50%;
@@ -590,21 +604,27 @@ ul.icons i {
 	transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
+/* Checked State */
 .checkbox-group input[type="checkbox"]:checked+label::before {
 	background-color: #9efaad;
+	/* Active color */
 	border-color: transparent;
 }
 
 .checkbox-group input[type="checkbox"]:checked+label::after {
 	transform: translate(20px, -50%);
+	/* Move the thumb */
 	background-color: #fff;
+	/* Thumb color when active */
 }
 
+/* Disabled state (used in skill presets) */
 .checkbox-group input[type="checkbox"]:disabled+label {
 	cursor: not-allowed;
 	opacity: 0.6;
 }
 
+/* Light Theme Adjustments */
 .light-theme .checkbox-group label::before {
 	background-color: #ccc;
 	border-color: #bbb;
@@ -623,6 +643,7 @@ ul.icons i {
 	background-color: #fff;
 }
 
+
 /* --- Result Panel Styles --- */
 .result-panel {
 	background: rgba(0, 0, 0, 0.2);
@@ -635,7 +656,7 @@ ul.icons i {
 }
 
 .result-content {
-	--result-scale: 1;
+	--result-scale: 1.0;
 	transition: all 0.3s ease;
 }
 
@@ -729,8 +750,7 @@ ul.icons i {
 	max-height: 0;
 	overflow: hidden;
 	opacity: 0;
-	transition: max-height 0.5s ease-in-out, opacity 0.4s ease-in,
-		padding-top 0.5s ease-in-out, padding-bottom 0.5s ease-in-out;
+	transition: max-height 0.5s ease-in-out, opacity 0.4s ease-in, padding-top 0.5s ease-in-out, padding-bottom 0.5s ease-in-out;
 	padding-top: 0;
 	padding-bottom: 0;
 }
@@ -970,9 +990,7 @@ ul.icons i {
 }
 
 .preset-card {
-	background: linear-gradient(145deg,
-			rgba(43, 84, 138, 0.2),
-			rgba(210, 44, 175, 0.1));
+	background: linear-gradient(145deg, rgba(43, 84, 138, 0.2), rgba(210, 44, 175, 0.1));
 	border: 1px solid rgba(255, 255, 255, 0.2);
 	border-radius: 6px;
 	padding: 0.75rem;
@@ -987,8 +1005,7 @@ ul.icons i {
 
 .preset-card:hover {
 	transform: translateY(-2px);
-	box-shadow: 0 4px 15px rgba(84, 235, 249, 0.2),
-		inset 0 0 10px rgba(84, 235, 249, 0.1);
+	box-shadow: 0 4px 15px rgba(84, 235, 249, 0.2), inset 0 0 10px rgba(84, 235, 249, 0.1);
 	border-color: rgba(84, 235, 249, 0.7);
 }
 
@@ -1045,14 +1062,12 @@ ul.icons i {
 
 .preset-btn.load-btn:hover {
 	border-color: #54ebf9;
-	box-shadow: inset 0 0 8px rgba(84, 235, 249, 0.3),
-		0 0 10px rgba(84, 235, 249, 0.3);
+	box-shadow: inset 0 0 8px rgba(84, 235, 249, 0.3), 0 0 10px rgba(84, 235, 249, 0.3);
 }
 
 .preset-btn.save-btn:hover {
 	border-color: #9efaad;
-	box-shadow: inset 0 0 8px rgba(158, 250, 173, 0.3),
-		0 0 10px rgba(158, 250, 173, 0.3);
+	box-shadow: inset 0 0 8px rgba(158, 250, 173, 0.3), 0 0 10px rgba(158, 250, 173, 0.3);
 }
 
 .preset-btn.delete-btn {
@@ -1245,6 +1260,7 @@ ul.icons i {
 	display: block;
 }
 
+
 /* --- Other Components --- */
 .pagetop a {
 	display: block;
@@ -1282,7 +1298,7 @@ ul.icons i {
 }
 
 .update-list {
-	list-style-type: "✓  ";
+	list-style-type: '✓  ';
 	padding-left: 1.2rem;
 }
 
@@ -1388,7 +1404,7 @@ ul.icons i {
 	}
 }
 
-/* --- about.html 専用スタイル --- */
+/* ★★★ about.html 専用スタイルを追加 ★★★ */
 .about-page header {
 	position: static;
 	width: 100%;
@@ -1410,35 +1426,6 @@ ul.icons i {
 
 .about-page #menubar nav a {
 	margin: 0.25rem;
-}
-
-/* --- 結果表示トグルのレイアウト --- */
-.result-toggles {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 15px;
-	padding: 0.75rem 1rem;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	background: rgba(0, 0, 0, 0.1);
-}
-
-/* --- 比較クリア時のアニメーション --- */
-@keyframes flash-uncheck {
-	0% {
-		background-color: rgba(255, 92, 92, 0);
-	}
-
-	50% {
-		background-color: rgba(255, 92, 92, 0.5);
-	}
-
-	100% {
-		background-color: rgba(255, 92, 92, 0);
-	}
-}
-
-.unchecking-animation label {
-	animation: flash-uncheck 0.5s ease-out;
 }
 
 /* --- Theme: Blue (Cool) --- */
@@ -1510,6 +1497,7 @@ ul.icons i {
 	background-color: #8cb8ff;
 }
 
+/* Blue Themeの調整 */
 .blue-theme .select-group select {
 	background: #1a233b;
 	color: #c0d0f0;
@@ -1608,4 +1596,34 @@ ul.icons i {
 .blue-theme.about-page header {
 	background: #202d4b;
 	border-bottom: 1px solid #30456f;
+}
+
+
+/* --- 比較クリア時のアニメーション --- */
+@keyframes flash-uncheck {
+	0% {
+		background-color: rgba(255, 92, 92, 0);
+	}
+
+	50% {
+		background-color: rgba(255, 92, 92, 0.5);
+	}
+
+	100% {
+		background-color: rgba(255, 92, 92, 0);
+	}
+}
+
+.unchecking-animation label {
+	animation: flash-uncheck 0.5s ease-out;
+}
+
+/* --- 結果表示トグルボタンのレイアウト --- */
+.result-toggles {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 15px;
+	padding: 0.75rem 1rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(0, 0, 0, 0.1);
 }
