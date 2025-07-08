@@ -313,6 +313,10 @@
                     id="pm-damage-up"><label>物魔ダメージ威力UP</label><span class="focus_line"></span></div>
                 <div class="input-group"><input class="ef calc-input" type="number"
                     id="attr-damage-up"><label>属性ダメージ威力UP</label><span class="focus_line"></span></div>
+                <div class="input-group"><input class="ef calc-input" type="number"
+                    id="pm-damage-resist-debuff"><label>物/魔ダメージ耐性ダウン</label><span class="focus_line"></span></div>
+                <div class="input-group"><input class="ef calc-input" type="number"
+                    id="attr-damage-resist-debuff"><label>属性ダメージ耐性ダウン</label><span class="focus_line"></span></div>
               </div>
             </div>
           </div>
@@ -482,7 +486,6 @@
             </div>
           </div>
         </div>
-
         <div class="result-panel">
           <div class="result-controls">
             <div id="data-preset-controls" class="preset-controls-container">
@@ -490,7 +493,6 @@
             </div>
             <div class="util-controls">
               <button id="open-compare-modal-btn" title="ダメージ比較設定"><i class="fas fa-balance-scale"></i></button>
-
               <button id="show-comparison-graph-btn" title="比較グラフ表示" style="display: none; background: #ff9800;"><i
                   class="fas fa-chart-pie"></i></button>
               <button id="show-graph-btn" title="グラフ表示"><i class="fas fa-chart-bar"></i></button>
@@ -526,6 +528,7 @@
           </div>
         </div>
       </div>
+
     </section>
 
     <section id="section4" class="section">
@@ -536,6 +539,8 @@
     <section id="section5" class="section">
       <h2>アップデート</h2>
       <dl class="new">
+        <dt>2025/07/09/02:21<span>ver 1.2.1 機能修正</span></dt>
+        <dd>属性、魔/物ダメージ耐性ダウンの項目を再度追加し直しました。</dd>
         <dt>2025/07/08/23:02<span>ver 1.2.0 機能更新・改善</span></dt>
         <dd>指定ダメージ比較機能を実装しました。
           <br>計算結果の表示を指定できる機能を実装しました。
