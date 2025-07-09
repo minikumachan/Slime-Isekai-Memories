@@ -569,6 +569,13 @@ function runCalculationEngine(inputData) {
   const stunSpecialTotal = p('stun-special-buff');
   const affinityUpTotal = p('affinity-up-buff');
   const weakPointBuffTotal = p('weak-point-buff') + p('weak-point-infinite-buff');
+  const pmDamageUpTotal = p('pm-damage-up');
+  const attrDamageUpTotal = p('attr-damage-up');
+  const pmDamageResistDebuffTotal = p('pm-damage-resist-debuff');
+  const attrDamageResistDebuffTotal = p('attr-damage-resist-debuff');
+  const totalPmDamageCoeff = (pmDamageUpTotal * dragonAuraCorrect) + (pmDamageResistDebuffTotal * debuffAmpCorrect);
+  const totalAttrDamageCoeff = (attrDamageUpTotal * dragonAuraCorrect) + (attrDamageResistDebuffTotal * debuffAmpCorrect);
+  const damagePowerCoeff = (1 + totalPmDamageCoeff) * (1 + totalAttrDamageCoeff);
   const critPowerTotal = p('crit-buff') + p('crit-ex-talent') + p('crit-special-stat') + p('crit-trait') + p('crit-divine-trait') + p('crit-divine-trait-support') + p('crit-engraved-seal');
   const piercePowerTotal = p('pierce-buff') + p('pierce-ex-talent') + p('pierce-special-stat') + p('pierce-trait') + p('pierce-divine-trait') + p('pierce-divine-trait-support') + p('pierce-engraved-seal');
   const synergyPowerTotal = p('synergy-buff') + p('synergy-ex-talent') + p('synergy-special-stat') + p('synergy-trait');
@@ -593,19 +600,6 @@ function runCalculationEngine(inputData) {
   const synergyResistDebuffTotal = p('synergy-resist-debuff') + p('synergy-resist-debuff-trait');
   const kensanResistDebuffTotal = p('kensan-resist-debuff') + p('kensan-resist-debuff-trait');
 
-  // ★★【計算式修正】ここから ★★
-  const pmDamageUpTotal = p('pm-damage-up');
-  const attrDamageUpTotal = p('attr-damage-up');
-  const pmDamageResistDebuffTotal = p('pm-damage-resist-debuff');
-  const attrDamageResistDebuffTotal = p('attr-damage-resist-debuff');
-
-  const damagePowerCoeff =
-    (1 + pmDamageUpTotal * dragonAuraCorrect) *
-    (1 + pmDamageResistDebuffTotal * debuffAmpCorrect) *
-    (1 + attrDamageUpTotal * dragonAuraCorrect) *
-    (1 + attrDamageResistDebuffTotal * debuffAmpCorrect);
-  // ★★【計算式修正】ここまで ★★
-
   // --- 計算開始 ---
   const displayAttack = baseAttack * (1 + attackBuffTotal * dragonAuraCorrect) * charmCorrect;
   const displayDefense = baseDefense * (1 + defenseBuffTotal);
@@ -617,7 +611,9 @@ function runCalculationEngine(inputData) {
   const kensanAddedAttack = (displayDefense * 0.4) * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect);
   const supportActualAttackSingle = baseSupportAttack * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect) * 0.4;
   const supportActualAttackAoe = baseSupportAttack * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect) * (1 + aoeAttackBuffTotal * dragonAuraCorrect) * 0.4;
-  const isAoe = (attackType === 'aoe'); const mainActualAttack = isAoe ? aoeActualAttack : baseActualAttack; const supportActualAttack = isAoe ? supportActualAttackAoe : supportActualAttackSingle;
+  const isAoe = (attackType === 'aoe');
+  const mainActualAttack = isAoe ? aoeActualAttack : baseActualAttack;
+  const supportActualAttack = isAoe ? supportActualAttackAoe : supportActualAttackSingle;
   const normalBaseDmg = (mainActualAttack * 2 - enemyActualDefense) * 0.2;
   const synergyBaseDmg = ((mainActualAttack + supportActualAttack) * 2 - enemyActualDefense) * 0.2;
   const kensanBaseDmg = ((mainActualAttack + kensanAddedAttack) * 2 - enemyActualDefense) * 0.2;
@@ -635,12 +631,32 @@ function runCalculationEngine(inputData) {
   const targetWeakness = s('target-weakness-type');
   if (targetWeakness === 'weak') { trueReleaseMultiplier = m('true-release-weak-mult'); } else if (targetWeakness === 'super-weak') { trueReleaseMultiplier = m('true-release-super-weak-mult'); }
   const commonCoeff = affinityWeaknessCoeff * specialResistCoeff;
-  function calculateFinalDamage(baseDmg) { return (baseDmg * damagePowerCoeff) * commonCoeff * trueReleaseMultiplier; }
+
+  function calculateFinalDamage(baseDmg) {
+    return (baseDmg * damagePowerCoeff) * commonCoeff * trueReleaseMultiplier;
+  }
+
   const skillBase = { normal: calculateFinalDamage(normalBaseDmg), synergy: calculateFinalDamage(synergyBaseDmg), kensan: calculateFinalDamage(kensanBaseDmg), synergyKensan: calculateFinalDamage(synergyKensanBaseDmg) };
   const ultimateBase = { normal: skillBase.normal * ultimateCoeff, synergy: skillBase.synergy * ultimateCoeff, kensan: skillBase.kensan * ultimateCoeff, synergyKensan: skillBase.synergyKensan * ultimateCoeff };
-  function applyEffects(damage, hasSynergy, hasKensan) { let finalDmg = damage; if (hasSynergy) finalDmg *= synergyTTL; if (hasKensan) finalDmg *= kensanTTL; finalDmg *= (1 + soulBuffTotal); return finalDmg > 0 ? finalDmg : 0; }
+
+  // ★★【変更点】applyEffectsから魔創魂バフの乗算を削除 ★★
+  function applyEffects(damage, hasSynergy, hasKensan) {
+    let finalDmg = damage;
+    if (hasSynergy) finalDmg *= synergyTTL;
+    if (hasKensan) finalDmg *= kensanTTL;
+    // finalDmg *= (1 + soulBuffTotal); <-- この行を削除
+    return finalDmg > 0 ? finalDmg : 0;
+  }
+
   const skillFinal = { normal: applyEffects(skillBase.normal, false, false), synergy: applyEffects(skillBase.synergy, true, false), kensan: applyEffects(skillBase.kensan, false, true), synergyKensan: applyEffects(skillBase.synergyKensan, true, true) };
   const ultimateFinal = { normal: applyEffects(ultimateBase.normal, false, false), synergy: applyEffects(ultimateBase.synergy, true, false), kensan: applyEffects(ultimateBase.kensan, false, true), synergyKensan: applyEffects(ultimateBase.synergyKensan, true, true) };
+
+  // ★★【変更点】通常攻撃(スキル)にのみ、魔創魂バフを乗算する ★★
+  const soulMultiplier = 1 + soulBuffTotal;
+  Object.keys(skillFinal).forEach(key => {
+    skillFinal[key] *= soulMultiplier;
+  });
+
   return { displayAttack, mainActualAttack, enemyActualDefense, isAoe, skillFinal, ultimateFinal, critTTL, pierceTTL, critRate: p('crit-rate'), pierceRate: p('pierce-rate') };
 }
 
