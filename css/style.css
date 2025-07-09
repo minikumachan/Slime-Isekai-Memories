@@ -1,7 +1,5 @@
-@charset "utf-8";
-
 /* Google Fonts, Font Awesome, lightbox */
-@import url('https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@300;400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@300;400;500&display=swap");
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css");
 @import url(https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/css/lightbox.css);
 
@@ -138,8 +136,6 @@ footer {
 }
 
 @media screen and (min-width: 900px) {
-
-	/* ★★★ about.html以外のページにのみ適用されるように修正 ★★★ */
 	body:not(.about-page) header {
 		position: fixed;
 		left: 0;
@@ -252,7 +248,7 @@ ul.icons i {
 
 /* --- Section Backgrounds --- */
 .section::before {
-	content: '';
+	content: "";
 	position: fixed;
 	z-index: -1;
 	inset: 0;
@@ -268,7 +264,7 @@ ul.icons i {
 }
 
 #section1::before {
-	background-image: url('../images/section1.jpg');
+	background-image: url("../images/section1.jpg");
 }
 
 #section2 {
@@ -276,7 +272,7 @@ ul.icons i {
 }
 
 #section2::before {
-	background-image: url('../images/section2.jpg');
+	background-image: url("../images/section2.jpg");
 }
 
 #section3 {
@@ -284,7 +280,7 @@ ul.icons i {
 }
 
 #section3::before {
-	background-image: url('../images/section3.jpg');
+	background-image: url("../images/section3.jpg");
 }
 
 #section4 {
@@ -292,7 +288,7 @@ ul.icons i {
 }
 
 #section4::before {
-	background-image: url('../images/section4.jpg');
+	background-image: url("../images/section4.jpg");
 }
 
 #section5 {
@@ -300,7 +296,7 @@ ul.icons i {
 }
 
 #section5::before {
-	background-image: url('../images/section3.jpg');
+	background-image: url("../images/section3.jpg");
 }
 
 #section6 {
@@ -318,10 +314,6 @@ ul.icons i {
 	.calculator-wrapper {
 		grid-template-columns: 2fr 1fr;
 	}
-}
-
-.input-panel {
-	/* overflow-y: auto; */
 }
 
 .form-section {
@@ -359,7 +351,7 @@ ul.icons i {
 	border: 0;
 	border-bottom: 1px solid #ffffff;
 	background-color: transparent;
-	color: #FFFFFF;
+	color: #ffffff;
 	outline: none;
 }
 
@@ -389,7 +381,7 @@ ul.icons i {
 
 .input-group .focus_line::before,
 .input-group .focus_line::after {
-	content: '';
+	content: "";
 	position: absolute;
 	bottom: 0;
 	width: 0;
@@ -415,7 +407,7 @@ ul.icons i {
 	align-items: center;
 }
 
-/* --- Custom Select (Dropdown) --- */
+/* --- Custom Select & Toggle Switch --- */
 .select-group {
 	display: flex;
 	flex-direction: column;
@@ -427,14 +419,11 @@ ul.icons i {
 	margin-left: 4px;
 }
 
-/* ラッパー要素の調整 */
 .custom-select-wrapper {
 	position: relative;
 	user-select: none;
-	/* テキスト選択を無効化 */
 }
 
-/* 表示されるトリガー部分のスタイル */
 .custom-select-trigger {
 	position: relative;
 	display: flex;
@@ -470,7 +459,6 @@ ul.icons i {
 	transform: rotate(180deg);
 }
 
-/* 選択肢リストのコンテナ */
 .custom-options {
 	position: absolute;
 	top: 100%;
@@ -496,7 +484,6 @@ ul.icons i {
 	transform: translateY(0);
 }
 
-/* 個々の選択肢 */
 .custom-option {
 	padding: 10px 12px;
 	cursor: pointer;
@@ -514,42 +501,6 @@ ul.icons i {
 	font-weight: 500;
 }
 
-
-/* --- Blue Theme用のスタイル調整 --- */
-.blue-theme .custom-select-trigger {
-	background: #1a233b;
-	color: #c0d0f0;
-	border-color: #4a6b9c;
-}
-
-.blue-theme .custom-select-trigger:hover {
-	border-color: #3d8bff;
-}
-
-.blue-theme .custom-select.open .custom-select-trigger {
-	border-color: #8cb8ff;
-	box-shadow: 0 0 5px rgba(140, 184, 255, 0.5);
-}
-
-.blue-theme .custom-options {
-	background: #1a233b;
-	border-color: #8cb8ff;
-}
-
-.blue-theme .custom-option {
-	color: #c0d0f0;
-}
-
-.blue-theme .custom-option:hover {
-	background-color: #3d8bff;
-	color: #fff;
-}
-
-.blue-theme .custom-option.selected {
-	background-color: rgba(61, 139, 255, 0.3);
-}
-
-/* --- Custom Toggle Switch --- */
 .checkbox-group {
 	display: flex;
 	align-items: center;
@@ -558,7 +509,6 @@ ul.icons i {
 }
 
 .checkbox-group input[type="checkbox"] {
-	/* Hide the original checkbox */
 	opacity: 0;
 	width: 0;
 	height: 0;
@@ -569,15 +519,12 @@ ul.icons i {
 	position: relative;
 	cursor: pointer;
 	user-select: none;
-	/* Make space for the switch */
 	padding-left: 52px;
 	line-height: 22px;
-	/* Vertically align text with the switch */
 }
 
-/* The switch track */
 .checkbox-group label::before {
-	content: '';
+	content: "";
 	position: absolute;
 	left: 0;
 	top: 50%;
@@ -590,9 +537,8 @@ ul.icons i {
 	border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* The switch thumb */
 .checkbox-group label::after {
-	content: '';
+	content: "";
 	position: absolute;
 	left: 3px;
 	top: 50%;
@@ -604,47 +550,22 @@ ul.icons i {
 	transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-/* Checked State */
 .checkbox-group input[type="checkbox"]:checked+label::before {
 	background-color: #9efaad;
-	/* Active color */
 	border-color: transparent;
 }
 
 .checkbox-group input[type="checkbox"]:checked+label::after {
 	transform: translate(20px, -50%);
-	/* Move the thumb */
 	background-color: #fff;
-	/* Thumb color when active */
 }
 
-/* Disabled state (used in skill presets) */
 .checkbox-group input[type="checkbox"]:disabled+label {
 	cursor: not-allowed;
 	opacity: 0.6;
 }
 
-/* Light Theme Adjustments */
-.light-theme .checkbox-group label::before {
-	background-color: #ccc;
-	border-color: #bbb;
-}
-
-.light-theme .checkbox-group label::after {
-	background-color: #f8f9fa;
-}
-
-.light-theme .checkbox-group input[type="checkbox"]:checked+label::before {
-	background-color: #28a745;
-	border-color: #28a745;
-}
-
-.light-theme .checkbox-group input[type="checkbox"]:checked+label::after {
-	background-color: #fff;
-}
-
-
-/* --- Result Panel Styles --- */
+/* --- Result Panel & Accordions --- */
 .result-panel {
 	background: rgba(0, 0, 0, 0.2);
 	border-radius: 8px;
@@ -656,7 +577,7 @@ ul.icons i {
 }
 
 .result-content {
-	--result-scale: 1.0;
+	--result-scale: 1;
 	transition: all 0.3s ease;
 }
 
@@ -688,17 +609,14 @@ ul.icons i {
 
 .result-content-collapsible {
 	overflow: hidden;
-	transition: max-height 0.5s ease-in-out, opacity 0.4s ease-in;
 }
 
 .result-header.is-open+.result-content-collapsible {
-	max-height: 2000px;
-	opacity: 1;
+	display: block;
 }
 
 .result-header:not(.is-open)+.result-content-collapsible {
-	max-height: 0;
-	opacity: 0;
+	display: none;
 }
 
 .result-header.is-open .fa-chevron-down {
@@ -734,7 +652,6 @@ ul.icons i {
 	font-weight: bold;
 }
 
-/* --- Accordion UI --- */
 .collapsible-header {
 	cursor: pointer;
 }
@@ -774,7 +691,7 @@ ul.icons i {
 	padding: 0;
 }
 
-/* --- Skill Preset Editor --- */
+/* --- Skill Preset & Data Preset --- */
 .skill-preset-wrapper {
 	background: rgba(0, 0, 0, 0.2);
 	border: 1px solid rgba(255, 255, 255, 0.2);
@@ -838,10 +755,6 @@ ul.icons i {
 	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
-}
-
-.skill-preset-card.dragging {
-	opacity: 0.4;
 }
 
 .skill-preset-card h4 {
@@ -950,7 +863,6 @@ ul.icons i {
 	border-color: #9efaad;
 }
 
-/* --- Data Preset & Util Controls --- */
 .result-controls {
 	display: flex;
 	flex-direction: column;
@@ -1007,18 +919,6 @@ ul.icons i {
 	transform: translateY(-2px);
 	box-shadow: 0 4px 15px rgba(84, 235, 249, 0.2), inset 0 0 10px rgba(84, 235, 249, 0.1);
 	border-color: rgba(84, 235, 249, 0.7);
-}
-
-.preset-card.dragging {
-	opacity: 0.4;
-}
-
-.preset-card.drag-over-left {
-	border-left: 2px solid #9efaad;
-}
-
-.preset-card.drag-over-right {
-	border-right: 2px solid #9efaad;
 }
 
 .preset-name {
@@ -1102,6 +1002,7 @@ ul.icons i {
 	border-color: rgba(158, 250, 173, 0.7);
 }
 
+/* --- Util Controls --- */
 .util-controls {
 	display: flex;
 	gap: 0.5rem;
@@ -1168,19 +1069,6 @@ ul.icons i {
 }
 
 /* --- Graph & Tooltip --- */
-.graph-container {
-	margin-top: 1.5rem;
-	padding-top: 1.5rem;
-	border-top: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.graph {
-	width: 100%;
-	display: grid;
-	gap: 1rem;
-	margin-top: 1rem;
-}
-
 .graph-item {
 	display: flex;
 	align-items: center;
@@ -1188,13 +1076,12 @@ ul.icons i {
 }
 
 .graph-label {
-	width: 100px;
+	width: 160px;
 	flex-shrink: 0;
 	font-size: 0.9em;
 	text-align: right;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	line-height: 1.4;
+	word-break: break-all;
 }
 
 .graph-bar-container {
@@ -1205,9 +1092,8 @@ ul.icons i {
 
 .graph-bar {
 	height: 20px;
-	background: linear-gradient(90deg, #54ebf9, #9efaad);
 	border-radius: 4px;
-	transition: width 0.5s ease-out;
+	transition: width 0.5s ease-out, background 0.5s ease-out;
 	text-align: right;
 	padding-right: 5px;
 	color: #000;
@@ -1217,25 +1103,12 @@ ul.icons i {
 	white-space: nowrap;
 }
 
-.light-theme .graph-bar {
-	background: linear-gradient(90deg, #007bff, #28a745);
-	color: #fff;
-}
-
-.light-theme .graph-bar-container {
-	background: #e9ecef;
-}
-
 .tooltip-icon {
 	font-size: 0.8em;
 	color: rgba(255, 255, 255, 0.5);
 	cursor: pointer;
 	margin-left: 0.5em;
 	position: relative;
-}
-
-.light-theme .tooltip-icon {
-	color: rgba(0, 0, 0, 0.4);
 }
 
 .tooltip-box {
@@ -1260,7 +1133,6 @@ ul.icons i {
 	display: block;
 }
 
-
 /* --- Other Components --- */
 .pagetop a {
 	display: block;
@@ -1274,32 +1146,6 @@ ul.icons i {
 	font-size: 1.5rem;
 	text-align: center;
 	border-radius: 50%;
-}
-
-.new dt {
-	margin-bottom: 0.5rem;
-}
-
-.new dd {
-	padding-left: 1rem;
-	margin-bottom: 1.5rem;
-	border-left: 2px solid #9efaad;
-}
-
-.new dt span {
-	display: inline-block;
-	text-align: center;
-	line-height: 1.8;
-	border-radius: 3px;
-	padding: 0 0.5rem;
-	margin-left: 0.5rem;
-	background: rgba(255, 255, 255, 0.8);
-	color: #333;
-}
-
-.update-list {
-	list-style-type: '✓  ';
-	padding-left: 1.2rem;
 }
 
 .info-box {
@@ -1404,7 +1250,7 @@ ul.icons i {
 	}
 }
 
-/* ★★★ about.html 専用スタイルを追加 ★★★ */
+/* --- about.html 専用スタイル --- */
 .about-page header {
 	position: static;
 	width: 100%;
@@ -1428,176 +1274,15 @@ ul.icons i {
 	margin: 0.25rem;
 }
 
-/* --- Theme: Blue (Cool) --- */
-.blue-theme {
-	background: #1a233b;
-	color: #c0d0f0;
+/* --- 結果表示トグルのレイアウト --- */
+.result-toggles {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 15px;
+	padding: 0.75rem 1rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(0, 0, 0, 0.1);
 }
-
-.blue-theme a {
-	color: #3d8bff;
-}
-
-.blue-theme header #logo,
-.blue-theme #menubar nav a {
-	background: #202d4b;
-	color: #c0d0f0;
-	border-color: #30456f;
-}
-
-.blue-theme #menubar nav a:hover {
-	background: #2a62c8;
-}
-
-.blue-theme #menubar_hdr {
-	background: #202d4b;
-}
-
-.blue-theme #menubar_hdr span {
-	border-top-color: #c0d0f0;
-}
-
-.blue-theme section {
-	color: #c0d0f0;
-}
-
-.blue-theme #section2,
-.blue-theme #section3,
-.blue-theme #section4,
-.blue-theme #section5,
-.blue-theme #section6 {
-	background-color: rgba(32, 45, 75, 0.9);
-	/* #202d4b */
-}
-
-.blue-theme .form-section,
-.blue-theme .skill-preset-wrapper,
-.blue-theme .skill-preset-card {
-	background: #202d4b;
-	border-color: #30456f;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.blue-theme .input-group .ef {
-	color: #c0d0f0;
-	border-bottom-color: #4a6b9c;
-}
-
-.blue-theme .input-group label {
-	color: #88a2d0;
-}
-
-.blue-theme .input-group .ef:focus+label,
-.blue-theme .input-group .ef.has-value+label {
-	color: #8cb8ff;
-}
-
-.blue-theme .input-group .focus_line::before,
-.blue-theme .input-group .focus_line::after {
-	background-color: #8cb8ff;
-}
-
-/* Blue Themeの調整 */
-.blue-theme .select-group select {
-	background: #1a233b;
-	color: #c0d0f0;
-	border-color: #4a6b9c;
-}
-
-.blue-theme .select-group select:hover {
-	border-color: #3d8bff;
-}
-
-.blue-theme .select-group select:focus {
-	border-color: #8cb8ff;
-	box-shadow: 0 0 5px rgba(140, 184, 255, 0.5);
-}
-
-.blue-theme .select-group select option {
-	background: #1a233b;
-	color: #c0d0f0;
-}
-
-.blue-theme .select-group::after {
-	color: #c0d0f0;
-}
-
-.blue-theme .checkbox-group input[type="checkbox"]:checked+label::before {
-	background-color: #3d8bff;
-	border-color: #3d8bff;
-}
-
-.blue-theme .checkbox-group input[type="checkbox"]:checked+label::after {
-	background-color: #fff;
-}
-
-.blue-theme .result-panel {
-	background: #202d4b;
-}
-
-.blue-theme .result-content .result-type-header {
-	background: rgba(42, 98, 200, 0.2);
-}
-
-.blue-theme .result-content td {
-	border-bottom-color: #30456f;
-}
-
-.blue-theme .result-header,
-.blue-theme .form-section h3,
-.blue-theme .info-box h3 {
-	color: #8cb8ff;
-}
-
-.blue-theme .result-header {
-	border-bottom-color: #8cb8ff;
-}
-
-.blue-theme .result-content td:first-child {
-	color: #8cb8ff;
-}
-
-.blue-theme .preset-controls-container::-webkit-scrollbar-thumb {
-	background: #3d8bff;
-}
-
-.blue-theme .preset-card {
-	background: #202d4b;
-	border-color: #30456f;
-}
-
-.blue-theme .preset-name {
-	border-bottom-color: #30456f;
-}
-
-.blue-theme .new-preset-card {
-	background: transparent;
-	border-color: #4a6b9c;
-	color: #88a2d0;
-}
-
-.blue-theme .tooltip-icon {
-	color: rgba(192, 208, 240, 0.5);
-}
-
-.blue-theme .graph-bar {
-	background: linear-gradient(90deg, #3d8bff, #8cb8ff);
-	color: #fff;
-}
-
-.blue-theme .graph-bar-container {
-	background: rgba(0, 0, 0, 0.2);
-}
-
-.blue-theme .new dd {
-	border-left-color: #3d8bff;
-}
-
-.blue-theme.about-page header {
-	background: #202d4b;
-	border-bottom: 1px solid #30456f;
-}
-
 
 /* --- 比較クリア時のアニメーション --- */
 @keyframes flash-uncheck {
@@ -1618,12 +1303,153 @@ ul.icons i {
 	animation: flash-uncheck 0.5s ease-out;
 }
 
-/* --- 結果表示トグルボタンのレイアウト --- */
-.result-toggles {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 15px;
-	padding: 0.75rem 1rem;
+/* --- グラフポップアップ用のスタイル --- */
+.graph-modal-content h2 {
+	text-align: center;
+	color: #9efaad;
+	margin-bottom: 2rem;
+}
+
+.graph-modal-content .graph-category-title {
+	color: #9efaad;
+	margin-top: 2rem;
+	margin-bottom: 1rem;
+	padding-bottom: 0.5rem;
+	border-bottom: 1px solid rgba(158, 250, 173, 0.5);
+	font-size: 1.2rem;
+}
+
+.graph-modal-content .graph-category-title:first-of-type {
+	margin-top: 0;
+}
+
+.graph-modal-content .graph-group {
+	margin-top: 1rem;
+	padding-bottom: 0.75rem;
+	margin-bottom: 0.75rem;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	background: rgba(0, 0, 0, 0.1);
+}
+
+.graph-modal-content .graph-group:last-child {
+	border-bottom: none;
+	margin-bottom: 0;
+}
+
+.collapsible-graph-header {
+	cursor: pointer;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	user-select: none;
+}
+
+.collapsible-graph-header i {
+	transition: transform 0.3s ease-in-out;
+	font-size: 0.9em;
+}
+
+.collapsible-graph-header.is-open i {
+	transform: rotate(180deg);
+}
+
+.collapsible-graph-content {
+	display: grid;
+	grid-template-rows: 0fr;
+	transition: grid-template-rows 0.4s ease-in-out;
+}
+
+.collapsible-graph-content.is-open {
+	grid-template-rows: 1fr;
+}
+
+.collapsible-graph-content .graph {
+	overflow: hidden;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+}
+
+.collapsible-graph-content.is-open .graph {
+	opacity: 1;
+	transition-delay: 0.15s;
+}
+
+.graph-top-summary {
+	text-align: center;
+	border: 1px solid rgba(191, 0, 255, 0.6);
+	background: linear-gradient(145deg, rgba(108, 0, 148, 0.1), rgba(108, 0, 148, 0.2));
+	padding: 1rem;
+	margin: -1rem 0 2rem 0;
+	border-radius: 8px;
+	box-shadow: 0 0 15px rgba(191, 0, 255, 0.2);
+}
+
+.graph-top-summary span {
+	font-size: 0.9rem;
+	color: #e0c8ff;
+	display: block;
+}
+
+.graph-top-summary .top-damage-label {
+	font-size: 1.2rem;
+	font-weight: 500;
+	margin: 0.25rem 0;
+	color: #fff;
+}
+
+.graph-top-summary .top-damage-value {
+	font-size: 1.6rem;
+	font-weight: 600;
+	color: #d8b9ff;
+	text-shadow: 0 0 8px rgba(191, 0, 255, 0.8);
+}
+
+/* --- アップデートセクションの改善スタイル --- */
+.update-header {
+	cursor: pointer;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: relative;
+}
+
+.update-header i.fa-chevron-down {
+	transition: transform 0.3s ease-in-out;
+	font-size: 0.9em;
+}
+
+.update-header.is-open i.fa-chevron-down {
+	transform: rotate(180deg);
+}
+
+.update-content {
+	display: none;
+}
+
+.pagination-controls {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 1.5rem;
+	margin-top: 2rem;
+	user-select: none;
+}
+
+.pagination-controls button {
+	background: rgba(255, 255, 255, 0.2);
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	color: #fff;
+	padding: 0.5rem 1rem;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+	background: #9efaad;
+	color: #1a233b;
+}
+
+.pagination-controls button:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
 }
