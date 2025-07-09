@@ -5,8 +5,10 @@
   <meta charset="UTF-8">
   <title>使い方ガイド - まおりゅうダメージ計算機</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@300;400;500&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body class="about-page">
@@ -25,14 +27,22 @@
   </header>
 
   <main>
-    <section id="about-main" class="section">
+    <section id="about-main" class="section active">
       <h2>使い方ガイド</h2>
       <p>「まおりゅうダメージ計算機」の各機能の使い方を解説します。</p>
 
       <div class="info-box">
+        <h3><i class="fas fa-sign-in-alt"></i> 新機能：アカウントログイン</h3>
+        <p>
+          Googleアカウントでログインできるようになりました。ログインすると、作成した<strong>データプリセットやスキルプリセットが自動でクラウドに保存</strong>され、異なる端末（PCやスマートフォンなど）からでも同じ設定を呼び出して利用できます。
+        </p>
+        <p>※ログイン中は、従来の「インポート/エクスポート」「共有URL」機能は無効になります。</p>
+      </div>
+
+      <div class="info-box">
         <h3><i class="fas fa-calculator"></i> 1. 基本的なダメージ計算</h3>
         <p>サイト左側の入力パネルに、キャラクターのステータスや使用するバフ・デバフの数値を入力します。数値はパーセンテージ（%）で入力してください（例: 30%バフなら「30」と入力）。</p>
-        <p>入力するたびに、結果表示パネルのダメージが**リアルタイムで自動更新**されます。</p>
+        <p>入力するたびに、結果表示パネルのダメージが**リアルタイムで自動更新**されます。ログイン中は、この入力状態もクラウドに保存されます。</p>
       </div>
 
       <div class="info-box">
@@ -108,6 +118,9 @@
   </footer>
 
   <div class="pagetop"><a href="#"><i class="fas fa-angle-double-up"></i></a></div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="js/main.js" defer></script>
 
 </body>
 
