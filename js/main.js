@@ -540,40 +540,73 @@ function runCalculationEngine(inputData) {
   const m = id => { const val = inputData[id]; return isNaN(val) || val <= 0 ? 1.0 : val; };
   const c = id => inputData[id] || false;
   const s = id => inputData[id] || '';
-  const baseAttack = v('base-attack-power'); const baseDefense = v('base-defense-power'); const enemyBaseDefense = v('enemy-defense-power'); const baseSupportAttack = v('support-attack-power');
-  const ultimateMagnification = p('ultimate-magnification'); const dragonAuraCorrect = c('is-dragon-aura') ? 1.2 : 1; const charmCorrect = c('is-charmed') ? 0.95 : 1;
-  const attackType = s('ultimate-type'); let affinityCorrect = 1.0;
+
+  // --- 各種変数の取得 ---
+  const baseAttack = v('base-attack-power');
+  const baseDefense = v('base-defense-power');
+  const enemyBaseDefense = v('enemy-defense-power');
+  const baseSupportAttack = v('support-attack-power');
+  const ultimateMagnification = p('ultimate-magnification');
+  const dragonAuraCorrect = c('is-dragon-aura') ? 1.2 : 1;
+  const charmCorrect = c('is-charmed') ? 0.95 : 1;
+  const attackType = s('ultimate-type');
+  let affinityCorrect = 1.0;
   if (s('affinity') === 'favorable' || s('affinity') === 'eiketsu') affinityCorrect = 1.5;
   if (s('affinity') === 'unfavorable') affinityCorrect = 0.7;
   let debuffAmpCorrect = 1.0;
-  if (c('is-frostbite')) debuffAmpCorrect += 0.3; if (c('is-dominated')) debuffAmpCorrect += 0.3; if (c('is-tremor')) debuffAmpCorrect += 0.4;
+  if (c('is-frostbite')) debuffAmpCorrect += 0.3;
+  if (c('is-dominated')) debuffAmpCorrect += 0.3;
+  if (c('is-tremor')) debuffAmpCorrect += 0.4;
   const attackBuffTotal = p('attack-buff') + p('attack-buff-trait') + p('attack-buff-cumulative') + p('attack-buff-faction') + p('attack-buff-faction-support') + p('attack-buff-divine-lead') + p('attack-buff-divine-lead-support') + p('attack-buff-divine-trait') + p('attack-buff-divine-trait-support');
   const defenseBuffTotal = p('defense-buff') + p('defense-trait') + p('defense-special-stat') + p('defense-ex-talent') + p('defense-engraved-seal') + p('defense-divine-lead') + p('defense-divine-lead-support') + p('defense-divine-trait') + p('defense-divine-trait-support');
   const selfAttrBuffTotal = p('all-attr-buff') + p('attr-buff') + p('attr-buff-cumulative') + p('attr-buff-divine-lead') + p('attr-buff-divine-lead-support');
   const selfPmBuffTotal = p('pm-buff') + p('pm-buff-cumulative') + p('pm-buff-divine-lead') + p('pm-buff-divine-lead-support') + p('pm-buff-divine-trait') + p('pm-buff-divine-trait-support');
-  const aoeAttackBuffTotal = p('aoe-attack-buff') + p('aoe-attack-buff-cumulative'); const ultimateBuffTotal = p('ultimate-buff') + p('ultimate-buff-cumulative'); const extremeUltimateBuffTotal = p('extreme-ultimate-buff');
-  const soulBuffTotal = p('soul-buff'); const charmSpecialTotal = p('charm-special-buff'); const stunSpecialTotal = p('stun-special-buff'); const affinityUpTotal = p('affinity-up-buff');
+  const aoeAttackBuffTotal = p('aoe-attack-buff') + p('aoe-attack-buff-cumulative');
+  const ultimateBuffTotal = p('ultimate-buff') + p('ultimate-buff-cumulative');
+  const extremeUltimateBuffTotal = p('extreme-ultimate-buff');
+  const soulBuffTotal = p('soul-buff');
+  const charmSpecialTotal = p('charm-special-buff');
+  const stunSpecialTotal = p('stun-special-buff');
+  const affinityUpTotal = p('affinity-up-buff');
   const weakPointBuffTotal = p('weak-point-buff') + p('weak-point-infinite-buff');
-  const pmDamageUpTotal = p('pm-damage-up');
-  const attrDamageUpTotal = p('attr-damage-up');
-  const pmDamageResistDebuffTotal = p('pm-damage-resist-debuff');
-  const attrDamageResistDebuffTotal = p('attr-damage-resist-debuff');
-  const totalPmDamageCoeff = (pmDamageUpTotal * dragonAuraCorrect) + (pmDamageResistDebuffTotal * debuffAmpCorrect);
-  const totalAttrDamageCoeff = (attrDamageUpTotal * dragonAuraCorrect) + (attrDamageResistDebuffTotal * debuffAmpCorrect);
-  const damagePowerCoeff = (1 + totalPmDamageCoeff) * (1 + totalAttrDamageCoeff);
   const critPowerTotal = p('crit-buff') + p('crit-ex-talent') + p('crit-special-stat') + p('crit-trait') + p('crit-divine-trait') + p('crit-divine-trait-support') + p('crit-engraved-seal');
   const piercePowerTotal = p('pierce-buff') + p('pierce-ex-talent') + p('pierce-special-stat') + p('pierce-trait') + p('pierce-divine-trait') + p('pierce-divine-trait-support') + p('pierce-engraved-seal');
   const synergyPowerTotal = p('synergy-buff') + p('synergy-ex-talent') + p('synergy-special-stat') + p('synergy-trait');
   const kensanPowerTotal = p('kensan-buff') + p('kensan-ex-talent') + p('kensan-special-stat') + p('kensan-trait');
-  const enemyAttrResistBuffTotal = p('enemy-all-attr-resist-buff') + p('enemy-attr-resist-buff'); const enemyPmResistBuffTotal = p('enemy-pm-resist-buff');
-  const critResistBuffTotal = p('enemy-crit-resist-buff'); const pierceResistBuffTotal = p('enemy-pierce-resist-buff'); const synergyResistBuffTotal = p('enemy-synergy-resist-buff'); const kensanResistBuffTotal = p('enemy-kensan-resist-buff');
-  const ultimateResistBuffTotal = p('enemy-ultimate-resist-buff'); const weakPointResistBuffTotal = p('enemy-weak-point-resist-buff');
-  const defenseDebuffTotal = p('defense-debuff') + p('defense-debuff-divine-trait'); const enemyAttrResistDebuffTotal = p('enemy-all-attr-resist-debuff') + p('attr-resist-debuff');
-  const enemyPmResistDebuffTotal = p('pm-resist-debuff'); const singleTargetResistDebuffTotal = p('single-target-resist-debuff'); const aoeResistDebuffTotal = p('aoe-resist-debuff');
-  const ultimateResistDebuffTotal = p('ultimate-resist-debuff'); const weakPointResistDebuffTotal = p('weak-point-resist-debuff');
+  const enemyAttrResistBuffTotal = p('enemy-all-attr-resist-buff') + p('enemy-attr-resist-buff');
+  const enemyPmResistBuffTotal = p('enemy-pm-resist-buff');
+  const critResistBuffTotal = p('enemy-crit-resist-buff');
+  const pierceResistBuffTotal = p('enemy-pierce-resist-buff');
+  const synergyResistBuffTotal = p('enemy-synergy-resist-buff');
+  const kensanResistBuffTotal = p('enemy-kensan-resist-buff');
+  const ultimateResistBuffTotal = p('enemy-ultimate-resist-buff');
+  const weakPointResistBuffTotal = p('enemy-weak-point-resist-buff');
+  const defenseDebuffTotal = p('defense-debuff') + p('defense-debuff-divine-trait');
+  const enemyAttrResistDebuffTotal = p('enemy-all-attr-resist-debuff') + p('attr-resist-debuff');
+  const enemyPmResistDebuffTotal = p('pm-resist-debuff');
+  const singleTargetResistDebuffTotal = p('single-target-resist-debuff');
+  const aoeResistDebuffTotal = p('aoe-resist-debuff');
+  const ultimateResistDebuffTotal = p('ultimate-resist-debuff');
+  const weakPointResistDebuffTotal = p('weak-point-resist-debuff');
   const critResistDebuffTotal = p('crit-resist-debuff') + p('crit-resist-debuff-trait') + p('crit-resist-debuff-divine-trait');
   const pierceResistDebuffTotal = p('pierce-resist-debuff') + p('pierce-resist-debuff-trait') + p('pierce-resist-debuff-divine-trait');
-  const synergyResistDebuffTotal = p('synergy-resist-debuff') + p('synergy-resist-debuff-trait'); const kensanResistDebuffTotal = p('kensan-resist-debuff') + p('kensan-resist-debuff-trait');
+  const synergyResistDebuffTotal = p('synergy-resist-debuff') + p('synergy-resist-debuff-trait');
+  const kensanResistDebuffTotal = p('kensan-resist-debuff') + p('kensan-resist-debuff-trait');
+
+  // ★★【計算式修正】ここから ★★
+  const pmDamageUpTotal = p('pm-damage-up');
+  const attrDamageUpTotal = p('attr-damage-up');
+  const pmDamageResistDebuffTotal = p('pm-damage-resist-debuff');
+  const attrDamageResistDebuffTotal = p('attr-damage-resist-debuff');
+
+  const damagePowerCoeff =
+    (1 + pmDamageUpTotal * dragonAuraCorrect) *
+    (1 + pmDamageResistDebuffTotal * debuffAmpCorrect) *
+    (1 + attrDamageUpTotal * dragonAuraCorrect) *
+    (1 + attrDamageResistDebuffTotal * debuffAmpCorrect);
+  // ★★【計算式修正】ここまで ★★
+
+  // --- 計算開始 ---
   const displayAttack = baseAttack * (1 + attackBuffTotal * dragonAuraCorrect) * charmCorrect;
   const displayDefense = baseDefense * (1 + defenseBuffTotal);
   const enemyPmResistCoeff = 1 + (enemyPmResistDebuffTotal * debuffAmpCorrect - enemyPmResistBuffTotal);
