@@ -1,9 +1,145 @@
-/* Google Fonts, Font Awesome, lightbox */
+/* ===============================================================
+   1. Theme Color Variables & Imports (高コントラスト版)
+=============================================================== */
 @import url("https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@300;400;500&display=swap");
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css");
 @import url(https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/css/lightbox.css);
 
-/* --- Keyframes --- */
+:root {
+	--main-bg: #3d3663;
+	--section-bg: rgba(65, 7, 119, 0.7);
+	--header-gradient-start: #9efaad;
+	--header-gradient-mid: #2b548a;
+	--header-gradient-end: #d22caf;
+	--accent-color-1: #54ebf9;
+	--accent-color-2: #a9dff9;
+	--accent-color-3: #9efaad;
+	--text-color: #fff;
+	--link-button-bg: #d30c44;
+	--link-button-hover-bg: #ff3c70;
+	--card-bg: rgba(0, 0, 0, 0.2);
+	--card-border: rgba(255, 255, 255, 0.2);
+}
+
+body.gemini-pink-theme {
+	--main-bg: #2a2139;
+	/* 深い宇宙のようなダークパープル */
+	--section-bg: rgba(42, 33, 57, 0.9);
+	--header-gradient-start: #ff75c3;
+	/* ネオンピンク */
+	--header-gradient-mid: #a259ff;
+	/* バイオレット */
+	--header-gradient-end: #65d6ff;
+	/* サイバーな水色 */
+	--accent-color-1: #f92672;
+	/* 鮮やかなショッキングピンク */
+	--accent-color-2: #ae81ff;
+	/* ラベンダー・パープル */
+	--accent-color-3: #66d9ef;
+	/* 明るいシアン */
+	--text-color: #f8f8f2;
+	/* 可読性の高いオフホワイト */
+	--link-button-bg: #f92672;
+	--link-button-hover-bg: #ff478a;
+	--card-bg: rgba(255, 255, 255, 0.05);
+	--card-border: rgba(249, 38, 114, 0.3);
+}
+
+body.blue-theme {
+	--main-bg: #0d1b2a;
+	--section-bg: rgba(23, 42, 69, 0.8);
+	--header-gradient-start: #778da9;
+	--header-gradient-mid: #415a77;
+	--header-gradient-end: #1b263b;
+	--accent-color-1: #80ffdb;
+	--accent-color-2: #64dfdf;
+	--accent-color-3: #48bfe3;
+	--text-color: #e0e1dd;
+	--link-button-bg: #415a77;
+	--link-button-hover-bg: #577399;
+}
+
+body.purple-theme {
+	--main-bg: #1a0b2e;
+	--section-bg: rgba(43, 21, 71, 0.7);
+	--header-gradient-start: #c77dff;
+	--header-gradient-mid: #9d4edd;
+	--header-gradient-end: #7b2cbf;
+	--accent-color-1: #e0aaff;
+	--accent-color-2: #c77dff;
+	--accent-color-3: #9d4edd;
+	--text-color: #f7f2ff;
+	--link-button-bg: #7b2cbf;
+	--link-button-hover-bg: #9346d9;
+}
+
+body.green-theme {
+	--main-bg: #082d22;
+	--section-bg: rgba(14, 71, 52, 0.7);
+	--header-gradient-start: #a9e5bb;
+	--header-gradient-mid: #55a683;
+	--header-gradient-end: #3b8660;
+	--accent-color-1: #95d5b2;
+	--accent-color-2: #b7e4c7;
+	--accent-color-3: #d8f3dc;
+	--text-color: #f0fdf4;
+	--link-button-bg: #40916c;
+	--link-button-hover-bg: #52b788;
+}
+
+/* Gemini's Solar Flare - 新テーマ1 */
+body.gemini-solar-theme {
+	--main-bg: #1e1e1e;
+	/* 限りなく黒に近いチャコールグレー */
+	--section-bg: rgba(30, 30, 30, 0.9);
+	--header-gradient-start: #ffd37e;
+	/* ゴールド */
+	--header-gradient-mid: #ff8e47;
+	/* オレンジ */
+	--header-gradient-end: #fcc172;
+	/* 明るいゴールド */
+	--accent-color-1: #ffa726;
+	/* 鮮やかなオレンジ */
+	--accent-color-2: #ffca28;
+	/* アンバー（琥珀色） */
+	--accent-color-3: #ffd54f;
+	/* 明るいイエロー */
+	--text-color: #f5f5f5;
+	/* 読みやすいオフホワイト */
+	--link-button-bg: #ff8f00;
+	--link-button-hover-bg: #ffb300;
+	--card-bg: rgba(255, 255, 255, 0.03);
+	--card-border: rgba(255, 167, 38, 0.3);
+}
+
+/* Gemini's Deep Ocean - 新テーマ2 */
+body.gemini-oceanic-theme {
+	--main-bg: #002b36;
+	/* 深い海の青緑 */
+	--section-bg: rgba(0, 43, 54, 0.9);
+	--header-gradient-start: #2aa198;
+	/* エメラルドグリーン */
+	--header-gradient-mid: #268bd2;
+	/* 知的なブルー */
+	--header-gradient-end: #859900;
+	/* アクセントのオリーブ */
+	--accent-color-1: #2aa198;
+	/* エメラルド */
+	--accent-color-2: #839496;
+	/* グレイッシュなシアン */
+	--accent-color-3: #93a1a1;
+	/* 明るいグレー */
+	--text-color: #eee8d5;
+	/* クリーム色のテキスト */
+	--link-button-bg: #268bd2;
+	--link-button-hover-bg: #3a9fde;
+	--card-bg: rgba(255, 255, 255, 0.03);
+	--card-border: rgba(42, 161, 152, 0.3);
+}
+
+/* ===============================================================
+   2. Keyframes & Base Resets
+=============================================================== */
 @keyframes opa1 {
 	0% {
 		opacity: 0;
@@ -24,7 +160,18 @@
 	}
 }
 
-/* --- Base & Reset --- */
+@keyframes flash-uncheck {
+
+	0%,
+	100% {
+		background-color: rgba(255, 92, 92, 0);
+	}
+
+	50% {
+		background-color: rgba(255, 92, 92, 0.5);
+	}
+}
+
 *,
 *::before,
 *::after {
@@ -42,10 +189,11 @@ body {
 	font-weight: 300;
 	letter-spacing: 0.1rem;
 	line-height: 1.8;
-	background: #3d3663;
-	color: #fff;
+	background: var(--main-bg);
+	color: var(--text-color);
 	margin: 0;
 	-webkit-text-size-adjust: none;
+	transition: background 0.3s ease;
 }
 
 figure,
@@ -82,7 +230,7 @@ img {
 }
 
 a {
-	color: #fff;
+	color: var(--text-color);
 	text-decoration: none;
 	transition: 0.3s;
 }
@@ -91,18 +239,21 @@ a:hover {
 	opacity: 0.8;
 }
 
-/* --- Layout --- */
+
+/* ===============================================================
+   3. Layout & Structure
+=============================================================== */
 header {
 	width: 250px;
 	padding: 0 2vw;
-	margin-top: 5vw;
+	margin-top: 2vw;
 	text-align: center;
 	position: relative;
 }
 
 header #logo {
 	margin: 0;
-	background: linear-gradient(30deg, #9efaad, #2b548a, #d22caf);
+	background: linear-gradient(30deg, var(--header-gradient-start), var(--header-gradient-mid), var(--header-gradient-end));
 	padding: 2rem;
 	border-radius: 5px;
 }
@@ -140,6 +291,7 @@ footer {
 		position: fixed;
 		left: 0;
 		top: 0;
+		margin-top: 5vw;
 	}
 
 	body:not(.about-page) main {
@@ -157,7 +309,91 @@ footer {
 	}
 }
 
-/* --- Menu & UI Icons --- */
+@media screen and (max-width: 899px) {
+	.header-utils {
+		position: absolute;
+		top: 5px;
+		left: 15px;
+		right: 15px;
+		width: auto;
+		padding: 0;
+		justify-content: flex-end;
+	}
+
+	.theme-switcher {
+		order: 2;
+	}
+
+	.auth-container {
+		order: 1;
+	}
+
+	header #logo {
+		padding-top: 70px;
+	}
+}
+
+
+/* ===============================================================
+   4. Header, Auth & Menu
+=============================================================== */
+.header-utils {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 15px 0;
+}
+
+.auth-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+#login-button {
+	padding: 0 16px;
+	height: 38px;
+	background: #4a90e2;
+	border-color: #4a90e2;
+}
+
+#login-button:hover {
+	background: #62a5f7;
+}
+
+#user-profile {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+#user-avatar {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	border: 2px solid var(--accent-color-3);
+}
+
+#logout-button {
+	background: #d30c44;
+	border: none;
+	color: white;
+	width: 38px;
+	height: 38px;
+	border-radius: 50%;
+	cursor: pointer;
+	font-size: 1rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease-in-out;
+}
+
+#logout-button:hover {
+	background: #ff3c70;
+	transform: scale(1.1);
+}
+
 #menubar {
 	display: none;
 }
@@ -246,7 +482,10 @@ ul.icons i {
 	font-size: 20px;
 }
 
-/* --- Section Backgrounds --- */
+
+/* ===============================================================
+   5. Section Backgrounds
+=============================================================== */
 .section::before {
 	content: "";
 	position: fixed;
@@ -276,7 +515,7 @@ ul.icons i {
 }
 
 #section3 {
-	background-color: rgba(65, 7, 119, 0.7);
+	background-color: var(--section-bg);
 }
 
 #section3::before {
@@ -303,7 +542,30 @@ ul.icons i {
 	background-color: #3b2434;
 }
 
-/* --- Calculator & Form Styles --- */
+
+/* ===============================================================
+   6. Calculator & Form Styles
+=============================================================== */
+#login-prompt {
+	background: rgba(245, 166, 35, 0.2);
+	border: 1px solid rgba(245, 166, 35, 0.7);
+	padding: 1rem 1.5rem;
+	border-radius: 8px;
+	text-align: center;
+	margin-bottom: 2rem;
+}
+
+#login-prompt a {
+	color: #f8b84e;
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+.calculator-content.disabled {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
 .calculator-wrapper {
 	display: grid;
 	grid-template-columns: 1fr;
@@ -317,17 +579,17 @@ ul.icons i {
 }
 
 .form-section {
-	border: 1px solid rgba(255, 255, 255, 0.2);
+	border: 1px solid var(--card-border);
 	padding: 1rem 1.5rem;
 	border-radius: 8px;
 	margin-bottom: 2rem;
-	background: rgba(0, 0, 0, 0.2);
+	background: var(--card-bg);
 }
 
 .form-section h3 {
 	margin-top: 0;
 	margin-bottom: 1.5rem;
-	color: #a9dff9;
+	color: var(--accent-color-2);
 	font-weight: 500;
 	display: flex;
 	align-items: center;
@@ -351,7 +613,7 @@ ul.icons i {
 	border: 0;
 	border-bottom: 1px solid #ffffff;
 	background-color: transparent;
-	color: #ffffff;
+	color: var(--text-color);
 	outline: none;
 }
 
@@ -368,7 +630,7 @@ ul.icons i {
 .input-group .ef.has-value+label {
 	top: -12px;
 	font-size: 12px;
-	color: #54ebf9;
+	color: var(--accent-color-1);
 }
 
 .input-group .focus_line {
@@ -386,7 +648,7 @@ ul.icons i {
 	bottom: 0;
 	width: 0;
 	height: 100%;
-	background-color: #54ebf9;
+	background-color: var(--accent-color-1);
 	transition: 0.4s;
 }
 
@@ -407,7 +669,42 @@ ul.icons i {
 	align-items: center;
 }
 
-/* --- Custom Select & Toggle Switch --- */
+/* Collapsible Content */
+.collapsible-header {
+	cursor: pointer;
+}
+
+.collapsible-header .fa-chevron-down {
+	transition: transform 0.4s ease;
+	font-size: 0.9em;
+	margin-left: auto;
+	padding-left: 1rem;
+}
+
+.collapsible-content {
+	max-height: 0;
+	overflow: hidden;
+	opacity: 0;
+	transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in, padding-top 0.4s ease-in-out, padding-bottom 0.4s ease-in-out;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.form-section.is-open>.collapsible-header .fa-chevron-down {
+	transform: rotate(180deg);
+}
+
+.form-section.is-open>.collapsible-content {
+	max-height: 1000px;
+	opacity: 1;
+	padding-top: 1.5rem;
+	padding-bottom: 0.5rem;
+}
+
+
+/* ===============================================================
+   7. Custom Form Elements (Select, Checkbox)
+=============================================================== */
 .select-group {
 	display: flex;
 	flex-direction: column;
@@ -436,17 +733,17 @@ ul.icons i {
 	cursor: pointer;
 	transition: border-color 0.3s, background-color 0.3s;
 	font-size: 1rem;
-	color: #fff;
+	color: var(--text-color);
 }
 
 .custom-select-trigger:hover {
-	border-color: #9efaad;
+	border-color: var(--accent-color-3);
 	background-color: rgba(0, 0, 0, 0.4);
 }
 
 .custom-select.open .custom-select-trigger {
-	border-color: #54ebf9;
-	box-shadow: 0 0 5px rgba(84, 235, 249, 0.5);
+	border-color: var(--accent-color-1);
+	box-shadow: 0 0 5px var(--accent-color-1);
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
@@ -465,7 +762,7 @@ ul.icons i {
 	left: 0;
 	right: 0;
 	background: #3d3663;
-	border: 1px solid #54ebf9;
+	border: 1px solid var(--accent-color-1);
 	border-top: none;
 	border-radius: 0 0 6px 6px;
 	z-index: 10;
@@ -488,11 +785,11 @@ ul.icons i {
 	padding: 10px 12px;
 	cursor: pointer;
 	transition: background-color 0.2s;
-	color: #fff;
+	color: var(--text-color);
 }
 
 .custom-option:hover {
-	background-color: #9efaad;
+	background-color: var(--accent-color-3);
 	color: #1a233b;
 }
 
@@ -551,7 +848,7 @@ ul.icons i {
 }
 
 .checkbox-group input[type="checkbox"]:checked+label::before {
-	background-color: #9efaad;
+	background-color: var(--accent-color-3);
 	border-color: transparent;
 }
 
@@ -565,9 +862,16 @@ ul.icons i {
 	opacity: 0.6;
 }
 
-/* --- Result Panel & Accordions --- */
+.unchecking-animation label {
+	animation: flash-uncheck 0.5s ease-out;
+}
+
+
+/* ===============================================================
+   8. Result Panel & Toggles
+=============================================================== */
 .result-panel {
-	background: rgba(0, 0, 0, 0.2);
+	background: var(--card-bg);
 	border-radius: 8px;
 	padding: 1rem;
 	position: sticky;
@@ -583,8 +887,8 @@ ul.icons i {
 
 .result-header {
 	margin-top: 1rem;
-	color: #54ebf9;
-	border-bottom: 1px solid #54ebf9;
+	color: var(--accent-color-1);
+	border-bottom: 1px solid var(--accent-color-1);
 	padding-bottom: calc(0.5rem * var(--result-scale));
 	font-size: calc(1.5rem * var(--result-scale));
 	transition: all 0.3s ease;
@@ -599,7 +903,7 @@ ul.icons i {
 }
 
 .result-header:hover {
-	color: #9efaad;
+	color: var(--accent-color-3);
 }
 
 .result-header .fa-chevron-down {
@@ -631,14 +935,14 @@ ul.icons i {
 
 .result-content td {
 	padding: calc(8px * var(--result-scale));
-	border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+	border-bottom: 1px solid var(--card-border);
 	font-size: calc(1rem * var(--result-scale));
 	transition: all 0.3s ease;
 }
 
 .result-content td:first-child {
 	font-weight: 500;
-	color: #a9dff9;
+	color: var(--accent-color-2);
 }
 
 .result-content td:last-child {
@@ -652,49 +956,22 @@ ul.icons i {
 	font-weight: bold;
 }
 
-.collapsible-header {
-	cursor: pointer;
+.result-toggles {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 15px;
+	padding: 0.75rem 1rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(0, 0, 0, 0.1);
 }
 
-.collapsible-header .fa-chevron-down {
-	transition: transform 0.4s ease;
-	font-size: 0.9em;
-	margin-left: auto;
-	padding-left: 1rem;
-}
 
-.collapsible-content {
-	max-height: 0;
-	overflow: hidden;
-	opacity: 0;
-	transition: max-height 0.5s ease-in-out, opacity 0.4s ease-in, padding-top 0.5s ease-in-out, padding-bottom 0.5s ease-in-out;
-	padding-top: 0;
-	padding-bottom: 0;
-}
-
-.form-section.is-open>.collapsible-header .fa-chevron-down {
-	transform: rotate(180deg);
-}
-
-.form-section.is-open>.collapsible-content {
-	max-height: 1000px;
-	opacity: 1;
-	padding-top: 1.5rem;
-	padding-bottom: 0.5rem;
-}
-
-.form-section.is-open>h3+.input-grid-4,
-.form-section.is-open>h3+.conditions-grid,
-.form-section.is-open>h3+.preset-activator-grid {
-	max-height: none;
-	opacity: 1;
-	padding: 0;
-}
-
-/* --- Skill Preset & Data Preset --- */
+/* ===============================================================
+   9. Presets (Skill & Data)
+=============================================================== */
 .skill-preset-wrapper {
-	background: rgba(0, 0, 0, 0.2);
-	border: 1px solid rgba(255, 255, 255, 0.2);
+	background: var(--card-bg);
+	border: 1px solid var(--card-border);
 	border-radius: 8px;
 	margin-bottom: 2rem;
 }
@@ -729,7 +1006,7 @@ ul.icons i {
 	padding-bottom: 15px;
 	-webkit-overflow-scrolling: touch;
 	scrollbar-width: thin;
-	scrollbar-color: #9efaad rgba(0, 0, 0, 0.2);
+	scrollbar-color: var(--accent-color-3) var(--card-bg);
 }
 
 #skill-preset-editor::-webkit-scrollbar {
@@ -737,18 +1014,18 @@ ul.icons i {
 }
 
 #skill-preset-editor::-webkit-scrollbar-track {
-	background: rgba(0, 0, 0, 0.2);
+	background: var(--card-bg);
 	border-radius: 4px;
 }
 
 #skill-preset-editor::-webkit-scrollbar-thumb {
-	background: #9efaad;
+	background: var(--accent-color-3);
 	border-radius: 4px;
 }
 
 .skill-preset-card {
-	background: rgba(0, 0, 0, 0.2);
-	border: 1px solid rgba(255, 255, 255, 0.2);
+	background: var(--card-bg);
+	border: 1px solid var(--card-border);
 	border-radius: 6px;
 	padding: 1rem;
 	width: 600px;
@@ -770,7 +1047,7 @@ ul.icons i {
 	background: transparent;
 	border: none;
 	border-bottom: 1px solid #fff;
-	color: #fff;
+	color: var(--text-color);
 	font-size: 1.1rem;
 	padding: 4px;
 }
@@ -809,10 +1086,10 @@ ul.icons i {
 }
 
 .skill-preset-category h5 {
-	color: #9efaad;
+	color: var(--accent-color-3);
 	margin-bottom: 0.5rem;
 	margin-top: 1rem;
-	border-bottom: 1px solid rgba(158, 250, 173, 0.5);
+	border-bottom: 1px solid var(--accent-color-3);
 	padding-bottom: 0.25rem;
 }
 
@@ -826,7 +1103,8 @@ ul.icons i {
 	gap: 10px 20px;
 }
 
-.new-skill-preset-card {
+.new-skill-preset-card,
+.new-preset-card {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -839,10 +1117,11 @@ ul.icons i {
 	width: 180px;
 }
 
-.new-skill-preset-card:hover {
+.new-skill-preset-card:hover,
+.new-preset-card:hover {
 	background: rgba(255, 255, 255, 0.1);
 	color: #fff;
-	border-color: rgba(158, 250, 173, 0.7);
+	border-color: var(--accent-color-3);
 }
 
 #skill-preset-activator {
@@ -852,7 +1131,7 @@ ul.icons i {
 }
 
 #skill-preset-activator .checkbox-group {
-	background: rgba(0, 0, 0, 0.2);
+	background: var(--card-bg);
 	padding: 8px;
 	border-radius: 4px;
 	border: 1px solid transparent;
@@ -860,7 +1139,7 @@ ul.icons i {
 }
 
 #skill-preset-activator .checkbox-group:has(input:checked) {
-	border-color: #9efaad;
+	border-color: var(--accent-color-3);
 }
 
 .result-controls {
@@ -875,7 +1154,7 @@ ul.icons i {
 	overflow-x: auto;
 	-webkit-overflow-scrolling: touch;
 	scrollbar-width: thin;
-	scrollbar-color: #9efaad rgba(0, 0, 0, 0.2);
+	scrollbar-color: var(--accent-color-3) var(--card-bg);
 }
 
 .preset-controls-container::-webkit-scrollbar {
@@ -883,12 +1162,12 @@ ul.icons i {
 }
 
 .preset-controls-container::-webkit-scrollbar-track {
-	background: rgba(0, 0, 0, 0.2);
+	background: var(--card-bg);
 	border-radius: 4px;
 }
 
 .preset-controls-container::-webkit-scrollbar-thumb {
-	background: #9efaad;
+	background: var(--accent-color-3);
 	border-radius: 4px;
 	border: 2px solid transparent;
 	background-clip: content-box;
@@ -903,7 +1182,7 @@ ul.icons i {
 
 .preset-card {
 	background: linear-gradient(145deg, rgba(43, 84, 138, 0.2), rgba(210, 44, 175, 0.1));
-	border: 1px solid rgba(255, 255, 255, 0.2);
+	border: 1px solid var(--card-border);
 	border-radius: 6px;
 	padding: 0.75rem;
 	display: flex;
@@ -918,7 +1197,7 @@ ul.icons i {
 .preset-card:hover {
 	transform: translateY(-2px);
 	box-shadow: 0 4px 15px rgba(84, 235, 249, 0.2), inset 0 0 10px rgba(84, 235, 249, 0.1);
-	border-color: rgba(84, 235, 249, 0.7);
+	border-color: var(--accent-color-1);
 }
 
 .preset-name {
@@ -929,7 +1208,7 @@ ul.icons i {
 	text-overflow: ellipsis;
 	text-align: center;
 	padding-bottom: 0.5rem;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+	border-bottom: 1px solid var(--card-border);
 }
 
 .preset-actions {
@@ -961,12 +1240,12 @@ ul.icons i {
 }
 
 .preset-btn.load-btn:hover {
-	border-color: #54ebf9;
+	border-color: var(--accent-color-1);
 	box-shadow: inset 0 0 8px rgba(84, 235, 249, 0.3), 0 0 10px rgba(84, 235, 249, 0.3);
 }
 
 .preset-btn.save-btn:hover {
-	border-color: #9efaad;
+	border-color: var(--accent-color-3);
 	box-shadow: inset 0 0 8px rgba(158, 250, 173, 0.3), 0 0 10px rgba(158, 250, 173, 0.3);
 }
 
@@ -984,28 +1263,13 @@ ul.icons i {
 	box-shadow: 0 0 10px rgba(255, 92, 92, 0.5);
 }
 
-.new-preset-card {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: transparent;
-	border: 2px dashed rgba(255, 255, 255, 0.4);
-	color: rgba(255, 255, 255, 0.7);
-	cursor: pointer;
-	font-size: 1.5rem;
-	transition: all 0.3s;
-}
 
-.new-preset-card:hover {
-	background: rgba(255, 255, 255, 0.1);
-	color: #fff;
-	border-color: rgba(158, 250, 173, 0.7);
-}
-
-/* --- Util Controls --- */
+/* ===============================================================
+   10. Util Controls & Modals
+=============================================================== */
 .util-controls {
 	display: flex;
-	gap: 0.5rem;
+	gap: 0.75rem;
 	align-items: center;
 	align-self: flex-end;
 	flex-wrap: wrap;
@@ -1013,50 +1277,74 @@ ul.icons i {
 }
 
 .util-controls button {
-	background: rgba(0, 0, 0, 0.3);
-	border: 1px solid rgba(255, 255, 255, 0.4);
+	border: 1px solid rgba(255, 255, 255, 0.2);
 	color: #fff;
-	width: 38px;
-	height: 38px;
+	width: 42px;
+	height: 42px;
 	border-radius: 50%;
 	cursor: pointer;
 	font-size: 1rem;
 	transition: all 0.2s ease-in-out;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+	background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.2));
 }
 
-.util-controls button:hover {
-	transform: scale(1.1);
+.util-controls button.disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+	box-shadow: none;
+	background-image: none;
+	background-color: #555 !important;
+	transform: none;
+}
+
+.util-controls button:hover:not(.disabled) {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+	background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.3));
+}
+
+/* 拡大・縮小ボタンの個別スタイル (背景色を調整) */
+#zoom-in,
+#zoom-out {
+	background-color: rgba(240, 240, 240, 0.3);
+	/* 少し明るい背景に */
+	color: #000;
+	/* アイコンの色を黒に */
+	border-color: rgba(0, 0, 0, 0.1);
+	background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.05));
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#zoom-in:hover:not(.disabled),
+#zoom-out:hover:not(.disabled) {
+	background-color: rgba(255, 255, 255, 0.5);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	transform: translateY(-2px);
+	background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.1));
 }
 
 #clear-inputs {
 	background: #d30c44;
 }
 
-#clear-inputs:hover {
+#clear-inputs:hover:not(.disabled) {
 	background: #ff3c70;
 }
 
-#export-presets {
-	background: #4a90e2;
+#open-compare-modal-btn {
+	background: #865cf0;
 }
 
-#export-presets:hover {
-	background: #62a5f7;
-}
-
-#import-presets {
-	background: #50e3c2;
-}
-
-#import-presets:hover {
-	background: #68f7d9;
+#open-compare-modal-btn:hover:not(.disabled) {
+	background: #9d7bf4;
 }
 
 #show-graph-btn {
 	background: #9c27b0;
 }
 
-#show-graph-btn:hover {
+#show-graph-btn:hover:not(.disabled) {
 	background: #af52bf;
 }
 
@@ -1064,15 +1352,118 @@ ul.icons i {
 	background: #f5a623;
 }
 
-#share-url-btn:hover {
+#share-url-btn:hover:not(.disabled) {
 	background: #f8b84e;
 }
 
-/* --- Graph & Tooltip --- */
+#export-presets {
+	background: #4a90e2;
+}
+
+#export-presets:hover:not(.disabled) {
+	background: #62a5f7;
+}
+
+#import-presets {
+	background: #50e3c2;
+}
+
+#import-presets:hover:not(.disabled) {
+	background: #68f7d9;
+}
+
+.modal-overlay {
+	position: fixed;
+	z-index: 2000;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.8);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	backdrop-filter: blur(5px);
+	animation: opa1 0.3s ease-out;
+}
+
+.modal-content {
+	background: #2a2a3e;
+	width: 90%;
+	max-width: 480px;
+	border-radius: 8px;
+	border: 1px solid var(--card-border);
+	box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+	padding: 2.5rem;
+	position: relative;
+	text-align: center;
+}
+
+.modal-content h2 {
+	color: var(--accent-color-2);
+	margin-top: 0;
+	margin-bottom: 1rem;
+	text-align: center;
+}
+
+.modal-close-btn {
+	position: absolute;
+	top: 10px;
+	right: 15px;
+	font-size: 2.5rem;
+	background: none;
+	border: none;
+	color: #aaa;
+	cursor: pointer;
+	line-height: 1;
+	transition: all 0.3s;
+}
+
+.modal-close-btn:hover {
+	transform: scale(1.1);
+	color: #ff5c5c;
+}
+
+.login-methods p {
+	margin-bottom: 1.5rem;
+	line-height: 1.6;
+	color: #ccc;
+}
+
+.social-login-btn {
+	padding: 12px;
+	border: none;
+	border-radius: 5px;
+	font-size: 1rem;
+	font-weight: 500;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	transition: all 0.3s;
+	width: 100%;
+}
+
+.social-login-btn i {
+	font-size: 1.2rem;
+}
+
+.social-login-btn.google {
+	background: #4285F4;
+	color: white;
+}
+
+.social-login-btn.google:hover {
+	background: #5a95f5;
+}
+
+
+/* ===============================================================
+   11. Graphs, Tooltips & Misc Components
+=============================================================== */
 .graph-item {
 	display: flex;
 	align-items: center;
 	gap: 10px;
+	margin-bottom: 6px;
 }
 
 .graph-label {
@@ -1086,7 +1477,7 @@ ul.icons i {
 
 .graph-bar-container {
 	flex-grow: 1;
-	background: rgba(0, 0, 0, 0.2);
+	background: var(--card-bg);
 	border-radius: 4px;
 }
 
@@ -1133,14 +1524,13 @@ ul.icons i {
 	display: block;
 }
 
-/* --- Other Components --- */
 .pagetop a {
 	display: block;
 	position: fixed;
 	right: 20px;
 	bottom: 20px;
 	z-index: 99;
-	background: rgba(0, 0, 0, 0.2);
+	background: var(--card-bg);
 	width: 60px;
 	line-height: 60px;
 	font-size: 1.5rem;
@@ -1149,15 +1539,15 @@ ul.icons i {
 }
 
 .info-box {
-	background: rgba(0, 0, 0, 0.2);
-	border: 1px solid rgba(255, 255, 255, 0.2);
+	background: var(--card-bg);
+	border: 1px solid var(--card-border);
 	border-radius: 8px;
 	padding: 1.5rem;
 	margin-bottom: 2rem;
 }
 
 .info-box h3 {
-	color: #a9dff9;
+	color: var(--accent-color-2);
 	margin-top: 0;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 	padding-bottom: 0.5rem;
@@ -1176,15 +1566,15 @@ ul.icons i {
 }
 
 .copyright {
-	background: rgba(0, 0, 0, 0.3);
+	background: var(--card-bg);
 	padding: 1rem;
-	border-left: 4px solid #9efaad;
+	border-left: 4px solid var(--accent-color-3);
 	margin: 1rem 0;
 }
 
 .link-button {
 	display: inline-block;
-	background: #d30c44;
+	background: var(--link-button-bg);
 	color: #fff !important;
 	padding: 0.75rem 1.5rem;
 	border-radius: 5px;
@@ -1192,7 +1582,7 @@ ul.icons i {
 }
 
 .link-button:hover {
-	background: #ff3c70;
+	background: var(--link-button-hover-bg);
 }
 
 .list-grid-trimming {
@@ -1225,16 +1615,17 @@ ul.icons i {
 	filter: contrast(1.3);
 }
 
-/* --- Theme Switcher --- */
 .theme-switcher {
-	position: absolute;
-	top: 20px;
-	right: 20px;
 	cursor: pointer;
 	font-size: 1.5rem;
 	color: rgba(255, 255, 255, 0.7);
 	transition: all 0.3s;
 	z-index: 102;
+	width: 38px;
+	height: 38px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .theme-switcher:hover {
@@ -1242,15 +1633,10 @@ ul.icons i {
 	transform: scale(1.1);
 }
 
-@media screen and (max-width: 899px) {
-	.theme-switcher {
-		right: auto;
-		left: 20px;
-		top: 15px;
-	}
-}
 
-/* --- about.html 専用スタイル --- */
+/* ===============================================================
+   12. Page Specific & Updates
+=============================================================== */
 .about-page header {
 	position: static;
 	width: 100%;
@@ -1274,48 +1660,18 @@ ul.icons i {
 	margin: 0.25rem;
 }
 
-/* --- 結果表示トグルのレイアウト --- */
-.result-toggles {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 15px;
-	padding: 0.75rem 1rem;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	background: rgba(0, 0, 0, 0.1);
-}
-
-/* --- 比較クリア時のアニメーション --- */
-@keyframes flash-uncheck {
-	0% {
-		background-color: rgba(255, 92, 92, 0);
-	}
-
-	50% {
-		background-color: rgba(255, 92, 92, 0.5);
-	}
-
-	100% {
-		background-color: rgba(255, 92, 92, 0);
-	}
-}
-
-.unchecking-animation label {
-	animation: flash-uncheck 0.5s ease-out;
-}
-
-/* --- グラフポップアップ用のスタイル --- */
 .graph-modal-content h2 {
 	text-align: center;
-	color: #9efaad;
+	color: var(--accent-color-3);
 	margin-bottom: 2rem;
 }
 
 .graph-modal-content .graph-category-title {
-	color: #9efaad;
+	color: var(--accent-color-3);
 	margin-top: 2rem;
 	margin-bottom: 1rem;
 	padding-bottom: 0.5rem;
-	border-bottom: 1px solid rgba(158, 250, 173, 0.5);
+	border-bottom: 1px solid var(--accent-color-3);
 	font-size: 1.2rem;
 }
 
@@ -1327,7 +1683,7 @@ ul.icons i {
 	margin-top: 1rem;
 	padding-bottom: 0.75rem;
 	margin-bottom: 0.75rem;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	border-bottom: 1px solid var(--card-border);
 }
 
 .graph-modal-content .graph-group:last-child {
@@ -1403,7 +1759,6 @@ ul.icons i {
 	text-shadow: 0 0 8px rgba(191, 0, 255, 0.8);
 }
 
-/* --- アップデートセクションの改善スタイル --- */
 .update-header {
 	cursor: pointer;
 	display: flex;
@@ -1445,7 +1800,7 @@ ul.icons i {
 }
 
 .pagination-controls button:hover:not(:disabled) {
-	background: #9efaad;
+	background: var(--accent-color-3);
 	color: #1a233b;
 }
 
@@ -1454,7 +1809,6 @@ ul.icons i {
 	cursor: not-allowed;
 }
 
-/* --- アップデート項目（dl.new）のスタイル --- */
 .new dt {
 	margin-bottom: 0.5rem;
 }
@@ -1462,7 +1816,7 @@ ul.icons i {
 .new dd {
 	padding-left: 1rem;
 	margin-bottom: 1.5rem;
-	border-left: 2px solid #9efaad;
+	border-left: 2px solid var(--accent-color-3);
 }
 
 .new dt span {
@@ -1476,6 +1830,179 @@ ul.icons i {
 	font-size: 0.85em;
 }
 
-.graph-modal-content .graph-group .graph-item {
-    margin-bottom: 6px;
+/* ===============================================================
+   13. Character Dex & Preset Modal Styles
+=============================================================== */
+.dex-buttons {
+	margin-bottom: 1.5rem;
+	text-align: center;
+}
+
+.dex-button {
+	background: var(--accent-color-2);
+}
+
+.dex-button:hover {
+	background: var(--accent-color-1);
+}
+
+#save-to-dex-button {
+	margin-top: 1.5rem;
+	display: inline-block;
+	width: auto;
+}
+
+#save-preset-modal .modal-content .input-group {
+	text-align: left;
+	margin-bottom: 1.5rem;
+}
+
+#save-preset-modal label {
+	position: static;
+	pointer-events: auto;
+	color: var(--text-color);
+	font-size: 1rem;
+}
+
+#save-preset-modal #preset-name-input {
+	width: 100%;
+}
+
+#save-preset-modal #save-preset-button-confirm {
+	margin-top: 1rem;
+}
+
+.dex-list {
+	max-height: 60vh;
+	overflow-y: auto;
+	text-align: left;
+}
+
+.dex-list-item {
+	background: var(--card-bg);
+	padding: 1rem;
+	border-radius: 6px;
+	margin-bottom: 0.75rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	cursor: pointer;
+	border: 1px solid var(--card-border);
+	transition: background 0.2s;
+}
+
+.dex-list-item:hover {
+	background: var(--accent-color-3);
+	color: #000;
+}
+
+.dex-list-item .delete-dex-item-btn {
+	background: none;
+	border: none;
+	color: #ff5c5c;
+	cursor: pointer;
+	font-size: 1.2rem;
+	padding: 0.5rem;
+}
+
+.dex-list-item .delete-dex-item-btn:hover {
+	color: #d30c44;
+}
+
+/* Preset Card with Image/Color */
+.preset-card {
+	background-image: var(--bg-image, none);
+	background-size: cover;
+	background-position: center;
+	border-color: var(--border-color, var(--card-border));
+}
+
+.preset-card .preset-name {
+	background-color: rgba(0, 0, 0, 0.5);
+	border-radius: 4px;
+}
+
+/* ===============================================================
+   14. Skill Preset Customization Styles
+=============================================================== */
+
+/* スキルプリセット編集カード内のカスタマイズ欄 */
+.skill-preset-card .customization-fields {
+	display: flex;
+	gap: 1.5rem;
+	align-items: center;
+	margin-top: 1rem;
+	padding-top: 1rem;
+	border-top: 1px solid var(--card-border);
+}
+
+.skill-preset-card .color-picker-group,
+.skill-preset-card .file-upload-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.skill-preset-card .customization-fields label {
+	font-size: 0.9rem;
+	color: var(--accent-color-2);
+}
+
+/* スキルプリセット有効化カード（チェックボックス）の新スタイル */
+#skill-preset-activator {
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.preset-activator-card {
+	position: relative;
+	background: var(--card-bg);
+	border: 2px solid var(--border-color, var(--card-border));
+	border-radius: 8px;
+	overflow: hidden;
+	transition: all 0.3s ease;
+	aspect-ratio: 16 / 10;
+	display: flex;
+	align-items: flex-end;
+	padding: 0.75rem;
+	background-image: var(--bg-image, none);
+	background-size: cover;
+	background-position: center;
+}
+
+.preset-activator-card::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%);
+	transition: background 0.3s;
+}
+
+.preset-activator-card label {
+	position: relative;
+	z-index: 2;
+	color: #fff;
+	font-weight: 500;
+	width: 100%;
+	cursor: pointer;
+	padding-left: 35px;
+	/* チェックボックス分 */
+	line-height: 1.2;
+}
+
+.preset-activator-card input[type="checkbox"] {
+	position: absolute;
+	z-index: 1;
+	top: 10px;
+	left: 10px;
+	width: 22px;
+	height: 22px;
+}
+
+.preset-activator-card:has(input:checked) {
+	border-color: var(--accent-color-1);
+	box-shadow: 0 0 10px var(--accent-color-1);
+}
+
+.preset-activator-card:has(input:checked)::before {
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.1) 60%);
 }
