@@ -1475,3 +1475,7 @@ ul.icons i {
 	color: #333;
 	font-size: 0.85em;
 }
+
+.graph-modal-content .graph-group .graph-item {
+    margin-bottom: 6px;
+}
