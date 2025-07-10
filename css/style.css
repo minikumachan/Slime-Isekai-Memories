@@ -326,6 +326,10 @@ footer {
 }
 
 #login-button {
+	width: auto;
+	/* 幅をテキストに合わせて自動調整 */
+	white-space: nowrap;
+	/* テキストの改行を禁止 */
 	padding: 0 16px;
 	height: 38px;
 	background: #4a90e2;
