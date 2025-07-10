@@ -2173,3 +2173,108 @@ ul.icons i {
 	border-left-color: #2196F3;
 	/* Blue */
 }
+
+/* ===============================================================
+   16. Responsive Design Adjustments (for Mobile)
+=============================================================== */
+@media screen and (max-width: 768px) {
+
+	/* --- 全体的なモバイル調整 --- */
+	body {
+		font-size: 13px;
+		/* スマホ向けにフォントサイズを少し調整 */
+		line-height: 1.7;
+	}
+
+	main h2 {
+		font-size: 1.8rem;
+	}
+
+	main h3 {
+		font-size: 1.3rem;
+	}
+
+	section {
+		padding: 8vw 4vw;
+		/* 上下の余白を増やし、左右の余白を減らす */
+	}
+
+	/* 全ての入力グリッドを1列レイアウトに変更 */
+	.input-grid-4 {
+		grid-template-columns: 1fr;
+		gap: 20px 0;
+	}
+
+
+	/* --- 戦闘条件セクションの修正 --- */
+	.conditions-grid {
+		display: flex;
+		flex-direction: column;
+		/* 縦一列に並べる */
+		gap: 20px;
+		/* 各項目間の余白 */
+		align-items: stretch;
+		/* 幅を親要素に合わせる */
+	}
+
+	.conditions-grid .select-group,
+	.conditions-grid .input-group,
+	.conditions-grid .state-conditions {
+		width: 100%;
+		/* 各要素の幅を100%に */
+	}
+
+	/* チェックボックス群のレイアウト調整 */
+	.state-conditions {
+		display: flex;
+		flex-wrap: wrap;
+		/* 折り返しを許可 */
+		gap: 10px 15px;
+	}
+
+
+	/* --- スキルプリセットエディタの調整 --- */
+	#skill-preset-editor {
+		gap: 10px;
+	}
+
+	.skill-preset-card {
+		width: 90vw;
+		/* カード幅を画面幅に合わせる */
+		max-width: 400px;
+	}
+
+	.skill-preset-grid {
+		grid-template-columns: 1fr;
+		/* プリセット内の項目も1列に */
+	}
+
+
+	/* --- ヘッダーとメインレイアウトの微調整 --- */
+	body:not(.about-page) main {
+		margin-left: 0;
+		/* PC用のマージンを解除 */
+	}
+
+	header {
+		width: 100%;
+		margin-top: 0;
+		padding: 0 1rem;
+	}
+
+	header #logo {
+		padding: 1rem;
+		padding-top: 60px;
+		/* ハンバーガーメニューとの重なりを回避 */
+	}
+
+	.util-controls {
+		flex-direction: row;
+		/* ユーティリティボタンを横並びに */
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 10px;
+		position: static;
+		/* PC用の追従を解除 */
+	}
+}
