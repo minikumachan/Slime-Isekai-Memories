@@ -1,5 +1,5 @@
 // ===============================================================
-// ** まおりゅうダメージ計算機 (v3.1.0 完全統合版) **
+// ** まおりゅうダメージ計算機 (v3.2.1) **
 // ===============================================================
 
 // ===============================================================
@@ -26,21 +26,13 @@ const updatesPerPage = 3;
 
 // --- Firebase 初期化 ---
 const firebaseConfig = {
-
   apiKey: "AIzaSyBYpP9_H5D9YpGA0kIDZbMlRplU7qmRX2Y",
-
   authDomain: "damage-login-project.firebaseapp.com",
-
   projectId: "damage-login-project",
-
   storageBucket: "damage-login-project.firebasestorage.app",
-
   messagingSenderId: "226418977169",
-
   appId: "1:226418977169:web:de3197437b1e5cb5ed1230",
-
   measurementId: "G-1XQ5ENVVSE"
-
 };
 
 try {
@@ -50,7 +42,7 @@ try {
   storage = firebase.storage();
 } catch (e) {
   console.error("Firebaseの初期化に失敗しました。設定情報を確認してください。", e);
-  alert("Firebaseの初期化に失敗しました。");
+  showToast("Firebaseの初期化に失敗しました。", "error");
 }
 
 // --- 共通ヘルパー関数 ---
@@ -79,25 +71,58 @@ const skillPresetStructure = [{ category: "状態異常", type: "state", id: "is
 // ===============================================================
 function signInWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).catch((error) => console.error("Googleログインエラー:", error));
+  auth.signInWithPopup(provider).catch((error) => {
+    console.error("Googleログインエラー:", error);
+    showToast("Googleログインに失敗しました。", "error");
+  });
 }
+
 function signOutUser() {
   if (confirm("ログアウトしますか？")) {
-    auth.signOut().catch((error) => console.error("ログアウトエラー:", error));
+    auth.signOut().catch((error) => {
+      console.error("ログアウトエラー:", error);
+      showToast("ログアウトに失敗しました。", "error");
+    });
   }
 }
+
 function updateUiForLoggedInUser(user) {
   $('#user-avatar').attr('src', user.photoURL || 'images/default-avatar.png');
   $('#user-profile').show();
   $('#login-button').hide();
   $('#login-prompt').hide();
-  $('#share-url-btn, #export-presets, #import-presets').addClass('disabled');
 }
+
 function updateUiForLoggedOutUser() {
   $('#user-profile').hide();
   $('#login-button').show();
   $('#login-prompt').show();
-  $('#share-url-btn, #export-presets, #import-presets').removeClass('disabled');
+}
+
+// ===============================================================
+// ** 2.5 UIヘルパー (Toast通知) **
+// ===============================================================
+function showToast(message, type = 'success', duration = 3000) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+
+  container.appendChild(toast);
+
+  // Animate in
+  setTimeout(() => {
+    toast.classList.add('show');
+  }, 100);
+
+  // Animate out and remove
+  setTimeout(() => {
+    toast.classList.remove('show');
+    toast.classList.add('hide');
+    toast.addEventListener('transitionend', () => toast.remove());
+  }, duration);
 }
 
 
@@ -122,6 +147,7 @@ async function loadAllDataFromFirestore() {
     listenToCalculatorState();
   } catch (e) {
     console.error("Firestoreからのデータ読み込みに失敗:", e);
+    showToast("クラウドからのデータ読み込みに失敗しました。", "error");
   }
 }
 
@@ -134,13 +160,19 @@ function listenToCalculatorState() {
         loadInputsFromDataObject(doc.data());
         calculateDamage();
       }
-    }, (error) => console.error("Firestoreの監視に失敗: ", error));
+    }, (error) => {
+      console.error("Firestoreの監視に失敗: ", error);
+      showToast("データの同期に失敗しました。", "error");
+    });
 }
 
 const saveInputsToFirestore = debounce(() => {
   if (!currentUser) return;
   db.collection('users').doc(currentUser.uid).collection('calculatorState').doc('live').set(getInputsAsDataObject())
-    .catch(e => console.error("Firestoreへの入力値保存失敗:", e));
+    .catch(e => {
+      console.error("Firestoreへの入力値保存失敗:", e);
+      showToast("自動保存に失敗しました。", "error");
+    });
 }, 1000);
 
 function getInputsAsDataObject() {
@@ -204,7 +236,11 @@ function loadFromUrl() {
       const jsonString = decodeURIComponent(atob(window.location.hash.substring(6)));
       loadInputsFromDataObject(JSON.parse(jsonString));
       window.history.pushState("", document.title, window.location.pathname + window.location.search);
-    } catch (e) { console.error('URLからのデータ読み込みに失敗:', e); }
+      showToast("URLからデータを読み込みました。", "info");
+    } catch (e) {
+      console.error('URLからのデータ読み込みに失敗:', e);
+      showToast("URLデータの読み込みに失敗しました。", "error");
+    }
   }
 }
 
@@ -229,7 +265,10 @@ function clearAllInputs() {
 }
 
 function exportPresets() {
-  if (currentUser) { alert("ログイン中はエクスポート機能を利用できません。"); return; }
+  if (currentUser) {
+    showToast("ログイン中はエクスポート機能を利用できません。", "info");
+    return;
+  }
   let filename = prompt("書き出すファイル名:", "maoryu-backup.json");
   if (!filename) return;
   if (!filename.toLowerCase().endsWith('.json')) filename += '.json';
@@ -249,7 +288,10 @@ function exportPresets() {
 }
 
 function importPresets(event) {
-  if (currentUser) { alert("ログイン中はインポート機能を利用できません。"); return; }
+  if (currentUser) {
+    showToast("ログイン中はインポート機能を利用できません。", "info");
+    return;
+  }
   const file = event.target.files[0];
   if (!file) return;
   const reader = new FileReader();
@@ -264,21 +306,28 @@ function importPresets(event) {
           for (const i in importedData.dataPresets) localStorage.setItem(`maoryuDataPreset_local_${i}`, JSON.stringify(importedData.dataPresets[i]));
         }
         loadInputsFromDataObject(importedData.currentCalculatorState);
-        alert('データのインポートが完了しました。');
+        showToast("データのインポートが完了しました。", "success");
         renderSkillPresetEditor(); renderSkillPresetActivator(); renderDataPresetButtons(); calculateDamage();
       }
-    } catch (error) { alert(`インポートに失敗しました: ${error.message}`); }
-    finally { event.target.value = null; }
+    } catch (error) {
+      showToast(`インポートに失敗しました: ${error.message}`, "error");
+    } finally {
+      event.target.value = null;
+    }
   };
   reader.readAsText(file);
 }
 
 function generateShareableUrl() {
-  if (currentUser) { alert("ログイン中は共有URL機能を利用できません。"); return; }
   try {
     const url = `${window.location.origin}${window.location.pathname}#data=${btoa(encodeURIComponent(JSON.stringify(getInputsAsDataObject())))}`;
-    navigator.clipboard.writeText(url).then(() => alert('共有URLをクリップボードにコピーしました。'), () => prompt('URLのコピーに失敗しました。手動でコピーしてください:', url));
-  } catch (e) { alert('URLの生成に失敗しました。'); }
+    navigator.clipboard.writeText(url).then(
+      () => showToast('共有URLをクリップボードにコピーしました。', "success"),
+      () => prompt('URLのコピーに失敗しました。手動でコピーしてください:', url)
+    );
+  } catch (e) {
+    showToast('URLの生成に失敗しました。', "error");
+  }
 }
 
 
@@ -288,43 +337,35 @@ function generateShareableUrl() {
 function openSavePresetModal(slot) {
   currentPresetSlot = slot;
   const existingPreset = getPresetDataBySlot(slot);
-  $('#preset-name-input').val(existingPreset?.name || `データセット ${slot}`).trigger('input');
-  $('#preset-color-input').val(existingPreset?.color || '#ff8fab');
-  $('#preset-image-preview').attr('src', existingPreset?.imageUrl || '#').toggle(!!existingPreset?.imageUrl);
-  $('#preset-image-input').val('');
+  const input = $('#preset-name-input');
+  input.val(existingPreset?.name || `データセット ${slot}`);
+  input.toggleClass('has-value', !!input.val());
   $('#save-preset-modal').fadeIn(200);
 }
 
 async function saveDataPreset() {
   if (!currentPresetSlot) return;
   const name = $('#preset-name-input').val().trim();
-  const color = $('#preset-color-input').val();
-  const imageFile = $('#preset-image-input')[0].files[0];
-  if (!name) { alert("プリセット名を入力してください。"); return; }
-
-  let imageUrl = getPresetDataBySlot(currentPresetSlot)?.imageUrl || null;
-  if (imageFile) {
-    if (!currentUser) { alert("画像のアップロードにはログインが必要です。"); return; }
-    const imagePath = `users/${currentUser.uid}/presets/${currentPresetSlot}_${Date.now()}_${imageFile.name}`;
-    try {
-      const snapshot = await storage.ref(imagePath).put(imageFile);
-      imageUrl = await snapshot.ref.getDownloadURL();
-    } catch (e) { alert("画像のアップロードに失敗しました。"); return; }
+  if (!name) {
+    showToast("プリセット名を入力してください。", "error");
+    return;
   }
-
-  const presetData = { name, color, imageUrl, data: getInputsAsDataObject(), createdAt: new Date() };
+  const presetData = { name, data: getInputsAsDataObject(), createdAt: new Date() };
   if (currentUser) {
     try {
       await db.collection('users').doc(currentUser.uid).collection('dataPresets').doc(`slot${currentPresetSlot}`).set(presetData);
-      alert(`「${name}」をクラウドに保存しました。`);
+      showToast(`「${name}」をクラウドに保存しました。`, "success");
       await loadAllDataFromFirestore();
-    } catch (e) { alert("クラウドへの保存に失敗しました。"); }
+    } catch (e) {
+      showToast("クラウドへの保存に失敗しました。", "error");
+    }
+    $('#save-preset-modal').fadeOut(200);
   } else {
     localStorage.setItem(`maoryuDataPreset_local_${currentPresetSlot}`, JSON.stringify(presetData));
-    alert(`「${name}」をこのブラウザに保存しました。`);
     renderDataPresetButtons();
+    showToast(`「${name}」をこのブラウザに保存しました。`, "success");
+    $('#save-preset-modal').fadeOut(200);
   }
-  $('#save-preset-modal').fadeOut(200);
 }
 
 function getPresetDataBySlot(slot) {
@@ -336,18 +377,31 @@ function getPresetDataBySlot(slot) {
   }
 }
 
+function loadDataPreset(slot) {
+  const preset = getPresetDataBySlot(slot);
+  if (!preset) {
+    showToast('プリセットが見つかりません。', "error");
+    return;
+  }
+  loadInputsFromDataObject(preset.data);
+  calculateDamage();
+  showToast(`「${preset.name}」を読み込みました。`, "info");
+}
+
 async function deleteDataPreset(slot) {
   const presetData = getPresetDataBySlot(slot);
   if (!presetData || !confirm(`データプリセット「${presetData.name}」を本当に削除しますか？`)) return;
   if (currentUser) {
     try {
       await db.collection('users').doc(currentUser.uid).collection('dataPresets').doc(`slot${slot}`).delete();
-      alert('クラウドからプリセットを削除しました。');
+      showToast('クラウドからプリセットを削除しました。', "success");
       await loadAllDataFromFirestore();
-    } catch (e) { alert("クラウドからの削除に失敗しました。"); }
+    } catch (e) {
+      showToast("クラウドからの削除に失敗しました。", "error");
+    }
   } else {
     localStorage.removeItem(`maoryuDataPreset_local_${slot}`);
-    alert('このブラウザからプリセットを削除しました。');
+    showToast('このブラウザからプリセットを削除しました。', "success");
     renderDataPresetButtons();
   }
 }
@@ -355,32 +409,60 @@ async function deleteDataPreset(slot) {
 async function saveSkillPreset(presetId, isNew = false) {
   const sourceId = isNew ? 'new' : presetId;
   const nameInput = document.getElementById(`skill-preset-${sourceId}-name`);
-  let name = nameInput ? nameInput.value.trim() : '';
-  if (!name) { alert('プリセットの名前を入力してください。'); nameInput?.focus(); return; }
+  if (!nameInput) {
+    console.error("Save failed: Name input not found for sourceId:", sourceId);
+    return;
+  }
+  const name = nameInput.value.trim();
+  if (!name) {
+    showToast('プリセットの名前を入力してください。', "error");
+    nameInput.focus();
+    return;
+  }
 
   const presetData = { name, buffs: {}, states: {}, order: Date.now() };
+  const colorInput = document.getElementById(`skill-preset-${sourceId}-color`);
+  presetData.color = colorInput ? colorInput.value : '#ffffff';
+
   skillPresetStructure.forEach(skill => {
     const input = document.getElementById(`skill-preset-${sourceId}-${skill.id}`);
-    if (!input) return;
-    if (skill.type === 'text') { const val = parseFloat(input.value) || 0; if (val) presetData.buffs[skill.id] = val; }
-    else if (skill.type === 'state') { if (input.checked) presetData.states[skill.id] = true; }
+    if (input) {
+      if (skill.type === 'text' && input.value) {
+        presetData.buffs[skill.id] = parseFloat(input.value) || 0;
+      } else if (skill.type === 'state' && input.checked) {
+        presetData.states[skill.id] = true;
+      }
+    }
   });
 
   if (currentUser) {
     try {
       const collectionRef = db.collection('users').doc(currentUser.uid).collection('skillPresets');
-      if (isNew) { await collectionRef.add(presetData); }
-      else { await collectionRef.doc(presetId).set(presetData, { merge: true }); }
-      alert(`スキルプリセット「${name}」をクラウドに保存しました。`);
+      if (isNew) {
+        await collectionRef.add(presetData);
+      } else {
+        await collectionRef.doc(presetId).set(presetData, { merge: true });
+      }
+      showToast(`スキルプリセット「${name}」をクラウドに保存しました。`, "success");
       await loadAllDataFromFirestore();
-    } catch (e) { alert("クラウドへの保存に失敗しました。"); }
+    } catch (e) {
+      console.error("Firebase save error:", e);
+      showToast("クラウドへの保存に失敗しました。", "error");
+    }
   } else {
     let presets = getStoredJSON(SKILL_PRESET_KEY, []);
-    if (isNew) { presets.push({ ...presetData, id: `local_${Date.now()}` }); }
-    else { const index = presets.findIndex(p => p.id === presetId); if (index > -1) presets[index] = { ...presets[index], ...presetData }; }
+    if (isNew) {
+      presets.push({ ...presetData, id: `local_${Date.now()}` });
+    } else {
+      const index = presets.findIndex(p => p.id === presetId);
+      if (index > -1) {
+        presets[index] = { ...presets[index], ...presetData };
+      }
+    }
     localStorage.setItem(SKILL_PRESET_KEY, JSON.stringify(presets));
-    alert(`スキルプリセット「${name}」をこのブラウザに保存しました。`);
-    renderSkillPresetEditor(); renderSkillPresetActivator();
+    showToast(`スキルプリセット「${name}」をこのブラウザに保存しました。`, "success");
+    renderSkillPresetEditor();
+    renderSkillPresetActivator();
   }
 }
 
@@ -389,19 +471,24 @@ async function deleteSkillPreset(presetId, presetName) {
   if (currentUser) {
     try {
       await db.collection('users').doc(currentUser.uid).collection('skillPresets').doc(presetId).delete();
-      alert('クラウドからプリセットを削除しました。');
+      showToast('クラウドからプリセットを削除しました。', "success");
       await loadAllDataFromFirestore();
-    } catch (e) { alert("クラウドからの削除に失敗しました。"); }
+    } catch (e) {
+      showToast("クラウドからの削除に失敗しました。", "error");
+    }
   } else {
     let presets = getStoredJSON(SKILL_PRESET_KEY, []);
     localStorage.setItem(SKILL_PRESET_KEY, JSON.stringify(presets.filter(p => p.id !== presetId)));
-    alert('このブラウザからプリセットを削除しました。');
+    showToast('このブラウザからプリセットを削除しました。', "success");
     renderSkillPresetEditor(); renderSkillPresetActivator(); calculateDamage();
   }
 }
 
 async function openCharacterDex() {
-  if (!currentUser) { alert("マイキャラ図鑑機能の利用にはログインが必要です。"); return; }
+  if (!currentUser) {
+    showToast("マイキャラ図鑑機能の利用にはログインが必要です。", "info");
+    return;
+  }
   const dexList = $('#character-dex-list').html('読み込み中...');
   $('#character-dex-modal').fadeIn(200);
   try {
@@ -410,7 +497,15 @@ async function openCharacterDex() {
     dexList.empty();
     snapshot.forEach(doc => {
       const char = doc.data();
-      const item = $(`<div class="dex-list-item" data-id="${doc.id}"><span class="dex-item-name">${char.characterName}</span><button class="delete-dex-item-btn" title="削除">&times;</button></div>`);
+      const styleParts = [];
+      if (char.color) styleParts.push(`border-color: ${char.color};`);
+      if (char.imageUrl) styleParts.push(`background-image: url(${char.imageUrl}); background-size: cover;`);
+      const styleAttr = styleParts.join(' ');
+      const item = $(`
+        <div class="dex-list-item" data-id="${doc.id}" style="${styleAttr}">
+          <span class="dex-item-name">${char.characterName}</span>
+          <button class="delete-dex-item-btn" title="削除">&times;</button>
+        </div>`);
       item.on('click', (e) => { if (!$(e.target).is('.delete-dex-item-btn')) loadCharacterFromDex(doc.id); });
       item.find('.delete-dex-item-btn').on('click', () => deleteCharacterFromDex(doc.id, char.characterName));
       dexList.append(item);
@@ -419,30 +514,57 @@ async function openCharacterDex() {
 }
 
 async function saveCharacterToDex() {
-  if (!currentUser) { alert("図鑑への登録にはログインが必要です。"); return; }
+  if (!currentUser) {
+    showToast("図鑑への登録にはログインが必要です。", "info");
+    return;
+  }
+
   const name = prompt("このキャラクターの名前を入力してください:", "[竜魔人]ミリム・ナーヴァ");
-  if (!name || !name.trim()) return;
+  if (!name?.trim()) return;
+
+  const charColor = prompt("枠の色を16進カラーコードで入力してください (例: #ff00ff):", "#ffffff");
+  const charImage = prompt("キャラクター画像のURLを入力してください (省略可):", "");
+
   const statsToSave = {
-    'base-attack-power': v('base-attack-power'), 'base-defense-power': v('base-defense-power'),
-    'support-attack-power': v('support-attack-power'), 'ultimate-magnification': v('ultimate-magnification'),
+    'base-attack-power': v('base-attack-power'),
+    'base-defense-power': v('base-defense-power'),
+    'support-attack-power': v('support-attack-power'),
+    'ultimate-magnification': v('ultimate-magnification'),
     'affinity-up-buff': v('affinity-up-buff'),
   };
+
   try {
-    await db.collection('users').doc(currentUser.uid).collection('characters').add({ characterName: name, stats: statsToSave, registeredAt: new Date() });
-    alert(`「${name}」を図鑑に登録しました。`);
-  } catch (e) { alert("図鑑への登録に失敗しました。"); }
+    await db.collection('users')
+      .doc(currentUser.uid)
+      .collection('characters')
+      .add({
+        characterName: name,
+        stats: statsToSave,
+        color: charColor,
+        imageUrl: charImage,
+        registeredAt: new Date()
+      });
+    showToast(`「${name}」を図鑑に登録しました。`, "success");
+  } catch (e) {
+    showToast("図鑑への登録に失敗しました。", "error");
+  }
 }
 
 async function loadCharacterFromDex(charId) {
   try {
     const doc = await db.collection('users').doc(currentUser.uid).collection('characters').doc(charId).get();
-    if (!doc.exists) { alert("キャラクターデータが見つかりません。"); return; }
+    if (!doc.exists) {
+      showToast("キャラクターデータが見つかりません。", "error");
+      return;
+    }
     const { stats, characterName } = doc.data();
     loadInputsFromDataObject(stats);
     calculateDamage();
     $('#character-dex-modal').fadeOut(200);
-    alert(`「${characterName}」のステータスを読み込みました。`);
-  } catch (e) { alert("キャラクターの読み込みに失敗しました。"); }
+    showToast(`「${characterName}」のステータスを読み込みました。`, "info");
+  } catch (e) {
+    showToast("キャラクターの読み込みに失敗しました。", "error");
+  }
 }
 
 async function deleteCharacterFromDex(charId, charName) {
@@ -450,7 +572,10 @@ async function deleteCharacterFromDex(charId, charName) {
   try {
     await db.collection('users').doc(currentUser.uid).collection('characters').doc(charId).delete();
     await openCharacterDex();
-  } catch (e) { alert("キャラクターの削除に失敗しました。"); }
+    showToast("キャラクターを削除しました。", "success");
+  } catch (e) {
+    showToast("キャラクターの削除に失敗しました。", "error");
+  }
 }
 
 
@@ -463,75 +588,196 @@ function calculateDamage() {
     applySkillPresets();
     const currentInputs = getInputsAsDataObject();
     lastTotalResult = runCalculationEngine(currentInputs);
+
     if (isComparisonModeActive) {
       const comparisonInputs = { ...currentInputs };
-      activeComparisonBuffs.forEach(id => { if (comparisonInputs[id] !== undefined) comparisonInputs[id] = 0; });
+      activeComparisonBuffs.forEach(id => {
+        if (comparisonInputs[id] !== undefined) comparisonInputs[id] = 0;
+      });
       lastComparisonResult = runCalculationEngine(comparisonInputs);
     }
+
     resultDiv.innerHTML = generateResultHtml(lastTotalResult);
+
   } catch (error) {
-    resultDiv.innerHTML = `<p style="color: #ff5c5c;">計算エラーが発生しました。<br><small>${error.message}</small></p>`;
+    resultDiv.innerHTML = `<p style="color: #ff5c5c; padding: 1rem;">計算エラーが発生しました。<br>入力値やプリセットの内容を確認してください。<br><small>${error.message}</small></p>`;
     console.error("Calculation Error:", error);
   }
 }
 
+function getCalculationHelpers(inputData) {
+  return {
+    p: id => (inputData[id] || 0) / 100,
+    v: id => inputData[id] || 0,
+    m: id => { const val = inputData[id]; return isNaN(val) || val <= 0 ? 1.0 : val; },
+    c: id => inputData[id] || false,
+    s: id => inputData[id] || ''
+  };
+}
+
 function runCalculationEngine(inputData) {
-  const p = id => (inputData[id] || 0) / 100;
-  const v = id => inputData[id] || 0;
-  const m = id => { const val = inputData[id]; return isNaN(val) || val <= 0 ? 1.0 : val; };
-  const c = id => inputData[id] || false;
-  const s = id => inputData[id] || '';
-  const baseAttack = v('base-attack-power'), baseDefense = v('base-defense-power'), enemyBaseDefense = v('enemy-defense-power'), baseSupportAttack = v('support-attack-power'), ultimateMagnification = p('ultimate-magnification'), dragonAuraCorrect = c('is-dragon-aura') ? 1.2 : 1, charmCorrect = c('is-charmed') ? 0.95 : 1, attackType = s('ultimate-type');
-  let affinityCorrect = 1.0; if (s('affinity') === 'favorable' || s('affinity') === 'eiketsu') affinityCorrect = 1.5; if (s('affinity') === 'unfavorable') affinityCorrect = 0.7;
-  let debuffAmpCorrect = 1.0; if (c('is-frostbite')) debuffAmpCorrect += 0.3; if (c('is-dominated')) debuffAmpCorrect += 0.3; if (c('is-tremor')) debuffAmpCorrect += 0.4;
+  const { p, v, c, s, m } = getCalculationHelpers(inputData);
+
+  const baseAttack = v('base-attack-power'), baseDefense = v('base-defense-power'), enemyBaseDefense = v('enemy-defense-power');
+  const baseSupportAttack = v('support-attack-power'), ultimateMagnification = p('ultimate-magnification');
+  const dragonAuraCorrect = c('is-dragon-aura') ? 1.2 : 1, charmCorrect = c('is-charmed') ? 0.95 : 1;
+  const attackType = s('ultimate-type');
+  let affinityCorrect = 1.0;
+  if (s('affinity') === 'favorable' || s('affinity') === 'eiketsu') affinityCorrect = 1.5;
+  if (s('affinity') === 'unfavorable') affinityCorrect = 0.7;
+  let debuffAmpCorrect = 1.0;
+  if (c('is-frostbite')) debuffAmpCorrect += 0.3;
+  if (c('is-dominated')) debuffAmpCorrect += 0.3;
+  if (c('is-tremor')) debuffAmpCorrect += 0.4;
+
   const attackBuffTotal = p('attack-buff') + p('attack-buff-trait') + p('attack-buff-cumulative') + p('attack-buff-faction') + p('attack-buff-faction-support') + p('attack-buff-divine-lead') + p('attack-buff-divine-lead-support') + p('attack-buff-divine-trait') + p('attack-buff-divine-trait-support');
   const defenseBuffTotal = p('defense-buff') + p('defense-trait') + p('defense-special-stat') + p('defense-ex-talent') + p('defense-engraved-seal') + p('defense-divine-lead') + p('defense-divine-lead-support') + p('defense-divine-trait') + p('defense-divine-trait-support');
   const selfAttrBuffTotal = p('all-attr-buff') + p('attr-buff') + p('attr-buff-cumulative') + p('attr-buff-divine-lead') + p('attr-buff-divine-lead-support');
   const selfPmBuffTotal = p('pm-buff') + p('pm-buff-cumulative') + p('pm-buff-divine-lead') + p('pm-buff-divine-lead-support') + p('pm-buff-divine-trait') + p('pm-buff-divine-trait-support');
   const aoeAttackBuffTotal = p('aoe-attack-buff') + p('aoe-attack-buff-cumulative');
-  const ultimateBuffTotal = p('ultimate-buff') + p('ultimate-buff-cumulative'), extremeUltimateBuffTotal = p('extreme-ultimate-buff'), soulBuffTotal = p('soul-buff'), charmSpecialTotal = p('charm-special-buff'), stunSpecialTotal = p('stun-special-buff'), affinityUpTotal = p('affinity-up-buff'), weakPointBuffTotal = p('weak-point-buff') + p('weak-point-infinite-buff'), pmDamageUpTotal = p('pm-damage-up'), attrDamageUpTotal = p('attr-damage-up'), pmDamageResistDebuffTotal = p('pm-damage-resist-debuff'), attrDamageResistDebuffTotal = p('attr-damage-resist-debuff');
-  const totalPmDamageCoeff = (pmDamageUpTotal * dragonAuraCorrect) + (pmDamageResistDebuffTotal * debuffAmpCorrect), totalAttrDamageCoeff = (attrDamageUpTotal * dragonAuraCorrect) + (attrDamageResistDebuffTotal * debuffAmpCorrect), damagePowerCoeff = (1 + totalPmDamageCoeff) * (1 + totalAttrDamageCoeff);
-  const critPowerTotal = p('crit-buff') + p('crit-ex-talent') + p('crit-special-stat') + p('crit-trait') + p('crit-divine-trait') + p('crit-divine-trait-support') + p('crit-engraved-seal'), piercePowerTotal = p('pierce-buff') + p('pierce-ex-talent') + p('pierce-special-stat') + p('pierce-trait') + p('pierce-divine-trait') + p('pierce-divine-trait-support') + p('pierce-engraved-seal'), synergyPowerTotal = p('synergy-buff') + p('synergy-ex-talent') + p('synergy-special-stat') + p('synergy-trait'), kensanPowerTotal = p('kensan-buff') + p('kensan-ex-talent') + p('kensan-special-stat') + p('kensan-trait');
-  const enemyAttrResistBuffTotal = p('enemy-all-attr-resist-buff') + p('enemy-attr-resist-buff'), enemyPmResistBuffTotal = p('enemy-pm-resist-buff'), critResistBuffTotal = p('enemy-crit-resist-buff'), pierceResistBuffTotal = p('enemy-pierce-resist-buff'), synergyResistBuffTotal = p('enemy-synergy-resist-buff'), kensanResistBuffTotal = p('enemy-kensan-resist-buff'), ultimateResistBuffTotal = p('enemy-ultimate-resist-buff'), weakPointResistBuffTotal = p('enemy-weak-point-resist-buff');
-  const defenseDebuffTotal = p('defense-debuff') + p('defense-debuff-divine-trait'), enemyAttrResistDebuffTotal = p('enemy-all-attr-resist-debuff') + p('attr-resist-debuff'), enemyPmResistDebuffTotal = p('pm-resist-debuff'), singleTargetResistDebuffTotal = p('single-target-resist-debuff'), aoeResistDebuffTotal = p('aoe-resist-debuff'), ultimateResistDebuffTotal = p('ultimate-resist-debuff'), weakPointResistDebuffTotal = p('weak-point-resist-debuff'), critResistDebuffTotal = p('crit-resist-debuff') + p('crit-resist-debuff-trait') + p('crit-resist-debuff-divine-trait'), pierceResistDebuffTotal = p('pierce-resist-debuff') + p('pierce-resist-debuff-trait') + p('pierce-resist-debuff-divine-trait'), synergyResistDebuffTotal = p('synergy-resist-debuff') + p('synergy-resist-debuff-trait'), kensanResistDebuffTotal = p('kensan-resist-debuff') + p('kensan-resist-debuff-trait');
-  const displayAttack = baseAttack * (1 + attackBuffTotal * dragonAuraCorrect) * charmCorrect, displayDefense = baseDefense * (1 + defenseBuffTotal), enemyPmResistCoeff = 1 + (enemyPmResistDebuffTotal * debuffAmpCorrect - enemyPmResistBuffTotal), enemyAttrResistCoeff = 1 + (enemyAttrResistDebuffTotal * debuffAmpCorrect - enemyAttrResistBuffTotal), enemyActualDefense = enemyBaseDefense * (1 - defenseDebuffTotal * debuffAmpCorrect) * enemyPmResistCoeff * enemyAttrResistCoeff, baseActualAttack = displayAttack * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect), aoeActualAttack = baseActualAttack * (1 + aoeAttackBuffTotal * dragonAuraCorrect), kensanAddedAttack = (displayDefense * 0.4) * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect), supportActualAttackSingle = baseSupportAttack * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect) * 0.4, supportActualAttackAoe = baseSupportAttack * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect) * (1 + aoeAttackBuffTotal * dragonAuraCorrect) * 0.4;
-  const isAoe = (attackType === 'aoe'), mainActualAttack = isAoe ? aoeActualAttack : baseActualAttack, supportActualAttack = isAoe ? supportActualAttackAoe : supportActualAttackSingle;
-  const normalBaseDmg = (mainActualAttack * 2 - enemyActualDefense) * 0.2, synergyBaseDmg = ((mainActualAttack + supportActualAttack) * 2 - enemyActualDefense) * 0.2, kensanBaseDmg = ((mainActualAttack + kensanAddedAttack) * 2 - enemyActualDefense) * 0.2, synergyKensanBaseDmg = ((mainActualAttack + supportActualAttack + kensanAddedAttack) * 2 - enemyActualDefense) * 0.2;
-  const critTTL = 1.3 + (critPowerTotal * dragonAuraCorrect) + ((critResistDebuffTotal * debuffAmpCorrect) - critResistBuffTotal), pierceTTL = 1 + (piercePowerTotal * dragonAuraCorrect) + ((pierceResistDebuffTotal * debuffAmpCorrect) - pierceResistBuffTotal), synergyTTL = 1 + (synergyPowerTotal * dragonAuraCorrect) + ((synergyResistDebuffTotal * debuffAmpCorrect) - synergyResistBuffTotal), kensanTTL = 1 + (kensanPowerTotal * dragonAuraCorrect) + ((kensanResistDebuffTotal * debuffAmpCorrect) - kensanResistBuffTotal);
-  let finalAffinityCorrect = (s('affinity') === 'eiketsu') ? 1.6 : affinityCorrect;
-  const affinityWeaknessCoeff = (finalAffinityCorrect * (1 + affinityUpTotal * dragonAuraCorrect)) + (weakPointBuffTotal * dragonAuraCorrect) + ((weakPointResistDebuffTotal * debuffAmpCorrect) - weakPointResistBuffTotal), targetResistDebuffTotal = isAoe ? aoeResistDebuffTotal : singleTargetResistDebuffTotal, specialResistCoeff = (1 + (stunSpecialTotal + charmSpecialTotal) * dragonAuraCorrect) * (1 + targetResistDebuffTotal * debuffAmpCorrect), ultimateCoeff = ultimateMagnification * (1 + ultimateBuffTotal + extremeUltimateBuffTotal) * (1 + ((ultimateResistDebuffTotal * debuffAmpCorrect) - ultimateResistBuffTotal));
+  const ultimateBuffTotal = p('ultimate-buff') + p('ultimate-buff-cumulative'), extremeUltimateBuffTotal = p('extreme-ultimate-buff'), soulBuffTotal = p('soul-buff');
+  const charmSpecialTotal = p('charm-special-buff'), stunSpecialTotal = p('stun-special-buff'), affinityUpTotal = p('affinity-up-buff');
+  const weakPointBuffTotal = p('weak-point-buff') + p('weak-point-infinite-buff');
+  const pmDamageUpTotal = p('pm-damage-up'), attrDamageUpTotal = p('attr-damage-up');
+  const pmDamageResistDebuffTotal = p('pm-damage-resist-debuff'), attrDamageResistDebuffTotal = p('attr-damage-resist-debuff');
+  const defenseDebuffTotal = p('defense-debuff') + p('defense-debuff-divine-trait');
+  const enemyAttrResistBuffTotal = p('enemy-all-attr-resist-buff') + p('enemy-attr-resist-buff');
+  const enemyPmResistBuffTotal = p('enemy-pm-resist-buff');
+  const enemyAttrResistDebuffTotal = p('enemy-all-attr-resist-debuff') + p('attr-resist-debuff');
+  const enemyPmResistDebuffTotal = p('pm-resist-debuff');
+  const singleTargetResistDebuffTotal = p('single-target-resist-debuff'), aoeResistDebuffTotal = p('aoe-resist-debuff');
+  const ultimateResistBuffTotal = p('enemy-ultimate-resist-buff'), ultimateResistDebuffTotal = p('ultimate-resist-debuff');
+  const weakPointResistBuffTotal = p('enemy-weak-point-resist-buff'), weakPointResistDebuffTotal = p('weak-point-resist-debuff');
+
+  const displayAttack = baseAttack * (1 + attackBuffTotal * dragonAuraCorrect) * charmCorrect;
+  const displayDefense = baseDefense * (1 + defenseBuffTotal);
+  const enemyPmResistCoeff = 1 + (enemyPmResistDebuffTotal * debuffAmpCorrect - enemyPmResistBuffTotal);
+  const enemyAttrResistCoeff = 1 + (enemyAttrResistDebuffTotal * debuffAmpCorrect - enemyAttrResistBuffTotal);
+  const enemyActualDefense = enemyBaseDefense * (1 - defenseDebuffTotal * debuffAmpCorrect) * enemyPmResistCoeff * enemyAttrResistCoeff;
+  const baseActualAttack = displayAttack * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect);
+  const isAoe = (attackType === 'aoe');
+  const mainActualAttack = isAoe ? (baseActualAttack * (1 + aoeAttackBuffTotal * dragonAuraCorrect)) : baseActualAttack;
+  const kensanAddedAttack = (displayDefense * 0.4) * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect);
+  const supportActualAttack = (isAoe ? (baseSupportAttack * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect) * (1 + aoeAttackBuffTotal * dragonAuraCorrect)) : (baseSupportAttack * (1 + selfAttrBuffTotal * dragonAuraCorrect) * (1 + selfPmBuffTotal * dragonAuraCorrect))) * 0.4;
+
+  const critPowerTotal = p('crit-buff') + p('crit-ex-talent') + p('crit-special-stat') + p('crit-trait') + p('crit-divine-trait') + p('crit-engraved-seal');
+  const piercePowerTotal = p('pierce-buff') + p('pierce-ex-talent') + p('pierce-special-stat') + p('pierce-trait') + p('pierce-divine-trait') + p('pierce-engraved-seal');
+  const synergyPowerTotal = p('synergy-buff') + p('synergy-ex-talent') + p('synergy-special-stat') + p('synergy-trait');
+  const kensanPowerTotal = p('kensan-buff') + p('kensan-ex-talent') + p('kensan-special-stat') + p('kensan-trait');
+  const critResistBuffTotal = p('enemy-crit-resist-buff'), critResistDebuffTotal = p('crit-resist-debuff') + p('crit-resist-debuff-trait') + p('crit-resist-debuff-divine-trait');
+  const pierceResistBuffTotal = p('enemy-pierce-resist-buff'), pierceResistDebuffTotal = p('pierce-resist-debuff') + p('pierce-resist-debuff-trait') + p('pierce-resist-debuff-divine-trait');
+  const synergyResistBuffTotal = p('enemy-synergy-resist-buff'), synergyResistDebuffTotal = p('synergy-resist-debuff') + p('synergy-resist-debuff-trait');
+  const kensanResistBuffTotal = p('enemy-kensan-resist-buff'), kensanResistDebuffTotal = p('kensan-resist-debuff') + p('kensan-resist-debuff-trait');
+  const critTTL = 1.3 + (critPowerTotal * dragonAuraCorrect) + ((critResistDebuffTotal * debuffAmpCorrect) - critResistBuffTotal);
+  const pierceTTL = 1 + (piercePowerTotal * dragonAuraCorrect) + ((pierceResistDebuffTotal * debuffAmpCorrect) - pierceResistBuffTotal);
+  const synergyTTL = 1 + (synergyPowerTotal * dragonAuraCorrect) + ((synergyResistDebuffTotal * debuffAmpCorrect) - synergyResistBuffTotal);
+  const kensanTTL = 1 + (kensanPowerTotal * dragonAuraCorrect) + ((kensanResistDebuffTotal * debuffAmpCorrect) - kensanResistBuffTotal);
+
+  const totalPmDamageCoeff = (pmDamageUpTotal * dragonAuraCorrect) + (pmDamageResistDebuffTotal * debuffAmpCorrect);
+  const totalAttrDamageCoeff = (attrDamageUpTotal * dragonAuraCorrect) + (attrDamageResistDebuffTotal * debuffAmpCorrect);
+  const damagePowerCoeff = (1 + totalPmDamageCoeff) * (1 + totalAttrDamageCoeff);
+  const finalAffinityCorrect = (s('affinity') === 'eiketsu') ? 1.6 : affinityCorrect;
+  const affinityWeaknessCoeff = (finalAffinityCorrect * (1 + affinityUpTotal * dragonAuraCorrect)) + (weakPointBuffTotal * dragonAuraCorrect) + ((weakPointResistDebuffTotal * debuffAmpCorrect) - weakPointResistBuffTotal);
+  const targetResistDebuffTotal = isAoe ? aoeResistDebuffTotal : singleTargetResistDebuffTotal;
+  const specialResistCoeff = (1 + (stunSpecialTotal + charmSpecialTotal) * dragonAuraCorrect) * (1 + targetResistDebuffTotal * debuffAmpCorrect);
   let trueReleaseMultiplier = 1.0;
   const targetWeakness = s('target-weakness-type');
-  if (targetWeakness === 'weak') { trueReleaseMultiplier = m('true-release-weak-mult'); } else if (targetWeakness === 'super-weak') { trueReleaseMultiplier = m('true-release-super-weak-mult'); }
+  if (targetWeakness === 'weak') { trueReleaseMultiplier = m('true-release-weak-mult'); }
+  else if (targetWeakness === 'super-weak') { trueReleaseMultiplier = m('true-release-super-weak-mult'); }
   const commonCoeff = affinityWeaknessCoeff * specialResistCoeff;
-  const calculateFinalDamage = (baseDmg) => (baseDmg * damagePowerCoeff) * commonCoeff * trueReleaseMultiplier;
-  const skillBase = { normal: calculateFinalDamage(normalBaseDmg), synergy: calculateFinalDamage(synergyBaseDmg), kensan: calculateFinalDamage(kensanBaseDmg), synergyKensan: calculateFinalDamage(synergyKensanBaseDmg) };
-  const ultimateBase = { normal: skillBase.normal * ultimateCoeff, synergy: skillBase.synergy * ultimateCoeff, kensan: skillBase.kensan * ultimateCoeff, synergyKensan: skillBase.synergyKensan * ultimateCoeff };
-  const applyEffects = (damage, hasSynergy, hasKensan) => { let finalDmg = damage; if (hasSynergy) finalDmg *= synergyTTL; if (hasKensan) finalDmg *= kensanTTL; return finalDmg > 0 ? finalDmg : 0; };
-  const skillFinal = { normal: applyEffects(skillBase.normal, false, false), synergy: applyEffects(skillBase.synergy, true, false), kensan: applyEffects(skillBase.kensan, false, true), synergyKensan: applyEffects(skillBase.synergyKensan, true, true) };
-  const ultimateFinal = { normal: applyEffects(ultimateBase.normal, false, false), synergy: applyEffects(ultimateBase.synergy, true, false), kensan: applyEffects(ultimateBase.kensan, false, true), synergyKensan: applyEffects(ultimateBase.synergyKensan, true, true) };
+  const calculateFinalDamage = (baseDmg) => (baseDmg > 0 ? baseDmg : 0) * damagePowerCoeff * commonCoeff * trueReleaseMultiplier;
+
+  const normalBaseDmg = (mainActualAttack * 2 - enemyActualDefense) * 0.2;
+  const synergyBaseDmg = ((mainActualAttack + supportActualAttack) * 2 - enemyActualDefense) * 0.2;
+  const kensanBaseDmg = ((mainActualAttack + kensanAddedAttack) * 2 - enemyActualDefense) * 0.2;
+  const synergyKensanBaseDmg = ((mainActualAttack + supportActualAttack + kensanAddedAttack) * 2 - enemyActualDefense) * 0.2;
+
+  const skillBase = {
+    normal: calculateFinalDamage(normalBaseDmg),
+    synergy: calculateFinalDamage(synergyBaseDmg),
+    kensan: calculateFinalDamage(kensanBaseDmg),
+    synergyKensan: calculateFinalDamage(synergyKensanBaseDmg)
+  };
+
+  const ultimateCoeff = ultimateMagnification * (1 + ultimateBuffTotal + extremeUltimateBuffTotal) * (1 + ((ultimateResistDebuffTotal * debuffAmpCorrect) - ultimateResistBuffTotal));
+  const ultimateBase = {
+    normal: skillBase.normal * ultimateCoeff,
+    synergy: skillBase.synergy * ultimateCoeff,
+    kensan: skillBase.kensan * ultimateCoeff,
+    synergyKensan: skillBase.synergyKensan * ultimateCoeff
+  };
+
+  const applyEffects = (damage, hasSynergy, hasKensan) => {
+    let finalDmg = damage;
+    if (hasSynergy) finalDmg *= synergyTTL;
+    if (hasKensan) finalDmg *= kensanTTL;
+    return finalDmg > 0 ? finalDmg : 0;
+  };
+
+  const skillFinal = {
+    normal: applyEffects(skillBase.normal, false, false),
+    synergy: applyEffects(skillBase.synergy, true, false),
+    kensan: applyEffects(skillBase.kensan, false, true),
+    synergyKensan: applyEffects(skillBase.synergyKensan, true, true)
+  };
   Object.keys(skillFinal).forEach(key => { skillFinal[key] *= (1 + soulBuffTotal); });
-  return { displayAttack, mainActualAttack, enemyActualDefense, isAoe, skillFinal, ultimateFinal, critTTL, pierceTTL, critRate: p('crit-rate'), pierceRate: p('pierce-rate') };
+
+  const ultimateFinal = {
+    normal: applyEffects(ultimateBase.normal, false, false),
+    synergy: applyEffects(ultimateBase.synergy, true, false),
+    kensan: applyEffects(ultimateBase.kensan, false, true),
+    synergyKensan: applyEffects(ultimateBase.synergyKensan, true, true)
+  };
+  Object.keys(ultimateFinal).forEach(key => { ultimateFinal[key] *= (1 + soulBuffTotal); });
+
+  return {
+    displayAttack, mainActualAttack, enemyActualDefense, isAoe,
+    skillFinal, ultimateFinal,
+    critTTL, pierceTTL,
+    critRate: p('crit-rate'), pierceRate: p('pierce-rate')
+  };
 }
 
 function generateResultHtml(resultData) {
   if (!resultData) return '';
   const { displayAttack, mainActualAttack, enemyActualDefense, isAoe, skillFinal, ultimateFinal, critTTL, pierceTTL, critRate, pierceRate } = resultData;
   let html = `<h3 class="result-header is-open">ステータス<i class="fas fa-chevron-down"></i></h3><div class="result-content-collapsible is-open"><table><tr><td>表示攻撃力</td><td>${Math.round(displayAttack).toLocaleString()}</td></tr><tr><td>実攻撃力(${isAoe ? '全体' : '単体'})</td><td>${Math.round(mainActualAttack).toLocaleString()}</td></tr><tr><td>敵の実防御力</td><td>${Math.round(enemyActualDefense).toLocaleString()}</td></tr></table></div>`;
+
   const generateSectionHtml = (title, baseResults) => {
-    let sectionHtml = `<h3 class="result-header is-open">${title}<i class="fas fa-chevron-down"></i></h3><div class="result-content-collapsible is-open"><table>`;
-    const damageTypes = { normal: { name: '通常', damage: baseResults.normal }, ...(c('toggle-synergy') && { synergy: { name: '協心', damage: baseResults.synergy } }), ...(c('toggle-kensan') && { kensan: { name: '堅閃', damage: baseResults.kensan } }), ...(c('toggle-synergy') && c('toggle-kensan') && { synergyKensan: { name: '協心+堅閃', damage: baseResults.synergyKensan } }) };
+    let sectionHtml = `<h3 class="result-header is-open">${title}<i class="fas fa-chevron-down"></i></h3><div class="result-content-collapsible is-open">`;
+
+    const damageTypes = {
+      normal: { name: '通常', damage: baseResults.normal },
+      ...(c('toggle-synergy') && { synergy: { name: '協心', damage: baseResults.synergy } }),
+      ...(c('toggle-kensan') && { kensan: { name: '堅閃', damage: baseResults.kensan } }),
+      ...(c('toggle-synergy') && c('toggle-kensan') && { synergyKensan: { name: '協心+堅閃', damage: baseResults.synergyKensan } })
+    };
+
     for (const type in damageTypes) {
       const { name, damage } = damageTypes[type];
       if (damage <= 0 && type !== 'normal') continue;
-      const critDmg = damage * critTTL, pierceDmg = (damage + displayAttack * 0.06) * pierceTTL, critPierceDmg = (critDmg + displayAttack * 0.06) * pierceTTL, expectedDmg = calculateExpectedDamage(damage, critDmg, pierceDmg, critPierceDmg, critRate, pierceRate);
-      sectionHtml += `<tr><td colspan="2" class="result-type-header">▼ ${name}</td></tr><tr><td>基礎</td><td>${Math.round(damage).toLocaleString()}</td></tr>`;
+
+      const critDmg = damage * critTTL;
+      const pierceDmg = (damage + displayAttack * 0.06) * pierceTTL;
+      const critPierceDmg = (critDmg + displayAttack * 0.06) * pierceTTL;
+      const expectedDmg = calculateExpectedDamage(damage, critDmg, pierceDmg, critPierceDmg, critRate, pierceRate);
+
+      sectionHtml += `<h4 class="sub-result-header is-open">▼ ${name}<i class="fas fa-chevron-down"></i></h4><div class="sub-result-content" style="display:block;"><table>`;
+      sectionHtml += `<tr><td>基礎</td><td>${Math.round(damage).toLocaleString()}</td></tr>`;
       if (c('toggle-crit')) sectionHtml += `<tr><td>会心</td><td>${Math.round(critDmg).toLocaleString()}</td></tr>`;
-      if (c('toggle-pierce')) { sectionHtml += `<tr><td>貫通</td><td>${Math.round(pierceDmg).toLocaleString()}</td></tr>`; if (c('toggle-crit')) sectionHtml += `<tr><td>会心+貫通</td><td>${Math.round(critPierceDmg).toLocaleString()}</td></tr>`; }
-      if ((c('toggle-crit') || c('toggle-pierce')) && (critRate > 0 || pierceRate > 0)) sectionHtml += `<tr><td><strong>期待値</strong></td><td><strong>${Math.round(expectedDmg).toLocaleString()}</strong></td></tr>`;
+      if (c('toggle-pierce')) {
+        sectionHtml += `<tr><td>貫通</td><td>${Math.round(pierceDmg).toLocaleString()}</td></tr>`;
+        if (c('toggle-crit')) sectionHtml += `<tr><td>会心+貫通</td><td>${Math.round(critPierceDmg).toLocaleString()}</td></tr>`;
+      }
+      if ((c('toggle-crit') || c('toggle-pierce')) && (critRate > 0 || pierceRate > 0)) {
+        sectionHtml += `<tr><td><strong>期待値</strong></td><td><strong>${Math.round(expectedDmg).toLocaleString()}</strong></td></tr>`;
+      }
+      sectionHtml += `</table></div>`;
     }
-    return sectionHtml + `</table></div>`;
+    sectionHtml += `</div>`;
+    return sectionHtml;
   };
+
   html += generateSectionHtml('通常ダメージ', skillFinal);
   html += generateSectionHtml('奥義ダメージ', ultimateFinal);
   return html;
@@ -547,11 +793,13 @@ function calculateExpectedDamage(normal, crit, pierce, critPierce, critRate, pie
 // ===============================================================
 // ** 6. UI描画 & 操作関連 **
 // ===============================================================
-
 function applySkillPresets() {
   const activePresetBuffs = {}, activePresetStates = {};
   const activePresetIds = new Set();
-  document.querySelectorAll('.skill-preset-activator-cb:checked').forEach(cb => { activePresetIds.add(cb.id.replace('activate-skill-preset-', '')); });
+  document.querySelectorAll('.skill-preset-activator-cb:checked').forEach(cb => {
+    activePresetIds.add(cb.id.replace('activate-skill-preset-', ''));
+  });
+
   let presets = [];
   if (currentUser) {
     document.querySelectorAll('#skill-preset-editor .skill-preset-card[data-id]').forEach(card => {
@@ -560,8 +808,12 @@ function applySkillPresets() {
         skillPresetStructure.forEach(skill => {
           const input = document.getElementById(`skill-preset-${card.dataset.id}-${skill.id}`);
           if (!input) return;
-          if (skill.type === 'text') { const value = parseFloat(input.value) || 0; if (value) preset.buffs[skill.id] = value; }
-          else if (skill.type === 'state') { if (input.checked) preset.states[skill.id] = true; }
+          if (skill.type === 'text') {
+            const value = parseFloat(input.value) || 0;
+            if (value) preset.buffs[skill.id] = value;
+          } else if (skill.type === 'state') {
+            if (input.checked) preset.states[skill.id] = true;
+          }
         });
         presets.push(preset);
       }
@@ -569,27 +821,46 @@ function applySkillPresets() {
   } else {
     presets = getStoredJSON(SKILL_PRESET_KEY, []).filter(p => activePresetIds.has(p.id));
   }
+
   presets.forEach(preset => {
-    Object.entries(preset.buffs || {}).forEach(([id, value]) => { activePresetBuffs[id] = (activePresetBuffs[id] || 0) + value; });
-    Object.keys(preset.states || {}).forEach(id => { activePresetStates[id] = true; });
+    if (preset && typeof preset.buffs === 'object') {
+      Object.entries(preset.buffs).forEach(([id, value]) => {
+        activePresetBuffs[id] = (activePresetBuffs[id] || 0) + value;
+      });
+    }
+    if (preset && typeof preset.states === 'object') {
+      Object.keys(preset.states).forEach(id => {
+        activePresetStates[id] = true;
+      });
+    }
   });
+
   skillPresetStructure.forEach(skill => {
     const input = document.getElementById(skill.id);
     if (!input) return;
     if (skill.type === 'state') {
-      if (activePresetStates[skill.id]) { input.checked = true; input.disabled = true; }
-      else if (input.disabled) { input.checked = false; input.disabled = false; }
+      if (activePresetStates[skill.id]) {
+        input.checked = true;
+        input.disabled = true;
+      } else if (input.disabled) {
+        input.checked = false;
+        input.disabled = false;
+      }
     } else if (skill.type === 'text') {
       const presetValue = activePresetBuffs[skill.id];
       if (presetValue !== undefined) {
-        if ((parseFloat(input.value) || 0) < presetValue) input.value = presetValue;
+        if ((parseFloat(input.value) || 0) < presetValue) {
+          input.value = presetValue;
+        }
         input.classList.add('preset-active');
       } else {
         input.classList.remove('preset-active');
       }
     }
   });
-  $('.ef').each(function () { $(this).toggleClass('has-value', $(this).val().trim() !== ''); });
+  $('.ef').each(function () {
+    $(this).toggleClass('has-value', $(this).val().trim() !== '');
+  });
 }
 
 function renderDataPresetButtons(presets = null) {
@@ -609,8 +880,6 @@ function renderDataPresetButtons(presets = null) {
     const slotEl = document.createElement('div');
     slotEl.className = 'preset-card';
     slotEl.dataset.index = slot;
-    slotEl.style.setProperty('--bg-image', savedData.imageUrl ? `url(${savedData.imageUrl})` : 'none');
-    slotEl.style.setProperty('--border-color', savedData.color || 'var(--card-border)');
     slotEl.innerHTML = `<div class="preset-name" title="${savedData.name}">${savedData.name}</div><div class="preset-actions"><button class="preset-btn load-btn" data-action="load-data" data-slot="${slot}" title="読込"><i class="fas fa-download"></i></button><button class="preset-btn delete-btn" data-action="delete-data" data-slot="${slot}" title="削除"><i class="fas fa-trash-alt"></i></button></div>`;
     container.appendChild(slotEl);
     lastSavedSlot = slot;
@@ -630,29 +899,57 @@ function renderSkillPresetEditor(presets = null) {
   editor.innerHTML = '';
   let skillPresets = presets;
   if (!currentUser && !presets) {
-    skillPresets = getStoredJSON(SKILL_PRESET_KEY, []).map((p, i) => p.id ? p : { ...p, id: `local_${i}` });
+    skillPresets = getStoredJSON(SKILL_PRESET_KEY, []);
   }
+
   if (skillPresets) {
     skillPresets.forEach((preset) => {
+      if (!preset || typeof preset !== 'object') return;
+
       const card = document.createElement('div');
-      card.className = 'skill-preset-card'; card.dataset.id = preset.id;
+      card.className = 'skill-preset-card';
+      card.dataset.id = preset.id;
+
       const categories = { '状態異常': '', 'バフ': '', 'デバフ': '' };
       skillPresetStructure.forEach(skill => {
         const value = preset.buffs?.[skill.id] || '';
         let inputHTML = '';
-        if (skill.type === 'text') { inputHTML = `<div class="input-group"><input class="ef${value ? ' has-value' : ''}" type="number" id="skill-preset-${preset.id}-${skill.id}" value="${value}"><label>${skill.label}</label><span class="focus_line"></span></div>`; }
-        else { inputHTML = `<div class="checkbox-group"><input type="checkbox" id="skill-preset-${preset.id}-${skill.id}" ${preset.states?.[skill.id] ? 'checked' : ''}><label for="skill-preset-${preset.id}-${skill.id}">${skill.label}</label></div>`; }
+        if (skill.type === 'text') {
+          inputHTML = `<div class="input-group"><input class="ef${value ? ' has-value' : ''}" type="number" id="skill-preset-${preset.id}-${skill.id}" value="${value}"><label>${skill.label}</label><span class="focus_line"></span></div>`;
+        } else {
+          const checked = preset.states?.[skill.id] ? 'checked' : '';
+          inputHTML = `<div class="checkbox-group"><input type="checkbox" id="skill-preset-${preset.id}-${skill.id}" ${checked}><label for="skill-preset-${preset.id}-${skill.id}">${skill.label}</label></div>`;
+        }
         if (categories[skill.category] !== undefined) categories[skill.category] += inputHTML;
       });
       let contentHTML = '<div class="skill-preset-content">';
-      for (const [categoryName, categoryHTML] of Object.entries(categories)) { if (categoryHTML) contentHTML += `<div class="skill-preset-category"><h5>${categoryName}</h5><div class="skill-preset-grid">${categoryHTML}</div></div>`; }
-      card.innerHTML = `<h4><input type="text" class="preset-name-input" id="skill-preset-${preset.id}-name" value="${preset.name || ''}" placeholder="スキルセット"><button class="save-skill-preset-btn" data-action="save-skill" data-id="${preset.id}" title="上書き保存"><i class="fas fa-save"></i></button><button class="delete-skill-preset-btn" data-action="delete-skill" data-id="${preset.id}" data-name="${preset.name || ''}" title="削除"><i class="fas fa-trash-alt"></i></button></h4>${contentHTML}</div>`;
+      for (const [categoryName, categoryHTML] of Object.entries(categories)) {
+        if (categoryHTML) contentHTML += `<div class="skill-preset-category"><h5>${categoryName}</h5><div class="skill-preset-grid">${categoryHTML}</div></div>`;
+      }
+      contentHTML += '</div>';
+
+      card.innerHTML = `
+            <h4>
+                <input type="text" class="preset-name-input" id="skill-preset-${preset.id}-name" value="${preset.name || ''}" placeholder="スキルセット">
+                <button class="save-skill-preset-btn" data-action="save-skill" data-id="${preset.id}" title="上書き保存"><i class="fas fa-save"></i></button>
+                <button class="delete-skill-preset-btn" data-action="delete-skill" data-id="${preset.id}" data-name="${preset.name || ''}" title="削除"><i class="fas fa-trash-alt"></i></button>
+            </h4>
+            <div class="customization-fields">
+                <div class="color-picker-group">
+                    <label for="skill-preset-${preset.id}-color">色</label>
+                    <input type="color" id="skill-preset-${preset.id}-color" value="${preset.color || '#ffffff'}">
+                </div>
+            </div>
+            ${contentHTML}`;
       editor.appendChild(card);
     });
   }
+
   const newCardEl = document.createElement('div');
-  newCardEl.className = 'skill-preset-card new-skill-preset-card'; newCardEl.id = 'new-skill-preset-creator';
-  newCardEl.title = `新規スキルプリセットを作成`; newCardEl.innerHTML = `<i class="fas fa-plus"></i>`;
+  newCardEl.className = 'skill-preset-card new-skill-preset-card';
+  newCardEl.id = 'new-skill-preset-creator';
+  newCardEl.title = '新規スキルプリセットを作成';
+  newCardEl.innerHTML = '<i class="fas fa-plus"></i>';
   editor.appendChild(newCardEl);
 }
 
@@ -668,8 +965,16 @@ function renderSkillPresetActivator(presets = null) {
     skillPresets.forEach((preset) => {
       if (preset && preset.name) {
         const div = document.createElement('div');
-        div.className = 'checkbox-group'; const id = `activate-skill-preset-${preset.id}`;
-        div.innerHTML = `<input type="checkbox" class="calc-input skill-preset-activator-cb" id="${id}" ${savedStates[id] ? 'checked' : ''}><label for="${id}">${preset.name}</label>`;
+        div.className = 'preset-activator-card';
+        div.style.setProperty('--border-color', preset.color || 'var(--card-border)');
+
+        const id = `activate-skill-preset-${preset.id}`;
+        const checkedAttr = savedStates[id] ? 'checked' : '';
+
+        div.innerHTML = `
+                    <input type="checkbox" class="calc-input skill-preset-activator-cb" id="${id}" ${checkedAttr}>
+                    <label for="${id}">${preset.name}</label>
+                `;
         activator.appendChild(div);
       }
     });
@@ -680,18 +985,40 @@ function addNewSkillPresetCard() {
   const editor = document.getElementById('skill-preset-editor');
   const newCardCreator = document.getElementById('new-skill-preset-creator');
   if (!editor || !newCardCreator || document.getElementById('skill-preset-new-name')) return;
+
   const card = document.createElement('div');
   card.className = 'skill-preset-card';
   let contentHTML = '<div class="skill-preset-content">';
   const categories = { '状態異常': '', 'バフ': '', 'デバフ': '' };
+
   skillPresetStructure.forEach(skill => {
     let inputHTML = '';
-    if (skill.type === 'text') { inputHTML = `<div class="input-group"><input class="ef" type="number" id="skill-preset-new-${skill.id}"><label>${skill.label}</label><span class="focus_line"></span></div>`; }
-    else { inputHTML = `<div class="checkbox-group"><input type="checkbox" id="skill-preset-new-${skill.id}"><label for="skill-preset-new-${skill.id}">${skill.label}</label></div>`; }
+    if (skill.type === 'text') {
+      inputHTML = `<div class="input-group"><input class="ef" type="number" id="skill-preset-new-${skill.id}"><label>${skill.label}</label><span class="focus_line"></span></div>`;
+    } else {
+      inputHTML = `<div class="checkbox-group"><input type="checkbox" id="skill-preset-new-${skill.id}"><label for="skill-preset-new-${skill.id}">${skill.label}</label></div>`;
+    }
     if (categories[skill.category] !== undefined) categories[skill.category] += inputHTML;
   });
-  for (const [categoryName, categoryHTML] of Object.entries(categories)) { if (categoryHTML) contentHTML += `<div class="skill-preset-category"><h5>${categoryName}</h5><div class="skill-preset-grid">${categoryHTML}</div></div>`; }
-  card.innerHTML = `<h4><input type="text" class="preset-name-input" id="skill-preset-new-name" placeholder="新しいプリセット名"><button class="save-skill-preset-btn" data-action="save-new" title="新規保存"><i class="fas fa-save"></i></button></h4>${contentHTML}</div>`;
+
+  for (const [categoryName, categoryHTML] of Object.entries(categories)) {
+    if (categoryHTML) contentHTML += `<div class="skill-preset-category"><h5>${categoryName}</h5><div class="skill-preset-grid">${categoryHTML}</div></div>`;
+  }
+  contentHTML += '</div>';
+
+  card.innerHTML = `
+    <h4>
+        <input type="text" class="preset-name-input" id="skill-preset-new-name" placeholder="新しいプリセット名">
+        <button class="save-skill-preset-btn" data-action="save-new" title="新規保存"><i class="fas fa-save"></i></button>
+    </h4>
+    <div class="customization-fields">
+        <div class="color-picker-group">
+            <label for="skill-preset-new-color">色</label>
+            <input type="color" id="skill-preset-new-color" value="#ffffff">
+        </div>
+    </div>
+    ${contentHTML}`;
+
   editor.insertBefore(card, newCardCreator);
   newCardCreator.style.display = 'none';
 }
@@ -782,6 +1109,7 @@ function openGraphModal() {
   $('#graph-modal')?.remove();
   const modal = $('<div id="graph-modal" class="modal-overlay"></div>').on('click', function (e) { if (e.target === this) $(this).remove(); });
   const content = $('<div class="modal-content graph-modal-content"></div>');
+  content.css({ 'overflow-y': 'auto' });
   let html = `<h2>${isComparisonModeActive ? 'ダメージ比較グラフ' : 'ダメージグラフ'}</h2>`;
   if (!lastTotalResult) { content.html(html + '<p>計算データがありません。</p>'); modal.append(content).appendTo('body').fadeIn(200); return; }
   const damageCategories = { normal: { name: '通常ダメージ', data: [] }, ...(c('toggle-synergy') && { synergy: { name: '協心ダメージ', data: [] } }), ...(c('toggle-kensan') && { kensan: { name: '堅閃ダメージ', data: [] } }), ...(c('toggle-synergy') && c('toggle-kensan') && { synergyKensan: { name: '協心+堅閃ダメージ', data: [] } }) };
@@ -837,7 +1165,13 @@ $(function () {
     else { calculateDamage(); saveInputsToLocalStorage(); }
   }, 400);
 
-  $('body').on('input change', '.calc-input', debouncedCalculateAndSave);
+  $('body').on('input change', '.calc-input', function (e) {
+    if (this.type === 'number' && parseFloat(this.value) < 0) {
+      this.value = 0;
+    }
+    debouncedCalculateAndSave();
+  });
+
   $('#login-button, #prompt-login-link').on('click', (e) => { e.preventDefault(); $('#login-modal').fadeIn(200); });
   $('#logout-button').on('click', signOutUser);
   $('#google-login-btn').on('click', signInWithGoogle);
@@ -865,13 +1199,6 @@ $(function () {
   $('#skill-preset-editor').on('click', '#new-skill-preset-creator', addNewSkillPresetCard);
 
   $('#save-preset-button-confirm').on('click', saveDataPreset);
-  $('#preset-image-input').on('change', function (e) {
-    if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (event) => $('#preset-image-preview').attr('src', event.target.result).show();
-      reader.readAsDataURL(e.target.files[0]);
-    }
-  });
 
   $('#open-dex-button').on('click', openCharacterDex);
   $('#save-to-dex-button').on('click', saveCharacterToDex);
@@ -879,15 +1206,38 @@ $(function () {
   $('.modal-overlay .modal-close-btn').on('click', function () { $(this).closest('.modal-overlay').fadeOut(200); });
   $('.openclose').on('click', function () { $(this).toggleClass('is-open').next('.preset-editor-container').slideToggle(300); });
   $('body').on('click', '.collapsible-header', function () { $(this).closest('.form-section').toggleClass('is-open'); });
-  $('#damage-result').on('click', '.result-header', function () { $(this).toggleClass('is-open').next('.result-content-collapsible').slideToggle(300); });
+  $('#damage-result').off('click', '.result-header').on('click', '.result-header', function () {
+    const $header = $(this);
+    const $content = $header.next('.result-content-collapsible');
+    if ($header.hasClass('is-open')) {
+      $header.removeClass('is-open');
+      $content.slideUp(300);
+    } else {
+      $header.addClass('is-open');
+      $content.slideDown(300);
+    }
+  });
+
+  $('#damage-result').off('click', '.sub-result-header').on('click', '.sub-result-header', function () {
+    const $hdr = $(this);
+    const $content = $hdr.next('.sub-result-content');
+    if ($hdr.hasClass('is-open')) {
+      $hdr.removeClass('is-open');
+      $content.slideUp(200);
+      $hdr.find('i').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+    } else {
+      $hdr.addClass('is-open');
+      $content.slideDown(200);
+      $hdr.find('i').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+    }
+  });
   $('body').on('click', '.collapsible-graph-header', function () { $(this).toggleClass('is-open').next('.collapsible-graph-content').slideToggle(300); });
   $('body').on('click', '.update-header', function () { $(this).toggleClass('is-open').next('.update-content').slideToggle(300); });
   $('#next-page').on('click', function () { renderUpdates(updateCurrentPage + 1); });
   $('#prev-page').on('click', function () { renderUpdates(updateCurrentPage - 1); });
 
-  // --- テーマ切り替え (修正版) ---
   const themes = ['light', 'blue-theme', 'purple-theme', 'green-theme', 'gemini-pink-theme', 'gemini-solar-theme', 'gemini-oceanic-theme'];
-  let currentThemeName = 'light'; // 現在のテーマ名を保持する変数を追加
+  let currentThemeName = 'light';
 
   function applyTheme(themeName) {
     themes.forEach(t => document.body.classList.remove(t));
@@ -895,14 +1245,12 @@ $(function () {
       document.body.classList.add(themeName);
     }
     localStorage.setItem(THEME_KEY, themeName);
-    currentThemeName = themeName; // 変数も更新
+    currentThemeName = themeName;
   }
 
-  // 初期読み込み
   const savedTheme = localStorage.getItem(THEME_KEY) || 'light';
   applyTheme(themes.includes(savedTheme) ? savedTheme : 'light');
 
-  // クリックイベント (よりシンプルなロジックに)
   $('.theme-switcher').on('click', function () {
     const currentIndex = themes.indexOf(currentThemeName);
     const nextIndex = (currentIndex + 1) % themes.length;
@@ -934,9 +1282,21 @@ $(function () {
   }
   $(window).on("scroll", debounce(checkVisibility, 50));
 
+  const $utilControls = $('.util-controls');
+  if ($utilControls.length) {
+    const utilOriginalTop = $utilControls.offset().top;
+    $(window).on('scroll', debounce(() => {
+      const scrollTop = $(window).scrollTop();
+      if (scrollTop >= utilOriginalTop - 20) {
+        $utilControls.css({ position: 'fixed', top: '20px' });
+      } else {
+        $utilControls.css({ position: '', top: '' });
+      }
+    }, 20));
+  }
+
   $('body').on('input', '.ef', function () { $(this).toggleClass('has-value', this.value.trim() !== '' || this.placeholder.trim() !== ''); });
 
-  // --- Initial Load ---
   loadFromUrl();
   setupCustomSelects();
   renderUpdates(1);
@@ -948,6 +1308,7 @@ $(function () {
       currentUser = user;
       updateUiForLoggedInUser(user);
       loadAllDataFromFirestore();
+      $('#login-modal').fadeOut(200);
     } else {
       currentUser = null;
       if (unsubscribeCalculatorListener) { unsubscribeCalculatorListener(); unsubscribeCalculatorListener = null; }
