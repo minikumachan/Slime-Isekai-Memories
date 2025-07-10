@@ -286,9 +286,10 @@ footer {
 @media screen and (max-width: 899px) {
 	.header-utils {
 		position: absolute;
-		top: 5px;
-		left: 15px;
-		right: 15px;
+		top: 30px;
+		/* メニューボタンと高さを合わせる */
+		right: 85px;
+		/* メニューボタンの左に配置する */
 		width: auto;
 		padding: 0;
 		justify-content: flex-end;
