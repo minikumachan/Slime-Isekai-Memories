@@ -23,22 +23,14 @@
 
 body.gemini-pink-theme {
 	--main-bg: #2a2139;
-	/* 深い宇宙のようなダークパープル */
 	--section-bg: rgba(42, 33, 57, 0.9);
 	--header-gradient-start: #ff75c3;
-	/* ネオンピンク */
 	--header-gradient-mid: #a259ff;
-	/* バイオレット */
 	--header-gradient-end: #65d6ff;
-	/* サイバーな水色 */
 	--accent-color-1: #f92672;
-	/* 鮮やかなショッキングピンク */
 	--accent-color-2: #ae81ff;
-	/* ラベンダー・パープル */
 	--accent-color-3: #66d9ef;
-	/* 明るいシアン */
 	--text-color: #f8f8f2;
-	/* 可読性の高いオフホワイト */
 	--link-button-bg: #f92672;
 	--link-button-hover-bg: #ff478a;
 	--card-bg: rgba(255, 255, 255, 0.05);
@@ -87,50 +79,32 @@ body.green-theme {
 	--link-button-hover-bg: #52b788;
 }
 
-/* Gemini's Solar Flare - 新テーマ1 */
 body.gemini-solar-theme {
 	--main-bg: #1e1e1e;
-	/* 限りなく黒に近いチャコールグレー */
 	--section-bg: rgba(30, 30, 30, 0.9);
 	--header-gradient-start: #ffd37e;
-	/* ゴールド */
 	--header-gradient-mid: #ff8e47;
-	/* オレンジ */
 	--header-gradient-end: #fcc172;
-	/* 明るいゴールド */
 	--accent-color-1: #ffa726;
-	/* 鮮やかなオレンジ */
 	--accent-color-2: #ffca28;
-	/* アンバー（琥珀色） */
 	--accent-color-3: #ffd54f;
-	/* 明るいイエロー */
 	--text-color: #f5f5f5;
-	/* 読みやすいオフホワイト */
 	--link-button-bg: #ff8f00;
 	--link-button-hover-bg: #ffb300;
 	--card-bg: rgba(255, 255, 255, 0.03);
 	--card-border: rgba(255, 167, 38, 0.3);
 }
 
-/* Gemini's Deep Ocean - 新テーマ2 */
 body.gemini-oceanic-theme {
 	--main-bg: #002b36;
-	/* 深い海の青緑 */
 	--section-bg: rgba(0, 43, 54, 0.9);
 	--header-gradient-start: #2aa198;
-	/* エメラルドグリーン */
 	--header-gradient-mid: #268bd2;
-	/* 知的なブルー */
 	--header-gradient-end: #859900;
-	/* アクセントのオリーブ */
 	--accent-color-1: #2aa198;
-	/* エメラルド */
 	--accent-color-2: #839496;
-	/* グレイッシュなシアン */
 	--accent-color-3: #93a1a1;
-	/* 明るいグレー */
 	--text-color: #eee8d5;
-	/* クリーム色のテキスト */
 	--link-button-bg: #268bd2;
 	--link-button-hover-bg: #3a9fde;
 	--card-bg: rgba(255, 255, 255, 0.03);
@@ -482,6 +456,14 @@ ul.icons i {
 	font-size: 20px;
 }
 
+/* メニュー内のコントロールを横並びに */
+#menubar .menu-controls {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 1rem;
+}
 
 /* ===============================================================
    5. Section Backgrounds
@@ -666,6 +648,9 @@ ul.icons i {
 }
 
 .conditions-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 15px 30px;
 	align-items: center;
 }
 
@@ -874,8 +859,7 @@ ul.icons i {
 	background: var(--card-bg);
 	border-radius: 8px;
 	padding: 1rem;
-	position: sticky;
-	top: 20px;
+	position: relative;
 	max-height: 90vh;
 	overflow-y: auto;
 }
@@ -1126,20 +1110,24 @@ ul.icons i {
 
 #skill-preset-activator {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 	gap: 10px;
 }
 
-#skill-preset-activator .checkbox-group {
-	background: var(--card-bg);
-	padding: 8px;
-	border-radius: 4px;
-	border: 1px solid transparent;
-	transition: border-color 0.3s;
+#skill-preset-activator .preset-activator-card {
+	background-color: var(--card-bg);
+	border: 1px solid var(--border-color);
+	color: var(--text-color);
+	border-radius: 8px;
+	padding: 0.75rem 1rem;
+	display: flex;
+	align-items: center;
+	transition: all 0.3s ease;
 }
 
-#skill-preset-activator .checkbox-group:has(input:checked) {
-	border-color: var(--accent-color-3);
+#skill-preset-activator .preset-activator-card:has(input:checked) {
+	border-color: var(--accent-color-1);
+	box-shadow: 0 0 10px var(--accent-color-1);
 }
 
 .result-controls {
@@ -1217,50 +1205,56 @@ ul.icons i {
 	margin-top: auto;
 }
 
+/* Preset button styles */
 .preset-btn {
-	background: rgba(0, 0, 0, 0.4);
-	border: 1px solid rgba(255, 255, 255, 0.3);
-	color: rgba(255, 255, 255, 0.8);
+	background: var(--accent-color-1);
+	border: none;
+	color: #fff;
+	width: 36px;
 	height: 36px;
-	border-radius: 4px;
-	cursor: pointer;
-	font-size: 1rem;
-	transition: all 0.2s ease-in-out;
-	flex-grow: 1;
+	border-radius: 6px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
-	padding: 0 8px;
+	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+	transition: background 0.3s ease, transform 0.2s ease;
+	cursor: pointer;
 }
 
 .preset-btn:hover {
-	color: #fff;
-	transform: scale(1.03);
-}
-
-.preset-btn.load-btn:hover {
-	border-color: var(--accent-color-1);
-	box-shadow: inset 0 0 8px rgba(84, 235, 249, 0.3), 0 0 10px rgba(84, 235, 249, 0.3);
-}
-
-.preset-btn.save-btn:hover {
-	border-color: var(--accent-color-3);
-	box-shadow: inset 0 0 8px rgba(158, 250, 173, 0.3), 0 0 10px rgba(158, 250, 173, 0.3);
+	background: var(--accent-color-3);
+	transform: translateY(-2px);
 }
 
 .preset-btn.delete-btn {
-	flex-grow: 0;
-	width: 36px;
-	color: #ff5c5c;
-	border-color: rgba(255, 92, 92, 0.5);
+	background: #ff5c5c;
 }
 
 .preset-btn.delete-btn:hover {
-	background: #ff5c5c;
-	border-color: #ff5c5c;
-	color: #fff;
-	box-shadow: 0 0 10px rgba(255, 92, 92, 0.5);
+	background: #e04444;
+}
+
+/* Data Preset Button Variants */
+.preset-btn.load-btn {
+	background: var(--accent-color-2);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.preset-btn.load-btn:hover {
+	background: var(--accent-color-3);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.preset-btn.save-btn {
+	background: var(--link-button-bg);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.preset-btn.save-btn:hover {
+	background: var(--link-button-hover-bg);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 
@@ -1274,43 +1268,48 @@ ul.icons i {
 	align-self: flex-end;
 	flex-wrap: wrap;
 	justify-content: flex-end;
+	z-index: 10;
+	/* Override any positioning to disable following/scroll behavior */
+	position: static !important;
 }
 
+
+/* Util controls button styles */
 .util-controls button {
-	border: 1px solid rgba(255, 255, 255, 0.2);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	background: var(--accent-color-1);
+	border: none;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 	color: #fff;
-	width: 42px;
-	height: 42px;
-	border-radius: 50%;
+	font-size: 1.2rem;
 	cursor: pointer;
-	font-size: 1rem;
-	transition: all 0.2s ease-in-out;
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-	background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.2));
-}
-
-.util-controls button.disabled {
-	opacity: 0.4;
-	cursor: not-allowed;
-	box-shadow: none;
-	background-image: none;
-	background-color: #555 !important;
-	transform: none;
+	transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .util-controls button:hover:not(.disabled) {
+	background: var(--accent-color-3);
 	transform: translateY(-2px);
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-	background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.3));
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.util-controls button.disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+	box-shadow: none;
+	background: var(--card-bg);
+	color: var(--text-color);
 }
 
 /* 拡大・縮小ボタンの個別スタイル (背景色を調整) */
 #zoom-in,
 #zoom-out {
 	background-color: rgba(240, 240, 240, 0.3);
-	/* 少し明るい背景に */
 	color: #000;
-	/* アイコンの色を黒に */
 	border-color: rgba(0, 0, 0, 0.1);
 	background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.05));
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -1660,6 +1659,13 @@ ul.icons i {
 	margin: 0.25rem;
 }
 
+/* Graph Modal Content */
+.graph-modal-content {
+	max-height: 80vh;
+	overflow-y: auto;
+	text-align: left;
+}
+
 .graph-modal-content h2 {
 	text-align: center;
 	color: var(--accent-color-3);
@@ -1879,7 +1885,10 @@ ul.icons i {
 }
 
 .dex-list-item {
-	background: var(--card-bg);
+	background-image: var(--bg-image, none);
+	background-size: cover;
+	background-position: center;
+	border: 1px solid var(--border-color, var(--card-border));
 	padding: 1rem;
 	border-radius: 6px;
 	margin-bottom: 0.75rem;
@@ -1887,7 +1896,6 @@ ul.icons i {
 	justify-content: space-between;
 	align-items: center;
 	cursor: pointer;
-	border: 1px solid var(--card-border);
 	transition: background 0.2s;
 }
 
@@ -1909,11 +1917,7 @@ ul.icons i {
 	color: #d30c44;
 }
 
-/* Preset Card with Image/Color */
 .preset-card {
-	background-image: var(--bg-image, none);
-	background-size: cover;
-	background-position: center;
 	border-color: var(--border-color, var(--card-border));
 }
 
@@ -1925,8 +1929,6 @@ ul.icons i {
 /* ===============================================================
    14. Skill Preset Customization Styles
 =============================================================== */
-
-/* スキルプリセット編集カード内のカスタマイズ欄 */
 .skill-preset-card .customization-fields {
 	display: flex;
 	gap: 1.5rem;
@@ -1936,8 +1938,7 @@ ul.icons i {
 	border-top: 1px solid var(--card-border);
 }
 
-.skill-preset-card .color-picker-group,
-.skill-preset-card .file-upload-group {
+.skill-preset-card .color-picker-group {
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
@@ -1948,9 +1949,29 @@ ul.icons i {
 	color: var(--accent-color-2);
 }
 
-/* スキルプリセット有効化カード（チェックボックス）の新スタイル */
-#skill-preset-activator {
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+.skill-preset-card .color-picker-group input[type="color"] {
+	width: 48px;
+	height: 48px;
+	border: 2px solid var(--accent-color-3);
+	border-radius: 50%;
+	padding: 0;
+	background: var(--card-bg);
+	cursor: pointer;
+	appearance: none;
+	position: relative;
+	overflow: hidden;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.skill-preset-card .color-picker-group input[type="color"]::-webkit-color-swatch-wrapper,
+.skill-preset-card .color-picker-group input[type="color"]::-webkit-color-swatch {
+	padding: 0;
+	border-radius: 50%;
+}
+
+.skill-preset-card .color-picker-group input[type="color"]:hover {
+	transform: scale(1.1);
+	box-shadow: 0 0 0 4px var(--accent-color-2);
 }
 
 .preset-activator-card {
@@ -1960,21 +1981,9 @@ ul.icons i {
 	border-radius: 8px;
 	overflow: hidden;
 	transition: all 0.3s ease;
-	aspect-ratio: 16 / 10;
 	display: flex;
-	align-items: flex-end;
+	align-items: center;
 	padding: 0.75rem;
-	background-image: var(--bg-image, none);
-	background-size: cover;
-	background-position: center;
-}
-
-.preset-activator-card::before {
-	content: '';
-	position: absolute;
-	inset: 0;
-	background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%);
-	transition: background 0.3s;
 }
 
 .preset-activator-card label {
@@ -1985,15 +1994,15 @@ ul.icons i {
 	width: 100%;
 	cursor: pointer;
 	padding-left: 35px;
-	/* チェックボックス分 */
 	line-height: 1.2;
 }
 
 .preset-activator-card input[type="checkbox"] {
 	position: absolute;
 	z-index: 1;
-	top: 10px;
-	left: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	left: 12px;
 	width: 22px;
 	height: 22px;
 }
@@ -2003,6 +2012,164 @@ ul.icons i {
 	box-shadow: 0 0 10px var(--accent-color-1);
 }
 
-.preset-activator-card:has(input:checked)::before {
-	background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.1) 60%);
+/* ===============================================================
+   Responsive Adjustments for Small Screens
+=============================================================== */
+@media (max-width: 1024px) {
+	.calculator-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+
+	.conditions-grid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+
+	.util-controls {
+		position: sticky;
+		bottom: 0;
+		background: var(--card-bg);
+		padding: 0.5rem 0;
+		justify-content: center;
+		box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+		flex-direction: row;
+		gap: 0.5rem;
+	}
+}
+
+#share-url-btn.disabled {
+	opacity: 1 !important;
+	pointer-events: auto !important;
+	background-color: var(--link-button-bg) !important;
+	border-color: var(--link-button-bg) !important;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* ===============================================================
+   Community Section & Misc
+=============================================================== */
+.community-section {
+	position: relative;
+	background: var(--section-bg);
+}
+
+.community-section::before {
+	content: "";
+	position: absolute;
+	top: 2.5rem;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 100px;
+	height: 4px;
+	background: var(--accent-color-1);
+	border-radius: 2px;
+}
+
+.community-content {
+	max-width: 800px;
+	margin: 2rem auto 0 auto;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	gap: 1.5rem;
+}
+
+.community-list li {
+	background: var(--card-bg);
+	border: 1px solid var(--card-border);
+	padding: 1rem 1.25rem;
+	border-radius: 8px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	list-style: none;
+}
+
+.community-list li:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.community-list li a {
+	display: block;
+	font-weight: 500;
+	color: var(--accent-color-2);
+	transition: color 0.3s;
+}
+
+.community-list li a:hover {
+	color: var(--accent-color-3);
+}
+
+@media (min-width: 1600px) {
+	.community-content {
+		max-width: 1200px;
+		margin: 2rem auto 0;
+	}
+}
+
+#save-preset-modal .modal-content .input-group label {
+	position: absolute;
+	top: 8px;
+	left: 0;
+	transition: 0.3s;
+	color: #aaaaaa;
+	pointer-events: none;
+}
+
+#save-preset-modal .modal-content .ef:focus+label,
+#save-preset-modal .modal-content .ef.has-value+label {
+	top: -12px;
+	font-size: 12px;
+	color: var(--accent-color-1);
+}
+
+/* ===============================================================
+   15. Toast Notifications
+=============================================================== */
+#toast-container {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	z-index: 9999;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.toast {
+	background: rgba(0, 0, 0, 0.8);
+	color: #fff;
+	padding: 15px 20px;
+	border-radius: 8px;
+	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+	border-left: 5px solid var(--accent-color-1);
+	opacity: 0;
+	transform: translateX(100%);
+	transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.toast.show {
+	opacity: 1;
+	transform: translateX(0);
+}
+
+.toast.hide {
+	opacity: 0;
+	transform: translateX(100%);
+}
+
+.toast.success {
+	border-left-color: #4CAF50;
+	/* Green */
+}
+
+.toast.error {
+	border-left-color: #f44336;
+	/* Red */
+}
+
+.toast.info {
+	border-left-color: #2196F3;
+	/* Blue */
 }
