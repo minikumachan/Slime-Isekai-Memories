@@ -37,7 +37,7 @@ const appState = {
   isGraphModalOpen: false,
   updates: {
     currentPage: 1,
-    perPage: 10, // 1ページあたりの更新履歴の表示件数
+    perPage: 5, // 1ページあたりの更新履歴の表示件数
   }
 };
 
