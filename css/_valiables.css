@@ -1,0 +1,108 @@
+/* ===============================================================
+   1. Theme Color Variables
+=============================================================== */
+:root {
+	--main-bg: #3d3663;
+	--section-bg: rgba(65, 7, 119, 0.7);
+	--header-gradient-start: #9efaad;
+	--header-gradient-mid: #2b548a;
+	--header-gradient-end: #d22caf;
+	--accent-color-1: #54ebf9;
+	--accent-color-2: #a9dff9;
+	--accent-color-3: #9efaad;
+	--text-color: #fff;
+	--link-button-bg: #d30c44;
+	--link-button-hover-bg: #ff3c70;
+	--card-bg: rgba(0, 0, 0, 0.2);
+	--card-border: rgba(255, 255, 255, 0.2);
+}
+
+body.gemini-pink-theme {
+	--main-bg: #2a2139;
+	--section-bg: rgba(42, 33, 57, 0.9);
+	--header-gradient-start: #ff75c3;
+	--header-gradient-mid: #a259ff;
+	--header-gradient-end: #65d6ff;
+	--accent-color-1: #f92672;
+	--accent-color-2: #ae81ff;
+	--accent-color-3: #66d9ef;
+	--text-color: #f8f8f2;
+	--link-button-bg: #f92672;
+	--link-button-hover-bg: #ff478a;
+	--card-bg: rgba(255, 255, 255, 0.05);
+	--card-border: rgba(249, 38, 114, 0.3);
+}
+
+body.blue-theme {
+	--main-bg: #0d1b2a;
+	--section-bg: rgba(23, 42, 69, 0.8);
+	--header-gradient-start: #778da9;
+	--header-gradient-mid: #415a77;
+	--header-gradient-end: #1b263b;
+	--accent-color-1: #80ffdb;
+	--accent-color-2: #64dfdf;
+	--accent-color-3: #48bfe3;
+	--text-color: #e0e1dd;
+	--link-button-bg: #415a77;
+	--link-button-hover-bg: #577399;
+}
+
+body.purple-theme {
+	--main-bg: #1a0b2e;
+	--section-bg: rgba(43, 21, 71, 0.7);
+	--header-gradient-start: #c77dff;
+	--header-gradient-mid: #9d4edd;
+	--header-gradient-end: #7b2cbf;
+	--accent-color-1: #e0aaff;
+	--accent-color-2: #c77dff;
+	--accent-color-3: #9d4edd;
+	--text-color: #f7f2ff;
+	--link-button-bg: #7b2cbf;
+	--link-button-hover-bg: #9346d9;
+}
+
+body.green-theme {
+	--main-bg: #082d22;
+	--section-bg: rgba(14, 71, 52, 0.7);
+	--header-gradient-start: #a9e5bb;
+	--header-gradient-mid: #55a683;
+	--header-gradient-end: #3b8660;
+	--accent-color-1: #95d5b2;
+	--accent-color-2: #b7e4c7;
+	--accent-color-3: #d8f3dc;
+	--text-color: #f0fdf4;
+	--link-button-bg: #40916c;
+	--link-button-hover-bg: #52b788;
+}
+
+body.gemini-solar-theme {
+	--main-bg: #1e1e1e;
+	--section-bg: rgba(30, 30, 30, 0.9);
+	--header-gradient-start: #ffd37e;
+	--header-gradient-mid: #ff8e47;
+	--header-gradient-end: #fcc172;
+	--accent-color-1: #ffa726;
+	--accent-color-2: #ffca28;
+	--accent-color-3: #ffd54f;
+	--text-color: #f5f5f5;
+	--link-button-bg: #ff8f00;
+	--link-button-hover-bg: #ffb300;
+	--card-bg: rgba(255, 255, 255, 0.03);
+	--card-border: rgba(255, 167, 38, 0.3);
+}
+
+body.gemini-oceanic-theme {
+	--main-bg: #002b36;
+	--section-bg: rgba(0, 43, 54, 0.9);
+	--header-gradient-start: #2aa198;
+	--header-gradient-mid: #268bd2;
+	--header-gradient-end: #859900;
+	--accent-color-1: #2aa198;
+	--accent-color-2: #839496;
+	--accent-color-3: #93a1a1;
+	--text-color: #eee8d5;
+	--link-button-bg: #268bd2;
+	--link-button-hover-bg: #3a9fde;
+	--card-bg: rgba(255, 255, 255, 0.03);
+	--card-border: rgba(42, 161, 152, 0.3);
+}
