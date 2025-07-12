@@ -74,12 +74,12 @@ function prepareGraphData(appState, isComparison) {
     // そうでなければ空配列を返す → 常に iterable に
     ...(v('extreme-ultimate-multiplier') > 0
       ? [{
-          type: '極奥義',
-          data: appState.lastTotalResult.extremeUltimateFinal,
-          compData: isComparison
-            ? appState.lastComparisonResult.extremeUltimateFinal
-            : null
-        }]
+        type: '極奥義',
+        data: appState.lastTotalResult.extremeUltimateFinal,
+        compData: isComparison
+          ? appState.lastComparisonResult.extremeUltimateFinal
+          : null
+      }]
       : [])
   ];
 

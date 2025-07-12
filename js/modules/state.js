@@ -24,39 +24,47 @@ export function getInputsAsDataObject() {
 
 /**
  * 入力オブジェクトからフォームを復元します。
+ * ※個別に has-value クラスを更新し、
+ *   全体を一括で走査するのはやめました。
  * @param {object} data - 入力データオブジェクト
  */
 export function loadInputsFromDataObject(data) {
   if (!data) return;
   Object.entries(data).forEach(([id, value]) => {
     const input = document.getElementById(id);
-    if (input) {
-      if (input.type === "checkbox" || input.type === "radio") {
-        input.checked = value;
-      } else {
-        input.value = value;
-      }
-      // カスタムセレクトボックスの表示を更新
-      if (input.tagName.toLowerCase() === "select") {
-        const wrapper = input.closest(".custom-select-wrapper");
-        if (wrapper) {
-          const triggerSpan = wrapper.querySelector(".custom-select-trigger span");
-          const selectedOption = wrapper.querySelector(`.custom-option[data-value="${value}"]`);
-          if (triggerSpan && selectedOption) {
-            triggerSpan.textContent = selectedOption.textContent;
-            wrapper.querySelectorAll(".custom-option").forEach(opt => opt.classList.remove("selected"));
-            selectedOption.classList.add("selected");
-          }
+    if (!input) return;
+
+    if (input.type === "checkbox" || input.type === "radio") {
+      input.checked = value;
+    } else {
+      input.value = value;
+    }
+
+    // カスタムセレクトボックスの表示を更新
+    if (input.tagName.toLowerCase() === "select") {
+      const wrapper = input.closest(".custom-select-wrapper");
+      if (wrapper) {
+        const triggerSpan = wrapper.querySelector(".custom-select-trigger span");
+        const selectedOption = wrapper.querySelector(`.custom-option[data-value="${value}"]`);
+        if (triggerSpan && selectedOption) {
+          triggerSpan.textContent = selectedOption.textContent;
+          wrapper.querySelectorAll(".custom-option").forEach(opt => opt.classList.remove("selected"));
+          selectedOption.classList.add("selected");
         }
       }
     }
-  });
-  // 入力値を持つフィールドのラベルを更新
-  $('.ef').each(function () {
-    $(this).toggleClass('has-value', !!$(this).val() || $(this).is('[placeholder]'));
+
+    // このフィールドのみ has-value クラスを付与／削除
+    const $inp = $(input);
+    if ($inp.hasClass('ef')) {
+      if (input.type === "checkbox" || input.type === "radio") {
+        $inp.toggleClass('has-value', input.checked);
+      } else {
+        $inp.toggleClass('has-value', input.value.toString().trim() !== '');
+      }
+    }
   });
 }
-
 
 /**
  * URLのハッシュからデータを読み込みます。
@@ -117,7 +125,7 @@ export async function loadAllDataFromFirestore(appState) {
     const skillPresetsSnap = await userRef.collection('skillPresets').orderBy('order').get();
     const skillPresets = [];
     skillPresetsSnap.forEach(doc => { skillPresets.push({ id: doc.id, ...doc.data() }); });
-    appState.globalSkillPresets = skillPresets; // 状態として保持
+    appState.globalSkillPresets = skillPresets;
     renderSkillPresetEditor(skillPresets, appState);
     renderSkillPresetActivator(skillPresets, appState);
 
@@ -130,10 +138,6 @@ export async function loadAllDataFromFirestore(appState) {
   }
 }
 
-/**
- * Firestoreの計算機状態を監視します。
- * @param {object} appState - アプリケーションの状態オブジェクト
- */
 function listenToCalculatorState(appState) {
   if (!appState.currentUser) return;
   if (appState.unsubscribeCalculatorListener) appState.unsubscribeCalculatorListener();
