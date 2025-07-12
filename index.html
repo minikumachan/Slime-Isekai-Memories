@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>まおりゅうダメージ計算機</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="スマホ向けアプリ「転生したらスライムだった件 魔王と竜の建国譚」のダメージ計算機です。">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/css/lightbox.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <header>
+    <h1 id="logo"><a href="index.html"><img src="images/tensura_WEB_City.png" alt="まおりゅう_WEB_City"></a></h1>
+    <div id="menubar">
+      <nav>
+        <div class="menu-controls">
+          <div class="header-utils">
+            <div class="theme-switcher" title="テーマ切り替え"><i class="fas fa-palette"></i></div>
+            <div id="auth-status" class="auth-container">
+              <button id="login-button" class="preset-btn">ログイン</button>
+              <div id="user-profile" style="display: none;">
+                <img id="user-avatar" src="" alt="User Avatar">
+                <button id="logout-button" title="ログアウト"><i class="fas fa-right-from-bracket"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ul>
+          <li><a href="#section1">ホーム</a></li>
+          <li><a href="#section2">プロフィール</a></li>
+          <li><a href="#section3">ダメージ計算機</a></li>
+          <li><a href="#section4">英傑杯ダメージ計算機</a></li>
+          <li><a href="#section5">アップデート</a></li>
+          <li><a href="#section6">コミュニティ</a></li>
+          <li><a href="#section7">ギャラリー</a></li>
+        </ul>
+      </nav>
+      <ul class="icons">
+        <li><a href="https://x.com/komine_kuboma" target="_blank"><i class="fa-brands fa-x-twitter"></i></a></li>
+        <li><a href="https://lin.ee/8Kx4JH4" target="_blank"><i class="fab fa-line"></i></a></li>
+        <li><a href="#"><i class="fab fa-youtube"></i></a></li>
+        <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <input type="file" id="import-file-input" accept=".json" style="display: none;">
+
+    <section id="section1" class="section"></section>
+
+    <section id="section2" class="section">
+      <h2>プロフィール / 利用規約</h2>
+      <div class="info-box">
+        <h3>サイトの詳しい使い方は</h3>
+        <p><a href="about.html" class="link-button">こちらをご覧下さい。</a></p>
+      </div>
+
+      <div class="info-box">
+        <h3>免責事項・コピーライト</h3>
+
+        <h4>著作権について</h4>
+        <p>当サイト「まおりゅうダメージ計算機」は、一個人がファン活動として運営する非公式のファンサイトです。運営元である株式会社バンダイナムコエンターテインメント様、およびその他関係者様とは一切関係ございません。</p>
+        <p>当サイトで使用している「転生したらスライムだった件 魔王と竜の建国譚」に関連する画像、固有名詞などの著作権、商標権、その他一切の知的財産権は、以下の権利所有者に帰属します。</p>
+        <blockquote class="copyright">
+          ©川上泰樹・伏瀬・講談社／転スラ製作委員会<br>
+          ©柴・伏瀬・講談社／転スラ日記製作委員会<br>
+          ©BANDAI NAMCO Entertainment Inc. Developed by WFS
+        </blockquote>
+        <p>
+          当サイトは上記作品の著作権侵害を目的とするものではありません。掲載内容に問題がございましたら、お手数ですが管理人までご連絡いただけますと幸いです。権利者様からの警告及び修正・削除のご連絡があった場合は、速やかに対処いたします。
+        </p>
+
+        <h4>免責事項</h4>
+        <p>
+          当サイトのコンテンツや情報については、可能な限り正確な情報を掲載するよう努めておりますが、その正確性、安全性、最新性を保証するものではありません。計算結果はあくまでシミュレーション上の数値であり、ゲーム内での実際のダメージと必ずしも一致することを保証するものではありません。
+        </p>
+        <p>当サイトを利用することで生じたいかなる損害についても、当サイト管理者は一切の責任を負いませんので、あらかじめご了承ください。</p>
+
+        <h4>利用規約</h4>
+        <p>当サイトは、個人が非営利で利用する場合に限り、ご自由にお使いいただけます。リンクフリーですが、サイト内のコンテンツ（計算ロジック、文章、デザイン等）の無断転載や、商業利用は固く禁じます。</p>
+        <p>以上の全ての事項にご理解、ご承諾いただいた上で、当サイトをご利用ください。ご承諾いただけない場合は、直ちにサイトの利用を中止してください。</p>
+      </div>
+    </section>
+
+    <section id="section3" class="section">
+      <p id="login-prompt" style="display: none;">プリセットやマイキャラ図鑑機能を利用するには、<a href="#"
+          id="prompt-login-link">ログイン</a>してください。</p>
+      <h2>ダメージ計算機</h2>
+      <div class="dex-buttons">
+        <button id="open-dex-button" class="link-button dex-button"><i class="fas fa-book"></i> マイキャラ図鑑から選択</button>
+      </div>
+      <div id="calculator-content">
+        <div class="skill-preset-wrapper">
+          <div class="openclose">スキルプリセット設定 <i class="fas fa-chevron-down"></i></div>
+          <div class="preset-editor-container">
+            <div id="skill-preset-editor"></div>
+          </div>
+        </div>
+        <div class="calculator-wrapper">
+          <div class="input-panel">
+            <div class="form-section">
+              <h3 class="collapsible-header">基礎ステータス <i class="fas fa-question-circle tooltip-icon"
+                  data-tooltip-id="base-stats"></i><i class="fas fa-chevron-down"></i></h3>
+              <div class="collapsible-content">
+                <div class="input-grid-4">
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="base-attack-power"><label>基礎攻撃力</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="base-defense-power"><label>自キャラ基礎防御力</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="enemy-defense-power"><label>敵の基礎防御力</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="support-attack-power"><label>基礎支援攻撃力</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="ultimate-magnification"><label>奥義倍率(%)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number" id="extreme-ultimate-multiplier"
+                      placeholder="1.5"><label>極奥義倍率(x倍)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="affinity-up-buff"><label>相性強化</label><span class="focus_line"></span></div>
+                </div>
+                <button id="save-to-dex-button" class="link-button dex-button"><i class="fas fa-save"></i>
+                  このステータスを図鑑に登録</button>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3 class="collapsible-header">戦闘条件 <i class="fas fa-question-circle tooltip-icon"
+                  data-tooltip-id="combat-conditions"></i><i class="fas fa-chevron-down"></i></h3>
+              <div class="collapsible-content">
+                <div class="input-grid-4 conditions-grid">
+                  <div class="select-group custom-select-wrapper"><label for="ultimate-type">攻撃の種類</label><select
+                      id="ultimate-type" name="ultimate-type" class="calc-input" style="display: none;">
+                      <option value="single" selected>単体攻撃/奥義</option>
+                      <option value="aoe">全体攻撃/奥義</option>
+                    </select>
+                    <div class="custom-select">
+                      <div class="custom-select-trigger"><span>単体攻撃/奥義</span><i class="fas fa-chevron-down"></i></div>
+                      <div class="custom-options">
+                        <div class="custom-option" data-value="single">単体攻撃/奥義</div>
+                        <div class="custom-option" data-value="aoe">全体攻撃/奥義</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="select-group custom-select-wrapper"><label for="affinity">属性相性</label><select
+                      id="affinity" name="affinity" class="calc-input" style="display: none;">
+                      <option value="equal" selected>等倍</option>
+                      <option value="favorable">有利(1.5)</option>
+                      <option value="unfavorable">不利(0.7)</option>
+                      <option value="eiketsu">英傑杯有利(1.6)</option>
+                    </select>
+                    <div class="custom-select">
+                      <div class="custom-select-trigger"><span>等倍</span><i class="fas fa-chevron-down"></i></div>
+                      <div class="custom-options">
+                        <div class="custom-option" data-value="equal">等倍</div>
+                        <div class="custom-option" data-value="favorable">有利(1.5)</div>
+                        <div class="custom-option" data-value="unfavorable">不利(0.7)</div>
+                        <div class="custom-option" data-value="eiketsu">英傑杯有利(1.6)</div>
+                      </div>
+                    </div>
+                  </div>
+                  <hr style="grid-column: 1 / -1; border: none; margin: -8px 0;">
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="crit-rate"><label>会心率(%)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pierce-rate"><label>貫通率(%)</label><span class="focus_line"></span></div>
+                  <hr style="grid-column: 1 / -1; border-color: rgba(255,255,255,0.1);">
+                  <div class="select-group custom-select-wrapper"><label
+                      for="target-weakness-type">真・属性解放</label><select id="target-weakness-type"
+                      name="target-weakness-type" class="calc-input" style="display: none;">
+                      <option value="none" selected>なし</option>
+                      <option value="weak">弱点</option>
+                      <option value="super-weak">超弱点</option>
+                    </select>
+                    <div class="custom-select">
+                      <div class="custom-select-trigger"><span>なし</span><i class="fas fa-chevron-down"></i></div>
+                      <div class="custom-options">
+                        <div class="custom-option" data-value="none">なし</div>
+                        <div class="custom-option" data-value="weak">弱点</div>
+                        <div class="custom-option" data-value="super-weak">超弱点</div>
+                      </div>
+                    </div>
+                  </div>
+                  <hr style="grid-column: 1 / -1; border: none; margin: -8px 0;">
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="true-release-weak-mult"><label>弱点時の倍率 (例: 1.3)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="true-release-super-weak-mult"><label>超弱点時の倍率 (例: 1.5)</label><span class="focus_line"></span>
+                  </div>
+                  <hr style="grid-column: 1 / -1; border-color: rgba(255,255,255,0.1);">
+                  <div class="state-conditions">
+                    <div class="checkbox-group"><input type="checkbox" id="is-dragon-aura" class="calc-input"><label
+                        for="is-dragon-aura">竜気状態</label></div>
+                    <div class="checkbox-group"><input type="checkbox" id="is-charmed" class="calc-input"><label
+                        for="is-charmed">魅了/束縛</label></div>
+                    <div class="checkbox-group"><input type="checkbox" id="is-frostbite" class="calc-input"><label
+                        for="is-frostbite">凍傷</label></div>
+                    <div class="checkbox-group"><input type="checkbox" id="is-dominated" class="calc-input"><label
+                        for="is-dominated">支配</label></div>
+                    <div class="checkbox-group"><input type="checkbox" id="is-tremor" class="calc-input"><label
+                        for="is-tremor">戦慄</label></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3 class="collapsible-header">使用するスキルプリセット<i class="fas fa-chevron-down"></i></h3>
+              <div class="collapsible-content">
+                <div id="skill-preset-activator" class="preset-activator-grid"></div>
+              </div>
+            </div>
+            <div class="form-section">
+              <h3 class="collapsible-header">攻撃系バフ<i class="fas fa-question-circle tooltip-icon"
+                  data-tooltip-id="attack-buffs"></i><i class="fas fa-chevron-down"></i></h3>
+              <div class="collapsible-content">
+                <div class="input-grid-4">
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attack-buff"><label>攻撃バフ(スキル)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attack-buff-trait"><label>攻撃バフ(特性)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attack-buff-cumulative"><label>攻撃バフ(累積)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attack-buff-faction"><label>攻撃バフ(勢力)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attack-buff-faction-support"><label>攻撃バフ(勢力支援)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attack-buff-divine-lead"><label>攻撃バフ(加護の導き)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attack-buff-divine-lead-support"><label>攻撃バフ(加護の導き支援)</label><span class="focus_line"></span>
+                  </div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attack-buff-divine-trait"><label>攻撃バフ(加護特性)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attack-buff-divine-trait-support"><label>攻撃バフ(加護特性支援)</label><span class="focus_line"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-section">
+              <h3 class="collapsible-header">属性・物/魔バフ<i class="fas fa-question-circle tooltip-icon"
+                  data-tooltip-id="element-pm-buffs"></i><i class="fas fa-chevron-down"></i></h3>
+              <div class="collapsible-content">
+                <div class="input-grid-4">
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="all-attr-buff"><label>全属性バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attr-buff"><label>属性バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attr-buff-cumulative"><label>属性バフ(累積)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attr-buff-divine-lead"><label>属性バフ(加護の導き)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attr-buff-divine-lead-support"><label>属性バフ(加護の導き支援)</label><span class="focus_line"></span>
+                  </div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pm-buff"><label>物/魔バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pm-buff-cumulative"><label>物/魔バフ(累積)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pm-buff-divine-lead"><label>物/魔バフ(加護の導き)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pm-buff-divine-lead-support"><label>物/魔バフ(加護の導き支援)</label><span class="focus_line"></span>
+                  </div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pm-buff-divine-trait"><label>物/魔バフ(加護特性)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pm-buff-divine-trait-support"><label>物/魔バフ(加護特性支援)</label><span class="focus_line"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-section">
+              <h3 class="collapsible-header">その他バフ<i class="fas fa-question-circle tooltip-icon"
+                  data-tooltip-id="other-buffs"></i><i class="fas fa-chevron-down"></i></h3>
+              <div class="collapsible-content">
+                <div class="input-grid-4">
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="aoe-attack-buff"><label>全体攻撃バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="aoe-attack-buff-cumulative"><label>全体攻撃バフ(累積)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="ultimate-buff"><label>奥義バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="ultimate-buff-cumulative"><label>奥義バフ(累積)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="extreme-ultimate-buff"><label>極奥義バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="soul-buff"><label>魔創魂バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="charm-special-buff"><label>魅了特攻</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="stun-special-buff"><label>気絶特攻</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="weak-point-buff"><label>弱点特攻</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="weak-point-infinite-buff"><label>弱点特攻(無限)</label><span class="focus_line"></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="form-section">
+              <h3 class="collapsible-header">ダメージ威力系<i class="fas fa-question-circle tooltip-icon"
+                  data-tooltip-id="damage-power"></i><i class="fas fa-chevron-down"></i></h3>
+              <div class="collapsible-content">
+                <div class="input-grid-4">
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pm-damage-up"><label>物魔ダメージ威力UP</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attr-damage-up"><label>属性ダメージ威力UP</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pm-damage-resist-debuff"><label>物/魔ダメージ耐性ダウン</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attr-damage-resist-debuff"><label>属性ダメージ耐性ダウン</label><span class="focus_line"></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="form-section">
+              <h3 class="collapsible-header">敵へのバフ/デバフ<i class="fas fa-question-circle tooltip-icon"
+                  data-tooltip-id="enemy-debuffs"></i><i class="fas fa-chevron-down"></i></h3>
+              <div class="collapsible-content">
+                <div class="input-grid-4">
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="defense-debuff"><label>防御力デバフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="defense-debuff-divine-trait"><label>防御力デバフ(加護)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="enemy-all-attr-resist-buff"><label>全属性耐性バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="enemy-all-attr-resist-debuff"><label>全属性耐性デバフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="enemy-attr-resist-buff"><label>属性耐性バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="attr-resist-debuff"><label>属性耐性デバフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="enemy-pm-resist-buff"><label>物/魔耐性バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pm-resist-debuff"><label>物/魔耐性デバフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="enemy-crit-resist-buff"><label>会心耐性バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="crit-resist-debuff"><label>会心耐性デバフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="enemy-pierce-resist-buff"><label>貫通耐性バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pierce-resist-debuff"><label>貫通耐性デバフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="enemy-synergy-resist-buff"><label>協心耐性バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="synergy-resist-debuff"><label>協心耐性デバフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="enemy-kensan-resist-buff"><label>堅閃耐性バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="kensan-resist-debuff"><label>堅閃耐性デバフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="single-target-resist-debuff"><label>単体攻撃耐性デバフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="aoe-resist-debuff"><label>全体攻撃耐性デバフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="enemy-ultimate-resist-buff"><label>奥義耐性バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="ultimate-resist-debuff"><label>奥義耐性デバフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="weak-point-resist-debuff"><label>弱点耐性デバフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="enemy-weak-point-resist-buff"><label>弱点耐性バフ</label><span class="focus_line"></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="form-section">
+              <h3 class="collapsible-header">会心<i class="fas fa-question-circle tooltip-icon"
+                  data-tooltip-id="crit-buffs"></i><i class="fas fa-chevron-down"></i></h3>
+              <div class="collapsible-content">
+                <div class="input-grid-4">
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="crit-buff"><label>会心力バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="crit-ex-talent"><label>会心力(EX才能)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="crit-special-stat"><label>会心力(特殊ステ)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="crit-trait"><label>会心力(特性)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="crit-divine-trait"><label>会心力(加護)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="crit-engraved-seal"><label>会心力(刻印符)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="crit-resist-debuff-trait"><label>会心耐性デバフ(特性)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="crit-resist-debuff-divine-trait"><label>会心耐性デバフ(加護)</label><span class="focus_line"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-section">
+              <h3 class="collapsible-header">貫通<i class="fas fa-question-circle tooltip-icon"
+                  data-tooltip-id="pierce-buffs"></i><i class="fas fa-chevron-down"></i></h3>
+              <div class="collapsible-content">
+                <div class="input-grid-4">
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pierce-buff"><label>貫通力バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pierce-ex-talent"><label>貫通力(EX才能)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pierce-special-stat"><label>貫通力(特殊ステ)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pierce-trait"><label>貫通力(特性)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pierce-divine-trait"><label>貫通力(加護)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pierce-engraved-seal"><label>貫通力(刻印符)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pierce-resist-debuff-trait"><label>貫通耐性デバフ(特性)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="pierce-resist-debuff-divine-trait"><label>貫通耐性デバフ(加護)</label><span class="focus_line"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-section">
+              <h3 class="collapsible-header">協心<i class="fas fa-question-circle tooltip-icon"
+                  data-tooltip-id="synergy-buffs"></i><i class="fas fa-chevron-down"></i></h3>
+              <div class="collapsible-content">
+                <div class="input-grid-4">
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="synergy-buff"><label>協心力バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="synergy-ex-talent"><label>協心力(EX才能)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="synergy-special-stat"><label>協心力(特殊ステ)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="synergy-trait"><label>協心力(特性)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="synergy-resist-debuff-trait"><label>協心耐性デバフ(特性)</label><span class="focus_line"></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="form-section">
+              <h3 class="collapsible-header">堅閃<i class="fas fa-question-circle tooltip-icon"
+                  data-tooltip-id="kensan-buffs"></i><i class="fas fa-chevron-down"></i></h3>
+              <div class="collapsible-content">
+                <div class="input-grid-4">
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="kensan-buff"><label>堅閃力バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="kensan-ex-talent"><label>堅閃力(EX才能)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="kensan-special-stat"><label>堅閃力(特殊ステ)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="kensan-trait"><label>堅閃力(特性)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="kensan-resist-debuff-trait"><label>堅閃耐性デバフ(特性)</label><span class="focus_line"></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="form-section">
+              <h3 class="collapsible-header">自キャラ防御力バフ<i class="fas fa-question-circle tooltip-icon"
+                  data-tooltip-id="self-defense"></i><i class="fas fa-chevron-down"></i></h3>
+              <div class="collapsible-content">
+                <div class="input-grid-4">
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="defense-buff"><label>防御力バフ</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="defense-trait"><label>防御力(特性)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="defense-special-stat"><label>防御力(特殊ステ)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="defense-ex-talent"><label>防御力(EX才能)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="defense-engraved-seal"><label>防御力(刻印符)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="defense-divine-lead"><label>防御力(加護の導き)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="defense-divine-lead-support"><label>防御力(加護の導き支援)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="defense-divine-trait"><label>防御力(加護特性)</label><span class="focus_line"></span></div>
+                  <div class="input-group"><input class="ef calc-input" type="number"
+                      id="defense-divine-trait-support"><label>防御力(加護特性支援)</label><span class="focus_line"></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="result-panel">
+            <div class="result-controls">
+              <div id="data-preset-controls" class="preset-controls-container">
+                <div id="preset-buttons" class="preset-buttons"></div>
+              </div>
+              <div class="util-controls">
+                <button id="open-comparison-unified-modal-btn" title="比較モード"><i
+                    class="fas fa-exchange-alt"></i></button>
+                <button id="show-graph-btn" title="グラフ表示"><i class="fas fa-chart-bar"></i></button>
+                <button id="share-url-btn" title="共有URLをコピー"><i class="fas fa-share-alt"></i></button>
+                <button id="export-presets" title="プリセットを書き出す"><i class="fas fa-file-export"></i></button>
+                <button id="import-presets" title="プリセットを読み込む"><i class="fas fa-file-import"></i></button>
+                <button id="clear-inputs" title="入力クリア"><i class="fas fa-trash-alt"></i></button>
+                <button id="zoom-out" title="縮小"><i class="fas fa-search-minus"></i></button>
+                <button id="zoom-in" title="拡大"><i class="fas fa-search-plus"></i></button>
+              </div>
+            </div>
+            <div class="result-toggles">
+              <div class="checkbox-group"><input type="checkbox" id="toggle-crit" class="calc-input" checked><label
+                  for="toggle-crit">会心</label></div>
+              <div class="checkbox-group"><input type="checkbox" id="toggle-pierce" class="calc-input" checked><label
+                  for="toggle-pierce">貫通</label></div>
+              <div class="checkbox-group"><input type="checkbox" id="toggle-synergy" class="calc-input" checked><label
+                  for="toggle-synergy">協心</label></div>
+              <div class="checkbox-group"><input type="checkbox" id="toggle-kensan" class="calc-input" checked><label
+                  for="toggle-kensan">堅閃</label></div>
+            </div>
+            <div id="damage-result" class="result-content"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="section4" class="section">
+      <h2>英傑杯ダメージ計算機</h2>
+      <p>準備中です。</p>
+    </section>
+
+    <section id="section5" class="section">
+      <h2>アップデート</h2>
+      <dl class="new">
+        <dt class="update-header">2025/07/12/09:40<span>ver 2.5.0 UX/アクセシビリティ改善</span><i
+            class="fas fa-chevron-down"></i></dt>
+        <dd class="update-content">キーボード操作対応、プリセット比較機能、トースト通知など、多数の改善を実装しました。
+          <br>グラフの機能性の改善、UIの改善とアクセシビリティの向上を行いました。
+          <br>ダメージ計算の精度向上と、計算結果の表示方法を改善しました。
+          <br>一部の不具合を修正し、全体的なパフォーマンスを向上させました。
+          <br>新しいテーマを追加しました。
+          <br>プリセットの読み込み・保存機能を強化し、ユーザーエクスペリエンスを向上させました。
+          <br>バフ指定比較機能を改善し、より拡張的に使用できるようになりました。
+          <br>キャラ図鑑の機能調整、改善を行いました。
+        </dd>
+        <dt class="update-header">2025/07/10/21:48<span>ver 2.1.0 機能改善・修正</span><i class="fas fa-chevron-down"></i></dt>
+        <dd class="update-content">主要機能の安定性を向上させ、複数の不具合を修正しました。</dd>
+        <dt class="update-header">2025/07/10/5:53<span>ver 2.0.0 機能追加・改善</span><i class="fas fa-chevron-down"></i></dt>
+        <dd class="update-content">プリセットの画像・色設定機能、マイキャラ図鑑機能を追加しました。</dd>
+        <dt class="update-header">2025/07/09/19:18<span>ver 1.2.2 機能改善</span><i class="fas fa-chevron-down"></i></dt>
+        <dd class="update-content">ダメージ比較グラフの見た目、最もダメージの高いパターンを分かりやすく表示するなどの改善を行いました。</dd>
+        <dt class="update-header">2025/07/09/04:15<span>ver 1.2.1 機能修正</span><i class="fas fa-chevron-down"></i></dt>
+        <dd class="update-content">属性、魔/物ダメージ耐性ダウンの項目を再度追加し直しました。
+          <br>指定バフの選択項目に状態異常を追加しました。
+          <br>同種のユーティリティーボタンを統一しました。
+          <br>インポート・エクスポート機能の改善を行いました。
+        </dd>
+        <dt class="update-header">2025/07/08/23:02<span>ver 1.2.0 機能更新・改善</span><i class="fas fa-chevron-down"></i></dt>
+        <dd class="update-content">指定ダメージ比較機能を実装しました。
+          <br>計算結果の表示を指定できる機能を実装しました。
+          <br>バフ入力時、プリセットが適応されたバフが分かりやすくなりました。
+        </dd>
+        <dt class="update-header">2025/07/07/19:09<span>ver 1.1.0 機能更新</span><i class="fas fa-chevron-down"></i></dt>
+        <dd class="update-content">耐性バフの入力項目を実装しました。
+          <br>超弱点、真・属性解放の計算に対応させました。
+          <br>スキルプリセットの項目を追加しました。
+        </dd>
+        <dt class="update-header">2025/07/07/17:34<span>ver 1.0.2 不具合の修正</span><i class="fas fa-chevron-down"></i></dt>
+        <dd class="update-content">ツールチップの表示が正しく動作しない不具合を修正しました。</dd>
+        <dt class="update-header">2025/07/07/05:03<span>ver1.0.1 機能改善</span><i class="fas fa-chevron-down"></i></dt>
+        <dd class="update-content">テーマ切り替えの配色のライトを削除し新たにブルーを追加しました。
+          <br>一部ユーティリティボタンのUI改善
+        </dd>
+        <dt class="update-header">2025/07/05/22:00<span>ver 1.0.0 一般公開・機能追加</span><i class="fas fa-chevron-down"></i>
+        </dt>
+        <dd class="update-content">期待値計算、グラフ表示、共有URL発行などの高度な機能を追加しました。
+          <br>Webサイトの一般公開を開始しました。
+        </dd>
+        <dt class="update-header">2025/07/04/17:00<span>ver 0.0.0 機能改善</span><i class="fas fa-chevron-down"></i></dt>
+        <dd class="update-content">入力フォームの折りたたみ機能、ヘルプ機能、テーマ切り替え機能を追加しました。
+          <br>スキルプリセットを無制限に作成・削除できる機能を追加し、UIを改善しました。
+          <br>プリセットのファイル保存・読込機能、名前付け機能を追加しました。
+        </dd>
+      </dl>
+      <div id="update-pagination" class="pagination-controls">
+        <button id="prev-page" disabled>« 前へ</button>
+        <span id="page-info"></span>
+        <button id="next-page">次へ »</button>
+      </div>
+    </section>
+
+    <section id="section6" class="section community-section">
+      <h2>コミュニティ・クレジット</h2>
+      <div class="community-content">
+        <p>このダメージ計算機の開発・運営にご協力いただいたコミュニティの皆様に感謝します。</p>
+        <ul class="community-list">
+          <li><a href="https://discord.gg/vXvM87q6Wj" target="_blank">まおりゅうのDiscordサーバー</a> – 情報交換やサポートはこちら</li>
+          <li><a href="https://x.com/komine_kuboma" target="_blank">ミニくまのX（旧Twitter）</a> – 最新アップデート情報を発信中</li>
+          <li><a href="https://www.youtube.com/@ru6309" target="_blank">るおうさんのYouTubeチャンネル</a> – ダメージ計算の参考元となった方のチャンネル
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="section7" class="section">
+      <h2>ギャラリー</h2>
+      <div class="list-grid-trimming">
+        <div class="list"><a href="images/section1.jpg" data-lightbox="group1" data-title="魔王竜祭"><img
+              src="images/section1.jpg" alt=""></a></div>
+        <div class="list"><a href="images/section2.jpg" data-lightbox="group1" data-title="魔国連邦VS鏡国連合"><img
+              src="images/section2.jpg" alt=""></a></div>
+        <div class="list"><a href="images/section3.jpg" data-lightbox="group1" data-title="魔国式スクールライフ"><img
+              src="images/section3.jpg" alt=""></a></div>
+        <div class="list"><a href="images/section4.jpg" data-lightbox="group1" data-title="ゲームオブオクタグラム"><img
+              src="images/section4.jpg" alt=""></a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <small>Copyright© <a href="index.html">Maoryu Calculator</a> All Rights Reserved.</small>
+  </footer>
+
+  <div id="login-modal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true"
+    aria-labelledby="login-modal-title" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close-btn" aria-label="閉じる">×</button>
+      <h2 id="login-modal-title">ログイン</h2>
+      <div class="login-methods">
+        <p>Googleアカウントでログインして、<br>作成したプリセットやキャラクターをクラウドに保存・同期できます。</p>
+        <button id="google-login-btn" class="social-login-btn google"><i class="fab fa-google"></i> Googleでログイン</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="save-preset-modal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true"
+    aria-labelledby="save-preset-modal-title" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close-btn" aria-label="閉じる">×</button>
+      <h2 id="save-preset-modal-title">データプリセットの保存</h2>
+      <div class="preset-modal-form">
+        <div class="input-group"><input class="ef" type="text" id="preset-name-input"
+            required><label>プリセット名</label><span class="focus_line"></span></div>
+        <button id="save-preset-button-confirm" class="link-button">この内容で保存する</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="character-dex-modal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true"
+    aria-labelledby="dex-modal-title" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close-btn" aria-label="閉じる">×</button>
+      <h2 id="dex-modal-title">マイキャラ図鑑</h2>
+      <div class="dex-list-controls">
+        <input type="text" id="dex-search-input" placeholder="キャラクター名で検索...">
+      </div>
+      <div id="character-dex-list" class="dex-list">
+      </div>
+    </div>
+  </div>
+
+  <div id="graph-modal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true"
+    aria-labelledby="graph-modal-title" aria-hidden="true">
+    <div class="modal-content graph-modal-content">
+      <button class="modal-close-btn" aria-label="閉じる">×</button>
+      <div id="graph-container-old"></div>
+      <hr class="graph_separator">
+      <div id="buff-contribution-container"></div>
+      <hr class="graph_separator">
+      <div id="chartjs-container">
+        <canvas id="damageChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div id="custom-alert-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h2 id="custom-alert-title">確認</h2>
+      <p id="custom-alert-message"></p>
+      <div class="modal-actions">
+        <button id="custom-alert-cancel" class="link-button" style="background-color: #6c757d;">キャンセル</button>
+        <button id="custom-alert-confirm" class="link-button">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="custom-prompt-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h2 id="custom-prompt-title"></h2>
+      <p id="custom-prompt-message"></p>
+      <div class="prompt-fields">
+        <div class="input-group">
+          <input type="text" id="custom-prompt-input-name" class="ef" required>
+          <label for="custom-prompt-input-name">キャラクター名</label>
+          <span class="focus_line"></span>
+        </div>
+        <div class="input-group">
+          <input type="url" id="custom-prompt-input-image" class="ef">
+          <label for="custom-prompt-input-image">画像URL (任意)</label>
+          <span class="focus_line"></span>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="custom-prompt-cancel" class="link-button" style="background-color: #6c757d;">キャンセル</button>
+        <button id="custom-prompt-confirm" class="link-button">OK</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="comparison-unified-modal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true"
+    aria-labelledby="comparison-modal-title" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close-btn" aria-label="閉じる">×</button>
+      <h2 id="comparison-modal-title">比較モード設定</h2>
+      <div class="modal-tabs">
+        <button class="modal-tab-btn active" data-tab="preset-comparison">データ比較</button>
+        <button class="modal-tab-btn" data-tab="buff-comparison">バフ比較</button>
+      </div>
+
+      <div class="modal-tab-content active" id="preset-comparison-content">
+        <p>2つのデータセットを選択して、ダメージを比較します。</p>
+        <div id="comparison-panel" class="comparison-panel">
+          <div class="comparison-slot" id="comparison-slot-a">
+            <div class="comparison-header">比較対象 A</div>
+            <button class="comparison-select-btn" data-slot="a">保存プリセットから選択</button>
+            <button class="comparison-current-btn" data-slot="a">現在の入力状況を選択</button>
+            <div class="comparison-preset-name">未選択</div>
+          </div>
+          <div class="comparison-vs">VS</div>
+          <div class="comparison-slot" id="comparison-slot-b">
+            <div class="comparison-header">比較対象 B</div>
+            <button class="comparison-select-btn" data-slot="b">保存プリセットから選択</button>
+            <button class="comparison-current-btn" data-slot="b">現在の入力状況を選択</button>
+            <div class="comparison-preset-name">未選択</div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button id="comparison-clear-btn" class="link-button">比較をリセット</button>
+          <button id="close-comparison-modal-btn" class="link-button" style="background-color: #6c757d;">閉じる</button>
+        </div>
+      </div>
+
+      <div class="modal-tab-content" id="buff-comparison-content">
+        <p>チェックした項目の数値を「0」としてダメージを再計算し、貢献度を比較します。</p>
+        <div id="buff-comparison-list" class="buff-comparison-list">
+        </div>
+        <div class="modal-actions">
+          <button id="buff-comparison-clear-btn" class="link-button">選択をクリア</button>
+          <button id="buff-comparison-apply-btn" class="link-button">比較を適用</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="preset-selection-modal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true"
+    aria-labelledby="preset-selection-modal-title" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close-btn" aria-label="閉じる">×</button>
+      <h2 id="preset-selection-modal-title">比較するプリセットを選択</h2>
+      <div id="preset-selection-list" class="dex-list">
+      </div>
+    </div>
+  </div>
+
+  <div class="pagetop"><a href="#"><i class="fas fa-angle-double-up"></i></a></div>
+  <div id="menubar_hdr"><span></span><span></span><span></span></div>
+
+  <div id="toast-container"></div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/js/lightbox-plus-jquery.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
+  <script src="js/main.js" type="module"></script>
+
+</body>
+
+</html>
