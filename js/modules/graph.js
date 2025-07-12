@@ -50,16 +50,37 @@ export function updateGraph(appState) {
 function prepareGraphData(appState, isComparison) {
   let flatDamageList = [];
   let allValues = [];
+
   const damageCategories = {
     normal: { name: '通常' },
     ...(c('toggle-synergy') && { synergy: { name: '協心' } }),
     ...(c('toggle-kensan') && { kensan: { name: '堅閃' } }),
     ...(c('toggle-synergy') && c('toggle-kensan') && { synergyKensan: { name: '協心+堅閃' } })
   };
+
+  // ↓ここを修正しています↓
   const sections = [
-    { type: 'スキル', data: appState.lastTotalResult.skillFinal, compData: isComparison ? appState.lastComparisonResult.skillFinal : null },
-    { type: '奥義', data: appState.lastTotalResult.ultimateFinal, compData: isComparison ? appState.lastComparisonResult.ultimateFinal : null },
-    ...(v('extreme-ultimate-multiplier') > 0 && [{ type: '極奥義', data: appState.lastTotalResult.extremeUltimateFinal, compData: isComparison ? appState.lastComparisonResult.extremeUltimateFinal : null }])
+    {
+      type: 'スキル',
+      data: appState.lastTotalResult.skillFinal,
+      compData: isComparison ? appState.lastComparisonResult.skillFinal : null
+    },
+    {
+      type: '奥義',
+      data: appState.lastTotalResult.ultimateFinal,
+      compData: isComparison ? appState.lastComparisonResult.ultimateFinal : null
+    },
+    // extreme-ultimate-multiplier が 0 より大きいときだけ要素を返し、
+    // そうでなければ空配列を返す → 常に iterable に
+    ...(v('extreme-ultimate-multiplier') > 0
+      ? [{
+          type: '極奥義',
+          data: appState.lastTotalResult.extremeUltimateFinal,
+          compData: isComparison
+            ? appState.lastComparisonResult.extremeUltimateFinal
+            : null
+        }]
+      : [])
   ];
 
   sections.forEach(section => {
@@ -84,20 +105,48 @@ function prepareGraphData(appState, isComparison) {
         if (isComparison) allValues.push(entry.compValue);
       };
 
-      const expectedDmg = calculateExpectedDamage(damage, damage * critTTL, (damage + displayAttack * 0.06) * pierceTTL, (damage * critTTL + displayAttack * 0.06) * pierceTTL, critRate, pierceRate);
+      const expectedDmg = calculateExpectedDamage(
+        damage,
+        damage * critTTL,
+        (damage + displayAttack * 0.06) * pierceTTL,
+        (damage * critTTL + displayAttack * 0.06) * pierceTTL,
+        critRate,
+        pierceRate
+      );
       let compExpectedDmg;
       if (isComparison) {
-        compExpectedDmg = calculateExpectedDamage(compDamage, compDamage * compResult.critTTL, (compDamage + compResult.displayAttack * 0.06) * compResult.pierceTTL, (compDamage * compResult.critTTL + compResult.displayAttack * 0.06) * compResult.pierceTTL, compResult.critRate, compResult.pierceRate);
+        compExpectedDmg = calculateExpectedDamage(
+          compDamage,
+          compDamage * compResult.critTTL,
+          (compDamage + compResult.displayAttack * 0.06) * compResult.pierceTTL,
+          (compDamage * compResult.critTTL + compResult.displayAttack * 0.06) * compResult.pierceTTL,
+          compResult.critRate,
+          compResult.pierceRate
+        );
       }
       if ((c('toggle-crit') || c('toggle-pierce')) && (critRate > 0 || pierceRate > 0)) {
         createDataEntry('期待値', expectedDmg, compExpectedDmg);
       }
 
       createDataEntry('基礎', damage, compDamage);
-      if (c('toggle-crit')) createDataEntry('会心', damage * critTTL, isComparison ? compDamage * compResult.critTTL : undefined);
+      if (c('toggle-crit')) {
+        createDataEntry('会心', damage * critTTL, isComparison ? compDamage * compResult.critTTL : undefined);
+      }
       if (c('toggle-pierce')) {
-        createDataEntry('貫通', (damage + displayAttack * 0.06) * pierceTTL, isComparison ? (compDamage + compResult.displayAttack * 0.06) * compResult.pierceTTL : undefined);
-        if (c('toggle-crit')) createDataEntry('会心+貫通', (damage * critTTL + displayAttack * 0.06) * pierceTTL, isComparison ? (compDamage * compResult.critTTL + compResult.displayAttack * 0.06) * compResult.pierceTTL : undefined);
+        createDataEntry(
+          '貫通',
+          (damage + displayAttack * 0.06) * pierceTTL,
+          isComparison ? (compDamage + compResult.displayAttack * 0.06) * compResult.pierceTTL : undefined
+        );
+        if (c('toggle-crit')) {
+          createDataEntry(
+            '会心+貫通',
+            (damage * critTTL + displayAttack * 0.06) * pierceTTL,
+            isComparison
+              ? (compDamage * compResult.critTTL + compResult.displayAttack * 0.06) * compResult.pierceTTL
+              : undefined
+          );
+        }
       }
     });
   });
@@ -110,6 +159,7 @@ function prepareGraphData(appState, isComparison) {
 // ===============================================================
 // 1. 従来のHTMLグラフ
 // ===============================================================
+
 function renderOldHtmlGraph(container, flatDamageList, maxValue, isComparison) {
   container.append(`<h2>ダメージ詳細</h2>`).append(createColorLegend());
 
@@ -138,7 +188,6 @@ function renderOldHtmlGraph(container, flatDamageList, maxValue, isComparison) {
   for (const category in groupedData) {
     const catData = groupedData[category];
     catData.sort((a, b) => b.value - a.value);
-    // is-open クラスを削除し、初期状態を閉じた状態に変更
     let categoryHtml = `<h4 class="graph-category-title collapsible-graph-header">${category}<i class="fas fa-chevron-down"></i></h4><div class="collapsible-graph-content"><div class="graph">`;
     catData.forEach(item => {
       categoryHtml += createGraphBar(item, maxValue, isComparison);
@@ -182,6 +231,7 @@ function createColorLegend() {
 // ===============================================================
 // 2. バフ貢献度分析
 // ===============================================================
+
 function createBuffContributionSection(appState) {
   const currentInputs = getInputsAsDataObject();
   const baseResult = appState.lastTotalResult;
@@ -251,7 +301,9 @@ function createBuffContributionSection(appState) {
 // ===============================================================
 
 function formatDataForChartJs(flatDamageList, isComparison) {
-  const expectedDmgList = flatDamageList.filter(item => item.type === '期待値').sort((a, b) => b.value - a.value);
+  const expectedDmgList = flatDamageList
+    .filter(item => item.type === '期待値')
+    .sort((a, b) => b.value - a.value);
 
   const labels = expectedDmgList.map(d => `${d.label} (${d.categoryName})`);
   const mainData = expectedDmgList.map(d => d.value);
@@ -281,9 +333,8 @@ function renderChartJsGraph(labels, datasets) {
   const ctx = document.getElementById('damageChart');
   if (!ctx) return;
 
-  if (damageChart) {
-    damageChart.destroy();
-  }
+  if (damageChart) damageChart.destroy();
+
   damageChart = new Chart(ctx.getContext('2d'), {
     type: 'bar',
     data: { labels, datasets },
@@ -292,19 +343,40 @@ function renderChartJsGraph(labels, datasets) {
       maintainAspectRatio: false,
       indexAxis: 'y',
       scales: {
-        x: { beginAtZero: true, ticks: { color: '#fff', callback: (value) => new Intl.NumberFormat('ja-JP').format(value) }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
-        y: { ticks: { color: '#fff', font: { size: 12 } }, grid: { display: false } }
+        x: {
+          beginAtZero: true,
+          ticks: {
+            color: '#fff',
+            callback: value => new Intl.NumberFormat('ja-JP').format(value)
+          },
+          grid: { color: 'rgba(255, 255, 255, 0.1)' }
+        },
+        y: {
+          ticks: { color: '#fff', font: { size: 12 } },
+          grid: { display: false }
+        }
       },
       plugins: {
-        title: { display: true, text: '期待値ダメージ グラフ', color: '#fff', font: { size: 18, weight: 'bold' }, padding: { top: 10, bottom: 20 } },
-        legend: { position: 'bottom', labels: { color: '#fff' } },
+        title: {
+          display: true,
+          text: '期待値ダメージ グラフ',
+          color: '#fff',
+          font: { size: 18, weight: 'bold' },
+          padding: { top: 10, bottom: 20 }
+        },
+        legend: {
+          position: 'bottom',
+          labels: { color: '#fff' }
+        },
         tooltip: {
           callbacks: {
-            label: (context) => {
-              let label = context.dataset.label || '';
-              if (label) { label += ': '; }
-              if (context.parsed.x !== null) { label += new Intl.NumberFormat('ja-JP').format(context.parsed.x); }
-              return label;
+            label: context => {
+              let lbl = context.dataset.label || '';
+              if (lbl) lbl += ': ';
+              if (context.parsed.x !== null) {
+                lbl += new Intl.NumberFormat('ja-JP').format(context.parsed.x);
+              }
+              return lbl;
             }
           }
         }
